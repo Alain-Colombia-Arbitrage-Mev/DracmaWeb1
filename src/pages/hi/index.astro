@@ -7,9 +7,7 @@ import SectionDivider from '../../components/astro/SectionDivider.astro';
 import Vision from '../../components/astro/Vision.astro';
 import Ecosystem from '../../components/astro/Ecosystem.astro';
 import Crowdfunding from '../../components/astro/Crowdfunding.astro';
-import Membership from '../../components/astro/Membership.astro';
 import Presale from '../../components/react/Presale.tsx';
-import Ambassadors from '../../components/react/Ambassadors.tsx';
 import Contact from '../../components/react/Contact.tsx';
 import Footer from '../../components/astro/Footer.astro';
 import AiModal from '../../components/react/AiModal.tsx';
@@ -32,9 +30,6 @@ const lang = 'hi';
     <Ecosystem lang={lang} />
     <SectionDivider />
     <Crowdfunding lang={lang} />
-    <SectionDivider />
-    <Membership lang={lang} />
-    <Ambassadors client:visible />
     <Contact client:visible />
   </main>
 

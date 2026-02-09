@@ -498,15 +498,6 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
   color: var(--th-text);
 }
 
-/* Ambassador icon backgrounds */
-.ambassador-icon-bg {
-  background: var(--th-surface-raised);
-  border: 1px solid var(--th-border-strong);
-}
-.ambassador-icon-bg-elite {
-  background: var(--th-primary);
-}
-
 /* Contact icon backgrounds */
 .contact-icon-bg {
   background: var(--th-primary);
@@ -521,29 +512,6 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 .section-divider-line {
   background: var(--th-primary);
   opacity: 0.6;
-}
-
-/* Membership tiers — solid surfaces, not gradients */
-.membership-tier-base {
-  background: var(--th-surface-raised);
-}
-.membership-tier-popular {
-  background: var(--th-primary);
-}
-.membership-tier-premium {
-  background: var(--th-surface);
-  border: 1px solid var(--th-primary);
-}
-.theme-light .membership-tier-premium {
-  background: var(--th-primary);
-}
-
-/* Membership feature icon — single color */
-.membership-feat-icon {
-  color: var(--th-primary);
-}
-.membership-tier-popular .membership-feat-icon {
-  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Crowdfunding project card header — subtle tonal surface, no gradient */
@@ -572,16 +540,6 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 .hero-asset-animation {
   animation: subtle-float 5s infinite alternate;
 }
-
-/* ─────────────────────────────────────────────
-   MEMBERSHIP CARD
-   ───────────────────────────────────────────── */
-
-.membership-card { perspective: 1500px; }
-.membership-card-inner { transition: transform 0.8s ease; transform-style: preserve-3d; }
-.membership-card:hover .membership-card-inner { transform: rotateY(180deg); }
-.membership-card-front, .membership-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 1rem; }
-.membership-card-back { transform: rotateY(180deg); }
 
 /* ─────────────────────────────────────────────
    TOKEN PROGRESS BAR

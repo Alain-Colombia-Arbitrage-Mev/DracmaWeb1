@@ -65,27 +65,6 @@ export interface EcosystemCardData {
   aiButtonKey: string;
 }
 
-export interface MembershipTierFeature {
-  key: string;
-  iconClass: string;
-}
-
-export interface MembershipTierData {
-  nameKey: string;
-  descKey: string;
-  price: string;
-  priceSuffixKey: string;
-  features: MembershipTierFeature[];
-  buttonKey: string;
-  buttonClass: string;
-  isPopular?: boolean;
-  popularTagKey?: string;
-  gradientClass: string;
-  textColorClass: string;
-  borderColorClass?: string;
-  shadowClass?: string;
-}
-
 export interface CountdownDigits {
   days: string;
   hours: string;
@@ -107,21 +86,6 @@ export interface RoadmapItemData {
   itemIconBgClass: string;
   itemIconShadowClass: string;
   itemTitleColorClass: string;
-}
-
-export interface AmbassadorTierData {
-  iconClass: string;
-  iconBgGradientClass: string;
-  iconShadowClass: string;
-  titleKey: string;
-  descKey: string;
-  rewardsTitleKey: string;
-  rewardsDescKey: string;
-  buttonKey: string;
-  buttonClass: string;
-  isElite?: boolean;
-  eliteTagKey?: string;
-  eliteBgClass?: string;
 }
 
 export interface ContactPoint {

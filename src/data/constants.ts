@@ -5,10 +5,8 @@ import type {
   NavLinkItem,
   VisionCardData,
   EcosystemCardData,
-  MembershipTierData,
   TokenDistributionItem,
   RoadmapItemData,
-  AmbassadorTierData,
   ContactPoint,
   SocialLink,
   FooterSection,
@@ -261,72 +259,7 @@ export const CROWDFUNDING_PROJECTS_DATA: CrowdfundingProjectData[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 10. Membership Tiers Data
-// ---------------------------------------------------------------------------
-export const MEMBERSHIP_TIERS_DATA: MembershipTierData[] = [
-  {
-    nameKey: 'memberTier1Name',
-    descKey: 'memberTier1Desc',
-    price: '$1,000',
-    priceSuffixKey: 'memberTierPriceSuffix',
-    features: [
-      { key: 'memberTier1Feat1', iconClass: 'fas fa-check-circle membership-feat-icon' },
-      { key: 'memberTier1Feat2', iconClass: 'fas fa-check-circle membership-feat-icon' },
-      { key: 'memberTier1Feat3', iconClass: 'fas fa-check-circle membership-feat-icon' },
-      { key: 'memberTier1Feat4', iconClass: 'fas fa-check-circle membership-feat-icon' },
-    ],
-    buttonKey: 'btnJoinCore',
-    buttonClass:
-      'w-full btn-secondary py-2.5',
-    gradientClass: 'membership-tier-base',
-    textColorClass: 'text-brand-text-primary',
-  },
-  {
-    nameKey: 'memberTier2Name',
-    descKey: 'memberTier2Desc',
-    price: '$5,000',
-    priceSuffixKey: 'memberTierPriceSuffix',
-    features: [
-      { key: 'memberTier2Feat1', iconClass: 'fas fa-star membership-feat-icon' },
-      { key: 'memberTier2Feat2', iconClass: 'fas fa-star membership-feat-icon' },
-      { key: 'memberTier2Feat3', iconClass: 'fas fa-star membership-feat-icon' },
-      { key: 'memberTier2Feat4', iconClass: 'fas fa-star membership-feat-icon' },
-      { key: 'memberTier2Feat5', iconClass: 'fas fa-star membership-feat-icon' },
-      { key: 'memberTier2Feat6', iconClass: 'fas fa-star membership-feat-icon' },
-    ],
-    buttonKey: 'btnJoinQuantum',
-    buttonClass: 'w-full btn-primary py-2.5',
-    isPopular: true,
-    popularTagKey: 'tagPopular',
-    gradientClass: 'membership-tier-popular',
-    textColorClass: 'text-white',
-    borderColorClass: 'border-brand-primary',
-    shadowClass: '',
-  },
-  {
-    nameKey: 'memberTier3Name',
-    descKey: 'memberTier3Desc',
-    price: '$25,000',
-    priceSuffixKey: 'memberTierPriceSuffix',
-    features: [
-      { key: 'memberTier3Feat1', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat2', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat3', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat4', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat5', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat6', iconClass: 'fas fa-atom membership-feat-icon' },
-      { key: 'memberTier3Feat7', iconClass: 'fas fa-atom membership-feat-icon' },
-    ],
-    buttonKey: 'btnJoinPhoton',
-    buttonClass:
-      'w-full btn-secondary py-2.5',
-    gradientClass: 'membership-tier-premium',
-    textColorClass: 'text-white',
-  },
-];
-
-// ---------------------------------------------------------------------------
-// 11. Token Distribution Data
+// 10. Token Distribution Data
 // ---------------------------------------------------------------------------
 export const TOKEN_DISTRIBUTION_DATA: TokenDistributionItem[] = [
   { percentage: 20, colorClass: 'bg-brand-primary', nameKey: 'distPresale', descKey: 'distPresaleDesc' },
@@ -374,51 +307,7 @@ export const ROADMAP_DATA: RoadmapItemData[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 13. Ambassadors Data
-// ---------------------------------------------------------------------------
-export const AMBASSADORS_DATA: AmbassadorTierData[] = [
-  {
-    iconClass: 'fas fa-satellite-dish',
-    iconBgGradientClass: 'ambassador-icon-bg',
-    iconShadowClass: '',
-    titleKey: 'ambassador1Title',
-    descKey: 'ambassador1Desc',
-    rewardsTitleKey: 'ambassadorEarnings',
-    rewardsDescKey: 'ambassador1Earnings',
-    buttonKey: 'btnLearnMore',
-    buttonClass:
-      'w-full btn-secondary py-2.5 text-sm',
-  },
-  {
-    iconClass: 'fas fa-network-wired',
-    iconBgGradientClass: 'ambassador-icon-bg-elite',
-    iconShadowClass: '',
-    titleKey: 'ambassador2Title',
-    descKey: 'ambassador2Desc',
-    rewardsTitleKey: 'ambassadorEarnings',
-    rewardsDescKey: 'ambassador2Earnings',
-    buttonKey: 'btnApplyNow',
-    buttonClass: 'w-full btn-primary py-2.5 text-sm',
-    isElite: true,
-    eliteTagKey: 'tagElite',
-    eliteBgClass: 'bg-brand-primary',
-  },
-  {
-    iconClass: 'fas fa-chalkboard-teacher',
-    iconBgGradientClass: 'ambassador-icon-bg',
-    iconShadowClass: '',
-    titleKey: 'ambassador3Title',
-    descKey: 'ambassador3Desc',
-    rewardsTitleKey: 'ambassadorEarnings',
-    rewardsDescKey: 'ambassador3Earnings',
-    buttonKey: 'btnLearnMore',
-    buttonClass:
-      'w-full btn-secondary py-2.5 text-sm',
-  },
-];
-
-// ---------------------------------------------------------------------------
-// 14. Contact Points Data
+// 13. Contact Points Data
 // ---------------------------------------------------------------------------
 export const CONTACT_POINTS_DATA: ContactPoint[] = [
   {

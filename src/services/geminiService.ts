@@ -33,12 +33,8 @@ export const callGeminiAPI = async (prompt: string, lang: string, getTranslation
       return getTranslation('simulatedResponsePhilosophy');
     } else if (lowerPrompt.includes("analizar inversión") || (lowerPrompt.includes("analyze investment") && lowerPrompt.includes("dracma"))) {
       return getTranslation('simulatedResponseInvestment');
-    } else if (lowerPrompt.includes("pitch de embajador") || (lowerPrompt.includes("ambassador pitch") && lowerPrompt.includes("dracma"))) {
-      return getTranslation('simulatedResponseAmbassador');
     } else if (lowerPrompt.includes("ecosistema dracma") || lowerPrompt.includes("tokenized real world assets") || lowerPrompt.includes("artificial intelligence (ai)") || lowerPrompt.includes("blockchain infrastructure") || (lowerPrompt.includes("explain") && lowerPrompt.includes("dracma ecosystem"))) {
       return getTranslation('simulatedResponseEcosystemDetail');
-    } else if (lowerPrompt.includes("membresía me conviene") || (lowerPrompt.includes("membership suits me") && lowerPrompt.includes("dracma"))) {
-      return getTranslation('simulatedResponseMembershipRec');
     } else if (lowerPrompt.includes("impacto del roadmap") || (lowerPrompt.includes("roadmap impact") && lowerPrompt.includes("dracma"))) {
       return getTranslation('simulatedResponseRoadmapOutlook');
     } else if (lowerPrompt.includes("confirmando la recepción") || lowerPrompt.includes("contactar a dracma") || (lowerPrompt.includes("contact form") && lowerPrompt.includes("dracma"))) {
