@@ -1,0 +1,55 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+import { VISION_CARDS_DATA } from '../../data/constants';
+import AiButton from '../react/AiButton.tsx';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<section id="vision" class="py-16 bg-brand-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-accent-gold-text">
+        {t['visionTitle'] || 'Nuestra Vision'}
+      </h2>
+      <div class="w-28 h-1 mx-auto mb-6 rounded-full" style="background: var(--th-primary); opacity: 0.5;"></div>
+      <div class="text-lg md:text-xl text-brand-text-secondary max-w-4xl mx-auto leading-relaxed" set:html={(t['visionSubtitle'] || '').replace(/\n/g, '<br />')} />
+      <div class="mt-8">
+        <AiButton
+          client:visible
+          titleKey="aiModalTitlePhilosophy"
+          promptTemplate={`Explica la filosofia de DRACMA de forma concisa y motivadora. DRACMA es un holding Web3 que une agricultura sostenible, granjas solares de mineria, apps de empleo, wallet y chat seguro, impulsado por IA y blockchain. Inspira confianza. Idioma: {lang}.`}
+          buttonTextKey="btnExplorePhilosophy"
+          iconClass="fas fa-brain"
+          className="btn-ai-feature text-base"
+        />
+      </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      {VISION_CARDS_DATA.map((card, index) => (
+        <div class="card-ui" style={`animation-delay: ${0.2 * (index + 1)}s`}>
+          <div class={`${card.gradientClass} w-16 h-16 rounded-xl flex items-center justify-center mb-6 ${card.shadowClass}`}>
+            <i class={`${card.iconClass} text-3xl text-white`}></i>
+          </div>
+          <h3 class="text-2xl font-bold mb-4 font-display" style="color: var(--th-text);">
+            {t[card.titleKey] || card.titleKey}
+          </h3>
+          <p class="text-brand-text-secondary text-sm">
+            {t[card.descKey] || card.descKey}
+          </p>
+        </div>
+      ))}
+    </div>
+    <!-- CTA after Vision -->
+    <div class="text-center mt-12">
+      <a href="#presale" class="btn-primary text-base inline-flex items-center">
+        <i class="fas fa-arrow-right mr-2"></i> {t['ctaInvestNow'] || 'Invierte Ahora en la Presale'}
+      </a>
+    </div>
+  </div>
+</section>

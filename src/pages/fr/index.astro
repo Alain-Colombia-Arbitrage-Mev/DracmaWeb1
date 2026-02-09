@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/react/Navbar.tsx';
+import ThreeBackground from '../../components/react/ThreeBackground.tsx';
+import Hero from '../../components/astro/Hero.astro';
+import SectionDivider from '../../components/astro/SectionDivider.astro';
+import Vision from '../../components/astro/Vision.astro';
+import Ecosystem from '../../components/astro/Ecosystem.astro';
+import Crowdfunding from '../../components/astro/Crowdfunding.astro';
+import Membership from '../../components/astro/Membership.astro';
+import Presale from '../../components/react/Presale.tsx';
+import Ambassadors from '../../components/react/Ambassadors.tsx';
+import Contact from '../../components/react/Contact.tsx';
+import Footer from '../../components/astro/Footer.astro';
+import AiModal from '../../components/react/AiModal.tsx';
+import WhitepaperModal from '../../components/react/WhitepaperModal.tsx';
+
+const lang = 'fr';
+---
+
+<BaseLayout lang={lang}>
+  <ThreeBackground client:only="react" />
+  <Navbar client:load />
+  <AiModal client:load />
+  <WhitepaperModal client:load />
+
+  <main>
+    <Hero lang={lang} />
+    <Presale client:visible />
+    <SectionDivider />
+    <Vision lang={lang} />
+    <Ecosystem lang={lang} />
+    <SectionDivider />
+    <Crowdfunding lang={lang} />
+    <SectionDivider />
+    <Membership lang={lang} />
+    <Ambassadors client:visible />
+    <Contact client:visible />
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

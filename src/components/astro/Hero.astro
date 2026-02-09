@@ -1,0 +1,97 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<section id="hero" class="relative pt-28 pb-16 md:pt-36 md:pb-24 min-h-[85vh] flex items-center overflow-hidden" style="background: var(--th-bg);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="md:flex md:items-center md:justify-between md:gap-12">
+      <div class="md:w-3/5 text-center md:text-left">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background: var(--th-secondary);"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2" style="background: var(--th-secondary);"></span>
+          </span>
+          <span class="text-xs font-medium" style="color: var(--th-text-secondary);">Presale Live on BSC</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] mb-6 title-main-display tracking-tight">
+          <span class="brand-accent-gold-gradient-text block">{t['heroTitleBrand'] || 'DRACMA'}</span>
+          <span class="block text-2xl sm:text-3xl md:text-4xl mt-3 font-semibold tracking-tight" style="color: var(--th-text-secondary);">{t['heroTitlePhoenix'] || 'El Futuro del Valor, Hoy.'}</span>
+        </h1>
+        <p class="text-lg mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed" style="color: var(--th-text-secondary);">
+          {t['heroSubtitle'] || ''}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+          <a href="#presale" class="btn-primary text-base px-8 py-3.5 inline-flex items-center justify-center">
+            <i class="fas fa-rocket mr-2 text-sm"></i> {t['btnJoinPresale'] || 'Participar en Presale'}
+          </a>
+          <a href="#ecosystem" class="btn-secondary text-base px-8 py-3.5 inline-flex items-center justify-center">
+            {t['btnExplore'] || 'Explorar Ecosistema'}
+          </a>
+        </div>
+        <!-- Social Proof -->
+        <div class="mt-8 flex items-center gap-3 justify-center md:justify-start">
+          <div class="flex -space-x-2">
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-white text-[10px] font-bold" style="background: var(--th-primary); border-color: var(--th-bg);">C</div>
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-white text-[10px] font-bold" style="background: var(--th-secondary); border-color: var(--th-bg);">M</div>
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-white text-[10px] font-bold" style="background: var(--th-accent); border-color: var(--th-bg);">R</div>
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-white text-[10px] font-bold" style="background: var(--th-surface-raised); border-color: var(--th-bg);">+</div>
+          </div>
+          <p class="text-sm" style="color: var(--th-text-tertiary);">
+            <span class="font-semibold" style="color: var(--th-text-secondary);">+10,000</span> {t['heroSocialProof'] || 'inversores ya confian en DRACMA'}
+          </p>
+        </div>
+      </div>
+      <!-- Right side: Stats grid -->
+      <div class="hidden md:block md:w-2/5 mt-10 md:mt-0">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+            <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Token Price</div>
+            <div class="text-2xl font-bold" style="color: var(--th-text);">$0.20</div>
+            <div class="text-xs mt-1" style="color: var(--th-secondary);">+15% bonus active</div>
+          </div>
+          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+            <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Market Cap</div>
+            <div class="text-2xl font-bold" style="color: var(--th-text);">$36M</div>
+            <div class="text-xs mt-1" style="color: var(--th-text-secondary);">of $80M target</div>
+          </div>
+          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+            <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Network</div>
+            <div class="text-lg font-bold flex items-center gap-2" style="color: var(--th-text);">
+              <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png?v=032" alt="BSC" class="w-5 h-5" />
+              BSC
+            </div>
+            <div class="text-xs mt-1" style="color: var(--th-text-secondary);">Binance Smart Chain</div>
+          </div>
+          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+            <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Staking APR</div>
+            <div class="text-2xl font-bold" style="color: var(--th-secondary);">14%</div>
+            <div class="text-xs mt-1" style="color: var(--th-text-secondary);">Annual yield</div>
+          </div>
+        </div>
+        <!-- Trust badges -->
+        <div class="flex items-center justify-center gap-4 mt-4 py-3 rounded-xl" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <div class="flex items-center gap-1.5 text-xs" style="color: var(--th-text-tertiary);">
+            <i class="fas fa-shield-alt" style="color: var(--th-secondary);"></i> Audited
+          </div>
+          <div class="w-px h-3" style="background: var(--th-border-strong);"></div>
+          <div class="flex items-center gap-1.5 text-xs" style="color: var(--th-text-tertiary);">
+            <i class="fas fa-lock" style="color: var(--th-primary);"></i> Secure
+          </div>
+          <div class="w-px h-3" style="background: var(--th-border-strong);"></div>
+          <div class="flex items-center gap-1.5 text-xs" style="color: var(--th-text-tertiary);">
+            <i class="fas fa-check-circle" style="color: var(--th-accent);"></i> KYC
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

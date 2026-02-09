@@ -1,0 +1,97 @@
+---
+interface Props {
+  lang?: string;
+  title?: string;
+  description?: string;
+}
+
+const {
+  lang = 'es',
+  title = 'DRACMA - El Futuro del Valor, Hoy',
+  description = 'Un holding Web3 de vanguardia que fusiona IA, Blockchain y proyectos de impacto real.'
+} = Astro.props;
+
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+
+  <!-- OG Tags -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Inline script to prevent flash of wrong theme + sync language -->
+  <script is:inline>
+    (function() {
+      var saved = localStorage.getItem('dracma-theme');
+      // Default to dark — only light if user explicitly chose it
+      if (saved === 'light') document.documentElement.classList.add('theme-light');
+      // Store page language globally so React islands can read it on mount
+      window.__DRACMA_LANG__ = document.documentElement.lang || 'es';
+    })();
+  </script>
+</head>
+<body class={`lang-${lang}`}>
+  <slot />
+
+  <script>
+    // IntersectionObserver for scroll animations
+    document.addEventListener('DOMContentLoaded', () => {
+      const animatedElements = document.querySelectorAll('.animate-on-visible, [class*="animate-slide-in"], [class*="animate-fade-in"]');
+
+      if (animatedElements.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              // For title underline animation
+              if (entry.target.classList.contains('title-underline-animated')) {
+                entry.target.classList.add('animate-on-visible');
+              }
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        animatedElements.forEach(el => observer.observe(el));
+      }
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+          const href = (e.currentTarget as HTMLAnchorElement).getAttribute('href');
+          if (href && href.startsWith('#')) {
+            const target = document.getElementById(href.substring(1));
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // Listen for whitepaper modal open event (dispatched from Footer)
+      window.addEventListener('open-whitepaper', () => {
+        // Import the store dynamically
+        import('../stores/appStore').then(({ showWhitepaperModal }) => {
+          showWhitepaperModal();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

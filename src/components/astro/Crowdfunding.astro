@@ -1,0 +1,141 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+import { CROWDFUNDING_FEATURES_DATA, CROWDFUNDING_PROJECTS_DATA } from '../../data/constants';
+import AiButton from '../react/AiButton.tsx';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<section id="crowdfunding" class="py-16 bg-brand-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-secondary-text">
+        {t['crowdfundingTitle'] || 'Crowdfunding P2P'}
+      </h2>
+      <div class="w-28 h-1 mx-auto mb-8 rounded-full" style="background: var(--th-primary); opacity: 0.5;"></div>
+      <p class="text-lg md:text-xl text-brand-text-secondary max-w-4xl mx-auto leading-relaxed">
+        {t['crowdfundingSubtitle'] || ''}
+      </p>
+      <div class="mt-10">
+        <AiButton
+          client:visible
+          titleKey="aiModalTitleCrowdfunding"
+          promptTemplate={`Explica el concepto de Crowdfunding P2P de DRACMA, que permite invertir fraccionadamente en activos reales usando tokens $DRC. Destaca la democratizacion del acceso a inversiones (agricultura sostenible, granjas solares para mineria, app de empleo, wallet y chat seguro), la transparencia blockchain, el rol de la comunidad, y como los inversores pueden obtener beneficios. Hazlo simple, atractivo y conciso para un nuevo usuario (3-4 frases). Idioma de la respuesta: {lang}.`}
+          buttonTextKey="btnExplainCrowdfundingAI"
+          iconClass="fas fa-chalkboard-teacher"
+          className="btn-ai-feature text-base"
+        />
+      </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="mb-20">
+      <h3 class="text-2xl md:text-3xl font-bold text-center mb-12 title-section-display brand-primary-text">
+        {t['crowdfundingKeyFeaturesTitle'] || 'Key Features'}
+      </h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+        {CROWDFUNDING_FEATURES_DATA.map((feature, index) => (
+          <div class="flex items-start" style={`animation-delay: ${0.1 * (index + 1)}s`}>
+            <div class={`flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center mr-5 shadow-md ${feature.bgColorClass} transition-all duration-300 group hover:scale-105`}>
+              <i class={`${feature.iconClass} ${feature.colorClass} text-2xl transition-transform duration-300 group-hover:rotate-[-5deg]`}></i>
+            </div>
+            <div>
+              <h4 class={`text-lg font-semibold mb-1.5 font-display ${feature.colorClass}`}>
+                {t[feature.titleKey] || feature.titleKey}
+              </h4>
+              <p class="text-brand-text-secondary/90 text-sm leading-relaxed">
+                {t[feature.descKey] || feature.descKey}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Active Projects -->
+    <div>
+      <h3 class="text-2xl md:text-3xl font-bold text-center mb-12 title-section-display brand-accent-gold-text">
+        {t['crowdfundingActiveProjectsTitle'] || 'Active Projects'}
+      </h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {CROWDFUNDING_PROJECTS_DATA.map((project, index) => {
+          const progress = (project.currentFundingDRC / project.fundingGoalDRC) * 100;
+          return (
+            <div style={`animation-delay: ${0.15 * (index + 1)}s`}>
+              <div class="card-ui glassmorphism-light overflow-hidden flex flex-col h-full transform transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-brand-secondary">
+                <div class="w-full h-48 flex items-center justify-center project-card-header">
+                <div class="text-center">
+                  <i class={`text-5xl mb-3 block ${
+                    project.id === 'agroverde01' ? 'fas fa-seedling' :
+                    project.id === 'solaris03' ? 'fas fa-solar-panel' :
+                    'fas fa-briefcase'
+                  }`} style="color: var(--th-primary);"></i>
+                  <p class="text-sm font-semibold tracking-wider uppercase" style="color: var(--th-text-secondary);">{t[project.assetTypeKey] || project.assetTypeKey}</p>
+                </div>
+              </div>
+                <div class="p-5 flex flex-col flex-grow">
+                  <span class={`text-xs font-semibold px-2.5 py-1 rounded-full text-white mb-2.5 self-start shadow-sm ${project.statusColorClass}`}>
+                    {t[project.statusKey] || project.statusKey}
+                  </span>
+                  <h4 class="text-xl font-bold font-display brand-accent-gold-text mb-1.5">
+                    {t[project.nameKey] || project.nameKey}
+                  </h4>
+                  <p class="text-sm text-brand-text-secondary/80 mb-3.5 font-mono">
+                    {t[project.assetTypeKey] || project.assetTypeKey}
+                  </p>
+
+                  <div class="text-xs text-brand-text-secondary/70 font-mono mb-1">
+                    {t['crowdfundingFundingProgressLabel'] || 'Progress'} <span class="font-semibold brand-primary-text">{progress.toFixed(1)}%</span>
+                  </div>
+                  <div class="w-full rounded-full h-2.5 mb-4 overflow-hidden" style="background: var(--th-surface-raised); border: 1px solid var(--th-border);"
+                    <div
+                      class="bg-gradient-to-r from-brand-primary to-brand-secondary h-full rounded-full animate-token-progress-anim"
+                      style={`--progress-width: ${Math.min(progress, 100)}%`}
+                    ></div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-x-4 text-xs font-mono mb-3.5">
+                    <div>
+                      <p class="text-brand-text-secondary/70">{t['crowdfundingMinInvestmentLabel'] || 'Min. Investment'}</p>
+                      <p class="font-semibold text-brand-text-primary text-sm">
+                        {project.minInvestmentDRC.toLocaleString()} <span class="text-brand-accent-gold-text">$DRC</span>
+                      </p>
+                    </div>
+                    {project.estimatedROIKey && (
+                      <div>
+                        <p class="text-brand-text-secondary/70">{t['crowdfundingEstROILabel'] || 'Est. ROI'}</p>
+                        <p class="font-semibold brand-secondary-text text-sm">
+                          {t[project.estimatedROIKey] || project.estimatedROIKey}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <p class="text-xs text-brand-text-secondary/70 font-mono mb-5">
+                    {t['presaleGoalLabel'] || 'Goal:'} {project.fundingGoalDRC.toLocaleString()} $DRC <span class="text-brand-text-secondary/50">(~${project.fundingGoalUSD.toLocaleString()} USD)</span>
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p class="text-center mt-8 text-sm text-brand-text-secondary/70 font-mono" style="animation-delay: 0.6s">
+        {t['crowdfundingDisclaimer'] || ''}
+      </p>
+      <!-- CTA after Crowdfunding -->
+      <div class="text-center mt-8">
+        <p class="text-sm text-brand-text-secondary mb-3">{t['ctaCrowdfundingHook'] || 'Necesitas tokens $DRC para invertir en estos proyectos'}</p>
+        <a href="#presale" class="btn-primary text-base inline-flex items-center">
+          <i class="fas fa-shopping-cart mr-2"></i> {t['ctaBuyDRC'] || 'Compra $DRC en la Presale'}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

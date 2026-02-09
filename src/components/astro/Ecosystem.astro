@@ -1,0 +1,56 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+import { ECOSYSTEM_CARDS_DATA } from '../../data/constants';
+import AiButton from '../react/AiButton.tsx';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<section id="ecosystem" class="py-16 bg-brand-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-primary-text">
+        {t['ecosystemTitle'] || 'El Ecosistema DRACMA'}
+      </h2>
+      <div class="w-28 h-1 mx-auto mb-8 rounded-full" style="background: var(--th-primary); opacity: 0.5;"></div>
+      <p class="text-lg md:text-xl text-brand-text-secondary max-w-4xl mx-auto leading-relaxed">
+        {t['ecosystemSubtitle'] || ''}
+      </p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {ECOSYSTEM_CARDS_DATA.map((card, index) => (
+        <div class="card-ui group" style={`animation-delay: ${0.1 * (index + 1)}s`}>
+          <div class="flex items-center mb-4">
+            <i class={`${card.iconClass} fa-2x ${card.colorClass} mr-4 group-hover:scale-110 transition-transform`}></i>
+            <h3 class={`text-xl font-bold ${card.colorClass} font-display`}>
+              {t[card.titleKey] || card.titleKey}
+            </h3>
+          </div>
+          <p class="text-brand-text-secondary text-sm mb-3">
+            {t[card.descKey] || card.descKey}
+          </p>
+          <AiButton
+            client:visible
+            titleKey="aiModalTitleEcosystem"
+            promptTemplate={`Explica de forma sencilla la importancia de '${t[card.titleKey] || card.titleKey}' (${t[card.descKey] || ''}) dentro del ecosistema DRACMA en 2-3 frases. Idioma: {lang}.`}
+            buttonTextKey={card.aiButtonKey}
+            iconClass="fas fa-robot"
+            className="btn-ai-feature-small"
+          />
+        </div>
+      ))}
+    </div>
+    <!-- CTA after Ecosystem -->
+    <div class="text-center mt-10">
+      <p class="text-sm text-brand-text-secondary mb-3">{t['ctaEcosystemHook'] || 'Sé parte de este ecosistema desde el día 1'}</p>
+      <a href="#presale" class="btn-primary text-base inline-flex items-center">
+        <i class="fas fa-coins mr-2"></i> {t['ctaGetTokens'] || 'Obtén tokens $DRC ahora'}
+      </a>
+    </div>
+  </div>
+</section>

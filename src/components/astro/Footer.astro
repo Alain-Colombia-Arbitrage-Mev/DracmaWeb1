@@ -1,0 +1,99 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+import { FOOTER_SECTIONS_DATA, FOOTER_SOCIAL_LINKS } from '../../data/constants';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<footer class="py-12" style="background: var(--th-bg-alt); border-top: 1px solid var(--th-border);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-8">
+      <!-- Brand Column -->
+      <div>
+        <a href="#hero" class="flex items-center text-2xl font-bold brand-accent-gold-text title-main-display mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-8 h-8 mr-2">
+            <defs>
+              <linearGradient id="footLogoGradNew2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F0E68C"/>
+                <stop offset="100%" stop-color="#D4AF37"/>
+              </linearGradient>
+            </defs>
+            <path d="M50 15 C 35 20, 20 35, 20 50 C 20 65, 35 80, 50 85 C 65 80, 80 65, 80 50 C 80 35, 65 20, 50 15 Z M 50 25 C 58.28 25, 65 31.72, 65 40 C 65 48.28, 58.28 55, 50 55 C 41.72 55, 35 48.28, 35 40 C 35 31.72, 41.72 25, 50 25 Z" fill="url(#footLogoGradNew2)" />
+          </svg>
+          DRACMA
+        </a>
+        <p class="text-brand-text-secondary/70 text-sm mb-6">
+          {t['footerDesc'] || ''}
+        </p>
+        <button id="footer-connect-wallet" class="btn-primary py-2.5 px-5 text-sm">
+          {t['btnConnectWallet'] || 'Connect Wallet'}
+        </button>
+      </div>
+
+      <!-- Footer Navigation Sections -->
+      {FOOTER_SECTIONS_DATA.map((section) => (
+        <div>
+          <h4 class={`text-lg font-semibold mb-4 font-display ${section.titleColorClass}`}>
+            {t[section.titleKey] || section.titleKey}
+          </h4>
+          <ul class="space-y-2 text-sm">
+            {section.links.map((link) => (
+                <li>
+                  {link.isWhitepaperModalTrigger ? (
+                    <button
+                      type="button"
+                      class="text-brand-text-secondary/80 transition hover:text-brand-primary cursor-pointer bg-transparent border-none p-0 text-sm text-left"
+                      data-whitepaper-trigger
+                    >
+                      {t[link.key] || link.key}
+                    </button>
+                  ) : (
+                    <a
+                      href={link.href}
+                      class="text-brand-text-secondary/80 transition hover:text-brand-primary"
+                    >
+                      {t[link.key] || link.key}
+                    </a>
+                  )}
+                </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-10 pt-8 flex flex-col md:flex-row justify-between items-center" style="border-top: 1px solid var(--th-border);">
+      <p class="text-brand-text-secondary/60 text-xs font-mono mb-4 md:mb-0">
+        {t['footerCopyright'] || ''}
+      </p>
+      <div class="flex space-x-5">
+        {FOOTER_SOCIAL_LINKS.map((link) => (
+          <a
+            href={link.href}
+            aria-label={link.label}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={`text-brand-text-secondary/70 transition ${link.hoverColorClass}`}
+          >
+            <i class={link.iconClass}></i>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Handle whitepaper modal trigger
+  document.querySelectorAll('[data-whitepaper-trigger]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-whitepaper'));
+    });
+  });
+</script>

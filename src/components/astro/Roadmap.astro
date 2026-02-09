@@ -1,0 +1,60 @@
+---
+import { getTranslationsForLang } from '../../i18n/utils';
+import { ROADMAP_DATA } from '../../data/constants';
+import AiButton from '../react/AiButton.tsx';
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = getTranslationsForLang(lang);
+---
+
+<section id="roadmap" class="py-16 bg-brand-background">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-accent-gold-text">
+        {t['roadmapTitle'] || 'Roadmap'}
+      </h2>
+      <div class="w-28 h-1 mx-auto mb-8 rounded-full" style="background: var(--th-primary); opacity: 0.5;"></div>
+      <p class="text-lg md:text-xl text-brand-text-secondary max-w-4xl mx-auto leading-relaxed">
+        {t['roadmapSubtitle'] || ''}
+      </p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="relative roadmap-timeline max-w-3xl mx-auto">
+      {ROADMAP_DATA.map((item, index) => (
+        <div class={`roadmap-item ${index % 2 === 0 ? 'animate-slide-in-left' : 'animate-slide-in-right'}`}>
+          <div class={`roadmap-icon ${item.itemIconBgClass} ${item.itemIconShadowClass}`}>
+            <i class={`${item.iconClass} text-brand-background text-xl`}></i>
+          </div>
+          <div class="roadmap-content">
+            <h3 class={`text-xl font-bold mb-2 font-display ${item.itemTitleColorClass}`}>
+              {t[item.titleKey] || item.titleKey}
+            </h3>
+            <ul class="list-disc list-inside text-brand-text-secondary/90 text-sm space-y-1.5 pl-2">
+              {(t[item.listKey] || '').split('|').map((listItem) => (
+                <li>{listItem}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- AI Button -->
+    <div class="text-center mt-12">
+      <AiButton
+        client:visible
+        titleKey="aiModalTitleRoadmap"
+        promptTemplate={`Basado en el roadmap de DRACMA (Fase 1: Cimientos y Presale; Fase 2: Expansion del Ecosistema RWA y listados; Fase 3: Consolidacion Global y neutralidad de carbono; Fase 4: Liderazgo Visionario con Micronations DAO y +$50B AUM), genera una perspectiva inspiradora y realista (2-3 frases concisas) sobre el impacto potencial a largo plazo de DRACMA en el panorama de inversion Web3 y la economia descentralizada, si logra ejecutar su vision. Manten un tono profesional, humano y facil de entender. Idioma de la respuesta: {lang}.`}
+        buttonTextKey="btnRoadmapOutlook"
+        iconClass="fas fa-chart-line"
+        className="btn-ai-feature text-base"
+      />
+    </div>
+  </div>
+</section>
