@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
-    "@astrojs/tailwind": "^6.0.2",
     "@google/genai": "^1.40.0",
     "@nanostores/react": "^1.0.0",
     "astro": "^5.17.1",
