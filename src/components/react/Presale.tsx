@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useStore } from '@nanostores/react';
+import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
 import { $currentLang, $translations, showAiModal, $aiModalInfo } from '../../stores/appStore';
 import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
+import Web3Provider from './Web3Provider';
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
 
@@ -55,10 +57,19 @@ const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDat
   );
 });
 
-export default function Presale() {
+function PresaleInner() {
   const currentLang = useStore($currentLang);
   const translations = useStore($translations);
   const t = useCallback((key: string, fallback?: string) => translations[key] || fallback || key, [translations]);
+
+  const { address, isConnected } = useAccount();
+  const { connect, isPending: isConnecting } = useConnect();
+  const { disconnect } = useDisconnect();
+  const connectors = useConnectors();
+
+  const truncatedAddress = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : '';
 
   const [currentBonus, setCurrentBonus] = useState(0);
   const [activeBonusNameKey, setActiveBonusNameKey] = useState("presaleBonusEndedName");
@@ -154,17 +165,15 @@ export default function Presale() {
     showAiModal('aiModalTitleInvestment', prompt);
   };
 
-  const handleConnectWallet = () => {
-    const networkName = t(BLOCKCHAIN_NETWORKS.find(n => n.id === selectedBlockchain)?.nameKey || '', selectedBlockchain);
-    const connectingText = `${t('walletConnecting')} (${networkName})`;
-    showAiModal('walletConnecting', undefined, `<div class="flex items-center justify-center mb-3"><i class="fas fa-spinner fa-spin text-2xl mr-3"></i><span class="text-lg">${connectingText}</span></div><p class="text-xs font-sans text-brand-text-secondary/80">${t('walletSim')}</p><div class="w-full h-1 bg-brand-primary/30 rounded-full mt-4 overflow-hidden"><div class="h-full bg-brand-primary animate-pulse" style="width: 0%; animation: fakeLoad 3s linear forwards;"></div></div><style> @keyframes fakeLoad { 0% { width: 0%; } 100% { width: 100%; } } </style>`);
-    setTimeout(() => {
-      const current = $aiModalInfo.get();
-      if (current.isOpen && current.titleKey === 'walletConnecting') {
-        $aiModalInfo.set({ ...current, isOpen: false });
-      }
-    }, 3500);
-  };
+  const handleConnectWallet = useCallback(() => {
+    const hasInjected = typeof window !== 'undefined' && !!window.ethereum;
+    const connector = hasInjected
+      ? connectors.find(c => c.id === 'injected')
+      : connectors.find(c => c.id === 'walletConnect');
+    if (connector) {
+      connect({ connector });
+    }
+  }, [connect, connectors]);
 
   const getCurrencyLogo = (currency: PresaleCurrency) => {
     switch (currency) {
@@ -180,7 +189,10 @@ export default function Presale() {
 
   return (
     <section id="presale" className="py-16 bg-brand-background relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-[0.03]" style={{backgroundImage: "repeating-linear-gradient(45deg, rgba(59,130,246,0.05), rgba(59,130,246,0.05) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(16,185,129,0.05), rgba(16,185,129,0.05) 1px, transparent 1px, transparent 15px)", animation: "backgroundGridScroll 80s linear infinite"}}></div>
+      <div className="absolute inset-0 z-0 opacity-[0.03]" style={{backgroundImage: "repeating-linear-gradient(45deg, rgba(99,102,241,0.06), rgba(99,102,241,0.06) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(139,92,246,0.04), rgba(139,92,246,0.04) 1px, transparent 1px, transparent 15px)", animation: "backgroundGridScroll 80s linear infinite"}}></div>
+      {/* Gradient mesh orbs */}
+      <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
+      <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
 
       {/* FOMO Notification Toast */}
       <div className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
@@ -244,7 +256,7 @@ export default function Presale() {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 card-ui glassmorphism-light p-6 md:p-8 animate-slide-in-left">
+          <div className="lg:col-span-2 card-ui glass-card-premium p-6 md:p-8 animate-slide-in-left">
             <h3 className="text-2xl font-bold mb-6 title-section-display brand-accent-gold-text relative pb-3 title-underline-animated animate-on-visible">{t('presaleStatusTitle')}</h3>
             <div className="space-y-5">
               <div>
@@ -314,7 +326,7 @@ export default function Presale() {
             </div>
           </div>
 
-          <div className="lg:col-span-3 card-ui glassmorphism-light p-6 md:p-8 animate-slide-in-right">
+          <div className="lg:col-span-3 card-ui glass-card-premium p-6 md:p-8 animate-slide-in-right">
             <h3 className="text-2xl font-bold mb-6 title-main-display brand-primary-text relative pb-3 title-underline-animated animate-on-visible">{t('presaleInvestTitle')}</h3>
             <div className="space-y-6">
               <div>
@@ -368,9 +380,25 @@ export default function Presale() {
                 <i className="fas fa-magic mr-2"></i> <span>{t('btnAnalyzeInvestment')}</span>
               </button>
               <div className="pt-2">
-                <button onClick={handleConnectWallet} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
-                  <i className="fas fa-wallet mr-2.5"></i> <span>{t('btnConnectAndConfirm')} (BSC)</span>
-                </button>
+                {isConnected ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-2 rounded-lg py-2.5 px-4" style={{background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)'}}>
+                      <i className="fas fa-check-circle text-brand-secondary"></i>
+                      <span className="text-sm font-mono text-brand-secondary">{truncatedAddress}</span>
+                      <button onClick={() => disconnect()} className="text-xs text-brand-text-secondary hover:text-brand-primary ml-2 underline">{t('btnDisconnect', 'Desconectar')}</button>
+                    </div>
+                    <button className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
+                      <i className="fas fa-paper-plane mr-2.5"></i> <span>{t('btnConfirmPurchase', 'Confirmar Compra')} (BSC)</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
+                    {isConnecting
+                      ? <><i className="fas fa-spinner fa-spin mr-2.5"></i><span>{t('walletConnecting', 'Conectando...')}</span></>
+                      : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndConfirm')} (BSC)</span></>
+                    }
+                  </button>
+                )}
                 {/* FOMO under CTA */}
                 <p className="text-xs text-center mt-2 text-brand-accent-coral font-semibold">
                   <i className="fas fa-users mr-1"></i> {t('fomoCTAMessage', `${liveInvestors}+ personas ya invirtieron. ¿Y tú?`)}
@@ -397,5 +425,13 @@ export default function Presale() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function Presale() {
+  return (
+    <Web3Provider>
+      <PresaleInner />
+    </Web3Provider>
   );
 }

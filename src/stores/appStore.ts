@@ -5,13 +5,12 @@ import { callGeminiAPI } from '../services/geminiService';
 
 // Theme store
 export type Theme = 'dark' | 'light';
-export const $theme = atom<Theme>('dark');
+export const $theme = atom<Theme>('light');
 
 export function initTheme() {
   if (typeof window === 'undefined') return;
   const saved = localStorage.getItem('dracma-theme') as Theme | null;
-  // Default to dark — only use light if user explicitly saved it
-  const preferred = saved || 'dark';
+  const preferred = saved || 'light';
   $theme.set(preferred);
   applyThemeClass(preferred);
 }

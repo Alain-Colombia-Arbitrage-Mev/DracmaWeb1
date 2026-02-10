@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
+import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
 import { $currentLang, $translations, changeLanguage, showAiModal, $aiModalInfo, getTranslation, $theme, toggleTheme, initTheme, initLang } from '../../stores/appStore';
 import { NAV_LINKS, LANGUAGES, BLOCKCHAIN_NETWORKS } from '../../data/constants';
 import type { PresaleBlockchain } from '../../types';
+import Web3Provider from './Web3Provider';
 
 const NavLogo = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-9 h-9 mr-2 transform transition-transform duration-700 hover:rotate-[360deg] hover:scale-110">
@@ -12,19 +14,27 @@ const NavLogo = () => (
   </svg>
 );
 
-export default function Navbar() {
+function NavbarInner() {
   const currentLang = useStore($currentLang);
   const translations = useStore($translations);
   const theme = useStore($theme);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const { address, isConnected } = useAccount();
+  const { connect, isPending: isConnecting } = useConnect();
+  const { disconnect } = useDisconnect();
+  const connectors = useConnectors();
+
   useEffect(() => { initTheme(); initLang(); }, []);
 
   const t = (key: string, fallback?: string) => translations[key] || fallback || key;
 
+  const truncatedAddress = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : '';
+
   const handleLanguageChange = (e: React.MouseEvent<HTMLAnchorElement>, langCode: string) => {
     e.preventDefault();
-    // Navigate to the correct locale URL
     const basePath = langCode === 'es' ? '/' : `/${langCode}/`;
     window.location.href = basePath;
   };
@@ -38,15 +48,16 @@ export default function Navbar() {
   };
 
   const handleConnectWallet = useCallback(() => {
-    const connectingText = t('walletConnecting');
-    showAiModal('walletConnecting', undefined, `<div class="flex items-center justify-center mb-3"><i class="fas fa-spinner fa-spin text-2xl mr-3"></i><span class="text-lg">${connectingText}</span></div><p class="text-xs font-sans text-brand-text-secondary/80">${t('walletSim')}</p><div class="w-full h-1 bg-brand-primary/30 rounded-full mt-4 overflow-hidden"><div class="h-full bg-brand-primary animate-pulse" style="width: 0%; animation: fakeLoad 3s linear forwards;"></div></div><style> @keyframes fakeLoad { 0% { width: 0%; } 100% { width: 100%; } } </style>`);
-    setTimeout(() => {
-      const current = $aiModalInfo.get();
-      if (current.isOpen && current.titleKey === 'walletConnecting') {
-        $aiModalInfo.set({ ...current, isOpen: false });
-      }
-    }, 3500);
-  }, [translations]);
+    // Use injected wallet if available (MetaMask, Trust Wallet in-app browser),
+    // otherwise fall back to WalletConnect (QR code / deep link for mobile)
+    const hasInjected = typeof window !== 'undefined' && !!window.ethereum;
+    const connector = hasInjected
+      ? connectors.find(c => c.id === 'injected')
+      : connectors.find(c => c.id === 'walletConnect');
+    if (connector) {
+      connect({ connector });
+    }
+  }, [connect, connectors]);
 
   return (
     <nav className="fixed w-full z-50 backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderBottom: '1px solid var(--th-nav-border)'}}>
@@ -85,7 +96,16 @@ export default function Navbar() {
             </div>
           </div>
           <div className="hidden md:block ml-4">
-            <button onClick={handleConnectWallet} className="btn-primary py-2.5 px-6 text-sm">{t('btnConnectWallet')}</button>
+            {isConnected ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono text-brand-secondary">{truncatedAddress}</span>
+                <button onClick={() => disconnect()} className="btn-primary py-2 px-4 text-xs">{t('btnDisconnect', 'Desconectar')}</button>
+              </div>
+            ) : (
+              <button onClick={handleConnectWallet} disabled={isConnecting} className="btn-primary py-2.5 px-6 text-sm">
+                {isConnecting ? <><i className="fas fa-spinner fa-spin mr-2"></i>{t('walletConnecting', 'Conectando...')}</> : t('btnConnectWallet')}
+              </button>
+            )}
           </div>
           <div className="-mr-2 flex md:hidden items-center">
             <button onClick={toggleTheme} className="theme-toggle mr-1" aria-label="Toggle theme">
@@ -121,10 +141,27 @@ export default function Navbar() {
             ))}
           </div>
           <div className="pt-4 pb-3 px-5" style={{borderTop: '1px solid var(--th-border)'}}>
-            <button onClick={handleConnectWallet} className="w-full btn-primary py-2.5">{t('btnConnectWallet')}</button>
+            {isConnected ? (
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-sm font-mono text-brand-secondary">{truncatedAddress}</span>
+                <button onClick={() => disconnect()} className="w-full btn-primary py-2.5">{t('btnDisconnect', 'Desconectar')}</button>
+              </div>
+            ) : (
+              <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-2.5">
+                {isConnecting ? <><i className="fas fa-spinner fa-spin mr-2"></i>{t('walletConnecting', 'Conectando...')}</> : t('btnConnectWallet')}
+              </button>
+            )}
           </div>
         </div>
       )}
     </nav>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <Web3Provider>
+      <NavbarInner />
+    </Web3Provider>
   );
 }

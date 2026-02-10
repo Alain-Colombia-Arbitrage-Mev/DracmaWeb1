@@ -10,6 +10,12 @@ const t = getTranslationsForLang(lang);
 ---
 
 <section id="hero" class="relative pt-28 pb-16 md:pt-36 md:pb-24 min-h-[85vh] flex items-center overflow-hidden" style="background: var(--th-bg);">
+  <!-- Gradient mesh background -->
+  <div class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+    <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.07]" style="background: radial-gradient(circle, rgba(99,102,241,0.6) 0%, transparent 70%); filter: blur(80px);"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full opacity-[0.05]" style="background: radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 70%); filter: blur(80px);"></div>
+    <div class="absolute top-[30%] left-[40%] w-[400px] h-[400px] rounded-full opacity-[0.04]" style="background: radial-gradient(circle, rgba(56,189,248,0.4) 0%, transparent 70%); filter: blur(80px);"></div>
+  </div>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="md:flex md:items-center md:justify-between md:gap-12">
       <div class="md:w-3/5 text-center md:text-left">
@@ -50,20 +56,20 @@ const t = getTranslationsForLang(lang);
           </p>
         </div>
       </div>
-      <!-- Right side: Stats grid -->
+      <!-- Right side: Stats grid — frosted glass cards -->
       <div class="hidden md:block md:w-2/5 mt-10 md:mt-0">
         <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <div class="glass-stat-card rounded-xl p-5">
             <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Token Price</div>
             <div class="text-2xl font-bold" style="color: var(--th-text);">$0.20</div>
             <div class="text-xs mt-1" style="color: var(--th-secondary);">+15% bonus active</div>
           </div>
-          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <div class="glass-stat-card rounded-xl p-5">
             <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Market Cap</div>
             <div class="text-2xl font-bold" style="color: var(--th-text);">$36M</div>
             <div class="text-xs mt-1" style="color: var(--th-text-secondary);">of $80M target</div>
           </div>
-          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <div class="glass-stat-card rounded-xl p-5">
             <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Network</div>
             <div class="text-lg font-bold flex items-center gap-2" style="color: var(--th-text);">
               <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png?v=032" alt="BSC" class="w-5 h-5" />
@@ -71,14 +77,14 @@ const t = getTranslationsForLang(lang);
             </div>
             <div class="text-xs mt-1" style="color: var(--th-text-secondary);">Binance Smart Chain</div>
           </div>
-          <div class="rounded-xl p-5" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+          <div class="glass-stat-card rounded-xl p-5">
             <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Staking APR</div>
             <div class="text-2xl font-bold" style="color: var(--th-secondary);">14%</div>
             <div class="text-xs mt-1" style="color: var(--th-text-secondary);">Annual yield</div>
           </div>
         </div>
-        <!-- Trust badges -->
-        <div class="flex items-center justify-center gap-4 mt-4 py-3 rounded-xl" style="background: var(--th-surface); border: 1px solid var(--th-border);">
+        <!-- Trust badges — glass bar -->
+        <div class="glass-stat-card flex items-center justify-center gap-4 mt-4 py-3 rounded-xl">
           <div class="flex items-center gap-1.5 text-xs" style="color: var(--th-text-tertiary);">
             <i class="fas fa-shield-alt" style="color: var(--th-secondary);"></i> Audited
           </div>

@@ -39,8 +39,8 @@ import '../styles/global.css';
   <script is:inline>
     (function() {
       var saved = localStorage.getItem('dracma-theme');
-      // Default to dark — only light if user explicitly chose it
-      if (saved === 'light') document.documentElement.classList.add('theme-light');
+      // Default to light — only dark if user explicitly chose it
+      if (saved !== 'dark') document.documentElement.classList.add('theme-light');
       // Store page language globally so React islands can read it on mount
       window.__DRACMA_LANG__ = document.documentElement.lang || 'es';
     })();
