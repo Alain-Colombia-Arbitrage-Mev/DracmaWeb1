@@ -19,6 +19,8 @@ function NavbarInner() {
   const translations = useStore($translations);
   const theme = useStore($theme);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isMobileLangOpen, setIsMobileLangOpen] = useState(false);
 
   const { address, isConnected } = useAccount();
   const { connect, isPending: isConnecting } = useConnect();
@@ -80,15 +82,22 @@ function NavbarInner() {
             <button onClick={toggleTheme} className="theme-toggle ml-4" aria-label="Toggle theme">
               <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
             </button>
-            <div className="language-selector ml-3">
-              <button className="flex items-center text-brand-text-secondary hover:text-brand-primary transition duration-300 text-sm font-semibold">
-                <i className="fas fa-globe mr-1.5"></i>
+            <div className="language-selector ml-3" onMouseEnter={() => setIsLangOpen(true)} onMouseLeave={() => setIsLangOpen(false)}>
+              <button
+                onClick={() => setIsLangOpen(prev => !prev)}
+                onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }}
+                aria-expanded={isLangOpen}
+                aria-haspopup="true"
+                aria-label={t('srLanguageSelector', 'Select language')}
+                className="flex items-center text-brand-text-secondary hover:text-brand-primary transition duration-300 text-sm font-semibold"
+              >
+                <i className="fas fa-globe mr-1.5" aria-hidden="true"></i>
                 <span>{currentLang.toUpperCase()}</span>
-                <i className="fas fa-chevron-down fa-xs ml-1.5"></i>
+                <i className="fas fa-chevron-down fa-xs ml-1.5" aria-hidden="true"></i>
               </button>
-              <div className="language-dropdown">
+              <div className={`language-dropdown ${isLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href="#" onClick={(e) => handleLanguageChange(e, lang.code)} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a key={lang.code} href="#" role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}
@@ -111,22 +120,28 @@ function NavbarInner() {
             <button onClick={toggleTheme} className="theme-toggle mr-1" aria-label="Toggle theme">
               <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
             </button>
-            <div className="language-selector mr-2">
-              <button className="flex items-center text-brand-text-secondary hover:text-brand-primary transition duration-300 p-2 rounded-md">
-                <i className="fas fa-globe"></i>
+            <div className="language-selector mr-2" onMouseEnter={() => setIsMobileLangOpen(true)} onMouseLeave={() => setIsMobileLangOpen(false)}>
+              <button
+                onClick={() => setIsMobileLangOpen(prev => !prev)}
+                onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }}
+                aria-expanded={isMobileLangOpen}
+                aria-haspopup="true"
+                aria-label={t('srLanguageSelector', 'Select language')}
+                className="flex items-center text-brand-text-secondary hover:text-brand-primary transition duration-300 p-2 rounded-md"
+              >
+                <i className="fas fa-globe" aria-hidden="true"></i>
                 <span className="ml-1 text-xs">{currentLang.toUpperCase()}</span>
               </button>
-              <div className="language-dropdown !right-auto left-0 min-w-[120px]">
+              <div className={`language-dropdown !right-auto left-0 min-w-[120px] ${isMobileLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href="#" onClick={(e) => handleLanguageChange(e, lang.code)} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a key={lang.code} href="#" role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}
               </div>
             </div>
-            <button type="button" onClick={() => setIsMobileMenuOpen(prev => !prev)} className="inline-flex items-center justify-center p-2 rounded-md focus:outline-none transition-colors" style={{color: 'var(--th-text-secondary)'}} aria-expanded={isMobileMenuOpen}>
-              <span className="sr-only">{t('srOpenMenu')}</span>
-              {isMobileMenuOpen ? <i className="fas fa-times text-2xl"></i> : <i className="fas fa-bars text-2xl"></i>}
+            <button type="button" onClick={() => setIsMobileMenuOpen(prev => !prev)} className="inline-flex items-center justify-center p-2 rounded-md transition-colors" style={{color: 'var(--th-text-secondary)'}} aria-expanded={isMobileMenuOpen} aria-label={isMobileMenuOpen ? t('srCloseMenu', 'Close menu') : t('srOpenMenu', 'Open menu')}>
+              {isMobileMenuOpen ? <i className="fas fa-times text-2xl" aria-hidden="true"></i> : <i className="fas fa-bars text-2xl" aria-hidden="true"></i>}
             </button>
           </div>
         </div>

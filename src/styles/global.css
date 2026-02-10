@@ -1011,3 +1011,101 @@ body.lang-ar #language-dropdown-mobile { right: 0; left: auto; }
     transform: scale(1.1) translateX(-50%);
   }
 }
+
+/* ─────────────────────────────────────────────
+   ACCESSIBILITY — Focus visible indicators
+   ───────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-ai-feature:focus-visible,
+.btn-ai-feature-small:focus-visible,
+.btn-preset-amount:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--th-primary-muted);
+}
+
+.nav-link:focus-visible,
+.nav-link-active:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+  background: var(--th-primary-muted);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+  background: var(--th-primary-muted);
+}
+
+.presale-input:focus-visible {
+  outline: none; /* Uses custom border + box-shadow from .presale-input:focus */
+}
+
+.payment-method-btn:focus-visible,
+.blockchain-method-btn:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+}
+
+.language-dropdown a:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: -2px;
+  background: var(--th-primary-muted);
+}
+
+.social-icon-circle:focus-visible {
+  outline: 2px solid var(--th-primary);
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   ACCESSIBILITY — Reduced motion
+   ───────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-asset-animation,
+  .animate-button-pulse-primary,
+  .glow-primary,
+  .animate-sparkle {
+    animation: none !important;
+  }
+
+  .card-ui:hover,
+  .glass-card-premium:hover,
+  .glass-stat-card:hover {
+    transform: none;
+  }
+
+  .donut-chart-card:hover .donut-chart {
+    transform: none;
+  }
+
+  .roadmap-item:hover .roadmap-icon {
+    transform: none;
+  }
+
+  .roadmap-item:hover .roadmap-content {
+    box-shadow: none;
+  }
+}

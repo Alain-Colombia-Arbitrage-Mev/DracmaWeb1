@@ -38,9 +38,9 @@ const t = getTranslationsForLang(lang);
       <!-- Footer Navigation Sections -->
       {FOOTER_SECTIONS_DATA.map((section) => (
         <div>
-          <h4 class={`text-lg font-semibold mb-4 font-display ${section.titleColorClass}`}>
+          <h3 class={`text-lg font-semibold mb-4 font-display ${section.titleColorClass}`}>
             {t[section.titleKey] || section.titleKey}
-          </h4>
+          </h3>
           <ul class="space-y-2 text-sm">
             {section.links.map((link) => (
                 <li>

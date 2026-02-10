@@ -195,7 +195,7 @@ function PresaleInner() {
       <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
 
       {/* FOMO Notification Toast */}
-      <div className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
+      <div role="status" aria-live="polite" className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
         <div className="rounded-xl shadow-2xl p-4 max-w-xs flex items-center gap-3 backdrop-blur-md" style={{background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)'}}>
           <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{background: 'var(--th-secondary-muted)'}}>
             <i className="fas fa-check-circle text-brand-secondary text-lg"></i>
@@ -352,7 +352,7 @@ function PresaleInner() {
                 <label className="presale-step-label">{t('presaleEnterAmount')} ({selectedCurrency} on BSC):</label>
                 <div className="relative flex items-center">
                   <i className="fas fa-coins text-brand-text-secondary/50 absolute left-3.5 top-1/2 transform -translate-y-1/2 pointer-events-none text-lg"></i>
-                  <input type="number" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} className="presale-input presale-input-with-icon flex-grow" placeholder="0.00" />
+                  <input type="number" inputMode="decimal" min="0" step="any" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} className="presale-input presale-input-with-icon flex-grow" placeholder="0.00" aria-label={t('presaleEnterAmount', 'Investment amount')} />
                   <span className="absolute right-4 text-brand-text-secondary/60 font-mono text-sm">{selectedCurrency}</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
