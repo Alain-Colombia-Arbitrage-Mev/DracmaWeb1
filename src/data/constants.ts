@@ -3,7 +3,6 @@ import type {
   LanguageData,
   PresaleData,
   NavLinkItem,
-  VisionCardData,
   EcosystemCardData,
   TokenDistributionItem,
   RoadmapItemData,
@@ -77,7 +76,6 @@ export const BLOCKCHAIN_NETWORKS: BlockchainNetwork[] = [
 // 4. Navigation Links
 // ---------------------------------------------------------------------------
 export const NAV_LINKS: NavLinkItem[] = [
-  { href: '#vision', key: 'navVision' },
   { href: '#ecosystem', key: 'navEcosystem' },
   { href: '#crowdfunding', key: 'navCrowdfunding' },
   { href: '#presale', key: 'navPresale', isActive: true },
@@ -95,33 +93,6 @@ export const LANGUAGES = [
   { code: 'ar', name: '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' },
   { code: 'ru', name: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439' },
   { code: 'zh', name: '\u7b80\u4f53\u4e2d\u6587' },
-];
-
-// ---------------------------------------------------------------------------
-// 6. Vision Cards Data
-// ---------------------------------------------------------------------------
-export const VISION_CARDS_DATA: VisionCardData[] = [
-  {
-    iconClass: 'fas fa-seedling',
-    gradientClass: 'vision-icon-bg',
-    titleKey: 'visionCard1Title',
-    descKey: 'visionCard1Desc',
-    shadowClass: '',
-  },
-  {
-    iconClass: 'fas fa-brain',
-    gradientClass: 'vision-icon-bg',
-    titleKey: 'visionCard2Title',
-    descKey: 'visionCard2Desc',
-    shadowClass: '',
-  },
-  {
-    iconClass: 'fas fa-users',
-    gradientClass: 'vision-icon-bg',
-    titleKey: 'visionCard3Title',
-    descKey: 'visionCard3Desc',
-    shadowClass: '',
-  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -354,7 +325,6 @@ export const FOOTER_SECTIONS_DATA: FooterSection[] = [
     titleKey: 'footerNav',
     titleColorClass: 'footer-heading',
     links: [
-      { key: 'navVision', href: '#vision' },
       { key: 'navEcosystem', href: '#ecosystem' },
       { key: 'navCrowdfunding', href: '#crowdfunding' },
       { key: 'navPresale', href: '#presale' },

@@ -49,14 +49,6 @@ export interface NavLinkItem {
   isActive?: boolean;
 }
 
-export interface VisionCardData {
-  iconClass: string;
-  gradientClass: string;
-  titleKey: string;
-  descKey: string;
-  shadowClass: string;
-}
-
 export interface EcosystemCardData {
   iconClass: string;
   colorClass: string;

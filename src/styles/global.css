@@ -472,11 +472,6 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
    disciplined single-hue approach.
    ───────────────────────────────────────────── */
 
-/* Vision card icon backgrounds — solid primary with muted opacity */
-.vision-icon-bg {
-  background: var(--th-primary);
-}
-
 /* Ecosystem and Crowdfunding icon/title color — primary */
 .eco-icon-color {
   color: var(--th-primary);

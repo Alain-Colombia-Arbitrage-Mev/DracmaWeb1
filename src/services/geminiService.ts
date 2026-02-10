@@ -29,9 +29,7 @@ export const callGeminiAPI = async (prompt: string, lang: string, getTranslation
   if (!ai) {
     console.log(`Simulating Gemini API call for lang: ${lang}, prompt: "${prompt.substring(0, 50)}..."`);
     const lowerPrompt = prompt.toLowerCase();
-    if (lowerPrompt.includes("filosofía dracma") || (lowerPrompt.includes("philosophy") && lowerPrompt.includes("dracma"))) {
-      return getTranslation('simulatedResponsePhilosophy');
-    } else if (lowerPrompt.includes("analizar inversión") || (lowerPrompt.includes("analyze investment") && lowerPrompt.includes("dracma"))) {
+    if (lowerPrompt.includes("analizar inversión") || (lowerPrompt.includes("analyze investment") && lowerPrompt.includes("dracma"))) {
       return getTranslation('simulatedResponseInvestment');
     } else if (lowerPrompt.includes("ecosistema dracma") || lowerPrompt.includes("tokenized real world assets") || lowerPrompt.includes("artificial intelligence (ai)") || lowerPrompt.includes("blockchain infrastructure") || (lowerPrompt.includes("explain") && lowerPrompt.includes("dracma ecosystem"))) {
       return getTranslation('simulatedResponseEcosystemDetail');
