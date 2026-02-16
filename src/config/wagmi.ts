@@ -13,7 +13,7 @@ export const wagmiConfig = createConfig({
       showQrModal: true,
       metadata: {
         name: 'DRACMA Presale',
-        description: 'Compra tokens $DRC en la preventa de DRACMA',
+        description: 'Compra tokens $DRACMA en la preventa de DRACMA',
         url: typeof window !== 'undefined' ? window.location.origin : 'https://dracma.org',
         icons: ['https://dracma.org/favicon.ico'],
       },

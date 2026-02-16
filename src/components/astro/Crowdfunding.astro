@@ -26,7 +26,7 @@ const t = getTranslationsForLang(lang);
         <AiButton
           client:visible
           titleKey="aiModalTitleCrowdfunding"
-          promptTemplate={`Explica el concepto de Crowdfunding P2P de DRACMA, que permite invertir fraccionadamente en activos reales usando tokens $DRC. Destaca la democratizacion del acceso a inversiones (agricultura sostenible, granjas solares para mineria, app de empleo, wallet y chat seguro), la transparencia blockchain, el rol de la comunidad, y como los inversores pueden obtener beneficios. Hazlo simple, atractivo y conciso para un nuevo usuario (3-4 frases). Idioma de la respuesta: {lang}.`}
+          promptTemplate={`Explica el concepto de Crowdfunding P2P de DRACMA, que permite invertir fraccionadamente en activos reales usando tokens $DRACMA. Destaca la democratizacion del acceso a inversiones (agricultura sostenible, granjas solares para mineria, app de empleo, wallet y chat seguro), la transparencia blockchain, el rol de la comunidad, y como los inversores pueden obtener beneficios. Hazlo simple, atractivo y conciso para un nuevo usuario (3-4 frases). Idioma de la respuesta: {lang}.`}
           buttonTextKey="btnExplainCrowdfundingAI"
           iconClass="fas fa-chalkboard-teacher"
           className="btn-ai-feature text-base"
@@ -104,7 +104,7 @@ const t = getTranslationsForLang(lang);
                     <div>
                       <p class="text-brand-text-secondary/70">{t['crowdfundingMinInvestmentLabel'] || 'Min. Investment'}</p>
                       <p class="font-semibold text-brand-text-primary text-sm">
-                        {project.minInvestmentDRC.toLocaleString()} <span class="text-brand-accent-gold-text">$DRC</span>
+                        {project.minInvestmentDRC.toLocaleString()} <span class="text-brand-accent-gold-text">$DRACMA</span>
                       </p>
                     </div>
                     {project.estimatedROIKey && (
@@ -117,7 +117,7 @@ const t = getTranslationsForLang(lang);
                     )}
                   </div>
                   <p class="text-xs text-brand-text-secondary/70 font-mono mb-5">
-                    {t['presaleGoalLabel'] || 'Goal:'} {project.fundingGoalDRC.toLocaleString()} $DRC <span class="text-brand-text-secondary/50">(~${project.fundingGoalUSD.toLocaleString()} USD)</span>
+                    {t['presaleGoalLabel'] || 'Goal:'} {project.fundingGoalDRC.toLocaleString()} $DRACMA <span class="text-brand-text-secondary/50">(~${project.fundingGoalUSD.toLocaleString()} USD)</span>
                   </p>
 
                 </div>
@@ -131,9 +131,9 @@ const t = getTranslationsForLang(lang);
       </p>
       <!-- CTA after Crowdfunding -->
       <div class="text-center mt-8">
-        <p class="text-sm text-brand-text-secondary mb-3">{t['ctaCrowdfundingHook'] || 'Necesitas tokens $DRC para invertir en estos proyectos'}</p>
+        <p class="text-sm text-brand-text-secondary mb-3">{t['ctaCrowdfundingHook'] || 'Necesitas tokens $DRACMA para invertir en estos proyectos'}</p>
         <a href="#presale" class="btn-primary text-base inline-flex items-center">
-          <i class="fas fa-shopping-cart mr-2"></i> {t['ctaBuyDRC'] || 'Compra $DRC en la Presale'}
+          <i class="fas fa-shopping-cart mr-2"></i> {t['ctaBuyDRC'] || 'Compra $DRACMA en la Presale'}
         </a>
       </div>
     </div>

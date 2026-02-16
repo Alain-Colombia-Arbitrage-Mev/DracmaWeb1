@@ -3,11 +3,11 @@ import {
   useAccount,
   useReadContract,
   useWriteContract,
-  useWaitForTransactionReceipt,
   useSwitchChain,
   useChainId,
+  usePublicClient,
 } from 'wagmi';
-import { parseUnits, formatUnits, type Address } from 'viem';
+import { parseUnits, type Address } from 'viem';
 import { bsc } from 'wagmi/chains';
 import {
   PRESALE_CONTRACT_ADDRESS,
@@ -19,7 +19,10 @@ import {
 } from '../config/contracts';
 import type { PresaleCurrency } from '../types';
 
-export type TxStep = 'idle' | 'switching-chain' | 'approving' | 'approved' | 'buying' | 'success' | 'error';
+export type TxStep = 'idle' | 'switching-chain' | 'approving' | 'waiting-approval' | 'buying' | 'confirming' | 'success' | 'error';
+
+// Minimum purchase: 1 token (1e18 in wei for 18-decimal tokens)
+const MIN_PURCHASE_AMOUNT = 1;
 
 interface UsePresaleReturn {
   // On-chain data
@@ -48,6 +51,7 @@ export function usePresale(): UsePresaleReturn {
   const chainId = useChainId();
   const { switchChainAsync } = useSwitchChain();
   const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
 
   const [txStep, setTxStep] = useState<TxStep>('idle');
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -126,14 +130,20 @@ export function usePresale(): UsePresaleReturn {
   const buyTokens = useCallback(
     async (currency: PresaleCurrency, amount: string) => {
       if (!isConnected || !address) {
-        setErrorMessage('Wallet not connected');
+        setErrorMessage('Wallet no conectada');
         setTxStep('error');
         return;
       }
 
       const parsedAmount = parseFloat(amount);
       if (!parsedAmount || parsedAmount <= 0) {
-        setErrorMessage('Invalid amount');
+        setErrorMessage('Ingresa una cantidad válida');
+        setTxStep('error');
+        return;
+      }
+
+      if (parsedAmount < MIN_PURCHASE_AMOUNT) {
+        setErrorMessage(`Compra mínima: ${MIN_PURCHASE_AMOUNT} ${currency}`);
         setTxStep('error');
         return;
       }
@@ -155,13 +165,23 @@ export function usePresale(): UsePresaleReturn {
         const decimals = TOKEN_DECIMALS[currencyKey];
         const amountInWei = parseUnits(amount, decimals);
 
-        // Step 2: Check & do approval (for ERC20 tokens)
-        setTxStep('approving');
+        // Step 2: Read fresh allowance from chain and approve if needed
+        let currentAllowance = BigInt(0);
 
-        // Read current allowance
-        const currentAllowance = userAllowance ?? BigInt(0);
+        if (publicClient && address) {
+          currentAllowance = await publicClient.readContract({
+            address: tokenAddress,
+            abi: ERC20_ABI,
+            functionName: 'allowance',
+            args: [address, PRESALE_CONTRACT_ADDRESS],
+          }) as bigint;
+        }
 
-        if (currentAllowance < amountInWei) {
+        const needsApproval = currentAllowance < amountInWei;
+
+        if (needsApproval) {
+          setTxStep('approving');
+
           const approveTxHash = await writeContractAsync({
             address: tokenAddress,
             abi: ERC20_ABI,
@@ -169,14 +189,20 @@ export function usePresale(): UsePresaleReturn {
             args: [PRESALE_CONTRACT_ADDRESS, amountInWei],
           });
 
-          // Wait for approval to be mined by polling
-          setTxStep('approved');
+          // Wait for approval to be confirmed on-chain
+          setTxStep('waiting-approval');
 
-          // Small delay to let the tx propagate
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+          if (publicClient) {
+            await publicClient.waitForTransactionReceipt({
+              hash: approveTxHash as `0x${string}`,
+              confirmations: 1,
+            });
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 8000));
+          }
         }
 
-        // Step 3: Call buyTokens on presale contract
+        // Step 3: Call buyTokens on presale contract (auto-proceeds after approval)
         setTxStep('buying');
 
         const buyTxHash = await writeContractAsync({
@@ -187,30 +213,43 @@ export function usePresale(): UsePresaleReturn {
         });
 
         setTxHash(buyTxHash);
+        setTxStep('confirming');
+
+        // Wait for the buy transaction to be confirmed on-chain
+        if (publicClient) {
+          const receipt = await publicClient.waitForTransactionReceipt({
+            hash: buyTxHash as `0x${string}`,
+            confirmations: 1,
+          });
+
+          if (receipt.status === 'reverted') {
+            throw new Error('La transacción fue revertida por la blockchain');
+          }
+        }
+
         setTxStep('success');
       } catch (err: any) {
         console.error('Presale purchase error:', err);
 
-        let message = 'Transaction failed';
+        let message = 'La transacción falló';
 
         if (err?.shortMessage) {
           message = err.shortMessage;
         } else if (err?.message) {
-          // Parse common errors
           if (err.message.includes('User rejected') || err.message.includes('user rejected')) {
-            message = 'Transaction rejected by user';
+            message = 'Transacción rechazada por el usuario';
           } else if (err.message.includes('insufficient funds') || err.message.includes('InsufficientAllowance')) {
-            message = 'Insufficient balance or allowance';
+            message = 'Balance o aprobación insuficiente';
           } else if (err.message.includes('BelowMinimumPurchase')) {
-            message = 'Amount below minimum purchase';
+            message = `Compra mínima: ${MIN_PURCHASE_AMOUNT} ${selectedCurrency || currency}`;
           } else if (err.message.includes('ExceedsMaximumPurchase')) {
-            message = 'Amount exceeds maximum purchase';
+            message = 'Cantidad excede el máximo de compra';
           } else if (err.message.includes('PresaleEndedError') || err.message.includes('PresaleTimeExpired')) {
-            message = 'Presale has ended';
+            message = 'La preventa ha terminado';
           } else if (err.message.includes('EnforcedPause')) {
-            message = 'Presale is currently paused';
+            message = 'La preventa está pausada';
           } else if (err.message.includes('InsufficientSaleTokens')) {
-            message = 'Not enough tokens available';
+            message = 'No hay suficientes tokens disponibles';
           } else {
             message = err.message.slice(0, 120);
           }
@@ -220,7 +259,7 @@ export function usePresale(): UsePresaleReturn {
         setTxStep('error');
       }
     },
-    [isConnected, address, chainId, switchChainAsync, writeContractAsync, userAllowance],
+    [isConnected, address, chainId, switchChainAsync, writeContractAsync, publicClient, selectedCurrency],
   );
 
   return {

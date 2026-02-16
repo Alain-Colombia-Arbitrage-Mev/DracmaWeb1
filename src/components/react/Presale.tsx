@@ -7,7 +7,7 @@ import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
-import { PRESALE_CONTRACT_ADDRESS } from '../../config/contracts';
+import { PRESALE_CONTRACT_ADDRESS, DRACMA_TOKEN_ADDRESS } from '../../config/contracts';
 import Web3Provider from './Web3Provider';
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
@@ -61,19 +61,51 @@ const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDat
   );
 });
 
-// Transaction status overlay
-function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t }: {
+// Transaction status overlay with purchase details
+interface PurchaseDetails {
+  amount: string;
+  currency: string;
+  baseTokens: number;
+  bonusTokens: number;
+  totalTokens: number;
+}
+
+function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDetails }: {
   txStep: TxStep;
   txHash: string | null;
   errorMessage: string | null;
   onReset: () => void;
   t: (key: string, fallback?: string) => string;
+  purchaseDetails: PurchaseDetails | null;
 }) {
   if (txStep === 'idle') return null;
 
-  const isProcessing = txStep === 'switching-chain' || txStep === 'approving' || txStep === 'approved' || txStep === 'buying';
+  const isProcessing = txStep === 'switching-chain' || txStep === 'approving' || txStep === 'waiting-approval' || txStep === 'buying' || txStep === 'confirming';
   const isSuccess = txStep === 'success';
   const isError = txStep === 'error';
+
+  const stepNumber = txStep === 'switching-chain' ? 0 : txStep === 'approving' ? 1 : txStep === 'waiting-approval' ? 2 : (txStep === 'buying' || txStep === 'confirming') ? 3 : 0;
+
+  const handleAddToWallet = async () => {
+    try {
+      const ethereum = (window as any).ethereum;
+      if (!ethereum) return;
+      await ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: DRACMA_TOKEN_ADDRESS,
+            symbol: 'DRACMA',
+            decimals: 18,
+            image: 'https://dracma.org/favicon.ico',
+          },
+        },
+      });
+    } catch (err) {
+      console.error('Failed to add token to wallet:', err);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
@@ -86,16 +118,64 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t }: {
             <h3 className="text-xl font-bold text-brand-text-primary mb-2">
               {txStep === 'switching-chain' && t('txSwitchingChain', 'Cambiando a BSC...')}
               {txStep === 'approving' && t('txApproving', 'Aprobando token...')}
-              {txStep === 'approved' && t('txWaitingApproval', 'Esperando confirmación...')}
-              {txStep === 'buying' && t('txBuying', 'Comprando $DRC...')}
+              {txStep === 'waiting-approval' && t('txWaitingApproval', 'Confirmando aprobación...')}
+              {txStep === 'buying' && t('txBuying', 'Comprando $DRACMA...')}
+              {txStep === 'confirming' && t('txConfirming', 'Confirmando en la blockchain...')}
             </h3>
             <p className="text-sm text-brand-text-secondary">
               {txStep === 'approving'
                 ? t('txApproveHint', 'Confirma la aprobación en tu wallet')
+                : txStep === 'waiting-approval'
+                ? t('txWaitingApprovalHint', 'Esperando confirmación en la blockchain... La compra procederá automáticamente.')
                 : txStep === 'buying'
                 ? t('txBuyHint', 'Confirma la compra en tu wallet')
+                : txStep === 'confirming'
+                ? t('txConfirmingHint', 'Tu transacción fue enviada. Esperando confirmación en BSC...')
                 : t('txProcessing', 'Procesando transacción...')}
             </p>
+
+            {/* Step progress: shows approval steps only when approval is needed */}
+            {(txStep === 'approving' || txStep === 'waiting-approval' || txStep === 'buying' || txStep === 'confirming') && (
+              <div className="mt-4 mb-2">
+                <div className="flex items-center justify-center gap-2">
+                  {/* Step 1: Approve */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    stepNumber > 1 ? 'bg-success-green text-white' :
+                    stepNumber === 1 ? 'bg-brand-primary text-white animate-pulse' :
+                    'text-brand-text-secondary/50'
+                  }`} style={stepNumber < 1 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
+                    {stepNumber > 1 ? <i className="fas fa-check text-[10px]"></i> : '1'}
+                  </div>
+                  <div className={`w-8 h-0.5 rounded ${stepNumber > 1 ? 'bg-success-green' : 'bg-brand-text-secondary/20'}`}></div>
+
+                  {/* Step 2: Confirm */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    stepNumber > 2 ? 'bg-success-green text-white' :
+                    stepNumber === 2 ? 'bg-brand-primary text-white animate-pulse' :
+                    'text-brand-text-secondary/50'
+                  }`} style={stepNumber < 2 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
+                    {stepNumber > 2 ? <i className="fas fa-check text-[10px]"></i> : '2'}
+                  </div>
+                  <div className={`w-8 h-0.5 rounded ${stepNumber > 2 ? 'bg-success-green' : 'bg-brand-text-secondary/20'}`}></div>
+
+                  {/* Step 3: Buy */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    stepNumber === 3 ? 'bg-brand-primary text-white animate-pulse' :
+                    'text-brand-text-secondary/50'
+                  }`} style={stepNumber < 3 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
+                    3
+                  </div>
+                </div>
+                <div className="flex justify-center mt-1.5">
+                  <div className="grid grid-cols-3 gap-0 w-[200px] text-[10px] text-brand-text-secondary/60 font-mono text-center">
+                    <span>{t('txStepApprove', 'Aprobar')}</span>
+                    <span>{t('txStepConfirm', 'Confirmar')}</span>
+                    <span>{t('txStepBuy', 'Comprar')}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <p className="text-xs text-brand-text-secondary/60 mt-3 font-mono">
               {t('txDoNotClose', 'No cierres esta ventana')}
             </p>
@@ -104,28 +184,71 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t }: {
 
         {isSuccess && (
           <>
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-green-500/20">
-              <i className="fas fa-check-circle text-4xl text-success-green"></i>
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-green-500/20">
+              <i className="fas fa-check-circle text-5xl text-success-green"></i>
             </div>
-            <h3 className="text-xl font-bold text-success-green mb-2">
-              {t('txSuccess', '¡Compra Exitosa!')}
+            <h3 className="text-2xl font-bold text-success-green mb-1">
+              {t('txThanks', '¡Gracias por comprar DRACMA!')}
             </h3>
-            <p className="text-sm text-brand-text-secondary mb-4">
-              {t('txSuccessDesc', 'Tus tokens $DRC han sido comprados exitosamente.')}
+            <p className="text-sm text-brand-text-secondary mb-5">
+              {t('txSuccessDesc', 'Tu compra ha sido procesada exitosamente.')}
             </p>
-            {txHash && (
-              <a
-                href={getBscScanTxUrl(txHash)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-mono text-brand-primary hover:text-brand-secondary transition-colors mb-4"
-              >
-                <i className="fas fa-external-link-alt"></i>
-                {t('txViewBscScan', 'Ver en BscScan')}
-              </a>
+
+            {/* Purchase Details Card */}
+            {purchaseDetails && (
+              <div className="rounded-xl p-4 mb-4 text-left space-y-2.5" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-brand-text-secondary">{t('txDetailAmount', 'Monto pagado')}</span>
+                  <span className="font-bold text-brand-text-primary font-mono">{parseFloat(purchaseDetails.amount).toLocaleString()} {purchaseDetails.currency}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-brand-text-secondary">{t('txDetailBaseTokens', 'Tokens base')}</span>
+                  <span className="font-bold brand-accent-gold-text font-mono">{purchaseDetails.baseTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                </div>
+                {purchaseDetails.bonusTokens > 0 && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-brand-text-secondary">{t('txDetailBonusTokens', 'Tokens bonus')}</span>
+                    <span className="font-bold text-success-green font-mono">+{purchaseDetails.bonusTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                  </div>
+                )}
+                <hr style={{ borderColor: 'var(--th-border)' }} />
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-brand-text-primary">{t('txDetailTotal', 'Total $DRACMA')}</span>
+                  <span className="font-bold brand-accent-gold-text text-xl font-display">{purchaseDetails.totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                </div>
+              </div>
             )}
-            <div>
-              <button onClick={onReset} className="btn-primary w-full mt-2">
+
+            {/* Transaction Hash */}
+            {txHash && (
+              <div className="rounded-lg p-3 mb-4" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                <p className="text-[10px] text-brand-text-secondary/60 font-mono mb-1">{t('txDetailHash', 'Hash de transacción')}</p>
+                <a
+                  href={getBscScanTxUrl(txHash)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-brand-primary hover:text-brand-secondary transition-colors"
+                >
+                  {txHash.slice(0, 16)}...{txHash.slice(-8)}
+                  <i className="fas fa-external-link-alt text-[10px]"></i>
+                </a>
+              </div>
+            )}
+
+            {/* Token Contract Info */}
+            <div className="rounded-lg p-3 mb-4" style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border)' }}>
+              <p className="text-[10px] text-brand-text-secondary/60 font-mono mb-1">{t('txTokenContract', 'Contrato del token DRACMA')}</p>
+              <p className="text-xs font-mono text-brand-text-primary truncate">{DRACMA_TOKEN_ADDRESS}</p>
+              <p className="text-[10px] text-brand-text-secondary/60 mt-1">BSC (BEP-20)</p>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-2.5">
+              <button onClick={handleAddToWallet} className="w-full py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors" style={{ background: 'var(--th-primary-muted)', border: '1px solid var(--th-border-accent)', color: 'var(--th-primary)' }}>
+                <i className="fas fa-plus-circle"></i>
+                {t('txAddToWallet', 'Agregar DRACMA a tu Wallet')}
+              </button>
+              <button onClick={onReset} className="btn-primary w-full">
                 {t('txClose', 'Cerrar')}
               </button>
             </div>
@@ -134,18 +257,77 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t }: {
 
         {isError && (
           <>
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--th-danger-muted)' }}>
-              <i className="fas fa-times-circle text-4xl text-brand-accent-coral"></i>
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--th-danger-muted)' }}>
+              <i className="fas fa-exclamation-triangle text-5xl text-brand-accent-coral"></i>
             </div>
-            <h3 className="text-xl font-bold text-brand-accent-coral mb-2">
-              {t('txError', 'Error en la Transacción')}
+            <h3 className="text-2xl font-bold text-brand-accent-coral mb-1">
+              {t('txError', 'Transacción Fallida')}
             </h3>
-            <p className="text-sm text-brand-text-secondary mb-4 break-words">
-              {errorMessage || t('txErrorGeneric', 'Ocurrió un error inesperado.')}
+            <p className="text-sm text-brand-text-secondary mb-4">
+              {t('txErrorSubtitle', 'No se realizó ningún cargo a tu wallet.')}
             </p>
-            <button onClick={onReset} className="btn-primary w-full">
-              {t('txTryAgain', 'Intentar de Nuevo')}
-            </button>
+
+            {/* Error details card */}
+            <div className="rounded-xl p-4 mb-4 text-left" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+              <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-2">{t('txErrorReason', 'Motivo del error')}</p>
+              <p className="text-sm text-brand-accent-coral font-medium break-words">
+                {errorMessage || t('txErrorGeneric', 'Ocurrió un error inesperado.')}
+              </p>
+            </div>
+
+            {/* Purchase attempt details */}
+            {purchaseDetails && (
+              <div className="rounded-xl p-4 mb-4 text-left space-y-2" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-2">{t('txErrorAttempted', 'Compra intentada')}</p>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-brand-text-secondary">{t('txDetailAmount', 'Monto')}</span>
+                  <span className="font-bold text-brand-text-primary font-mono">{parseFloat(purchaseDetails.amount).toLocaleString()} {purchaseDetails.currency}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-brand-text-secondary">{t('txDetailTotal', 'Total $DRACMA')}</span>
+                  <span className="font-bold brand-accent-gold-text font-mono">{purchaseDetails.totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Helpful tips */}
+            <div className="rounded-xl p-3 mb-5 text-left" style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border)' }}>
+              <p className="text-xs font-semibold text-brand-text-primary mb-2 flex items-center gap-1.5">
+                <i className="fas fa-lightbulb text-brand-accent-gold"></i>
+                {t('txErrorTipsTitle', 'Sugerencias')}
+              </p>
+              <ul className="space-y-1.5 text-xs text-brand-text-secondary">
+                <li className="flex items-start gap-1.5">
+                  <i className="fas fa-check text-brand-secondary text-[10px] mt-0.5 flex-shrink-0"></i>
+                  {t('txErrorTip1', 'Verifica que tienes suficiente balance y BNB para gas')}
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <i className="fas fa-check text-brand-secondary text-[10px] mt-0.5 flex-shrink-0"></i>
+                  {t('txErrorTip2', 'Asegúrate de aprobar la transacción en tu wallet')}
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <i className="fas fa-check text-brand-secondary text-[10px] mt-0.5 flex-shrink-0"></i>
+                  {t('txErrorTip3', 'Si el problema persiste, intenta con una cantidad menor')}
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-2.5">
+              <button onClick={onReset} className="btn-primary w-full">
+                <i className="fas fa-redo mr-2"></i>
+                {t('txTryAgain', 'Intentar de Nuevo')}
+              </button>
+              <a
+                href="https://t.me/dracma_updates"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
+                style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)', color: 'var(--th-text-secondary)' }}
+              >
+                <i className="fab fa-telegram"></i>
+                {t('txErrorSupport', '¿Necesitas ayuda? Contáctanos')}
+              </a>
+            </div>
           </>
         )}
       </div>
@@ -180,12 +362,13 @@ function PresaleInner() {
   const [currentBonus, setCurrentBonus] = useState(0);
   const [activeBonusNameKey, setActiveBonusNameKey] = useState("presaleBonusEndedName");
   const [activeBonusInfoKey, setActiveBonusInfoKey] = useState("presaleBonusEndedInfo");
-  const [selectedCurrency, setSelectedCurrency] = useState<PresaleCurrency>(PresaleCurrency.USDC);
+  const [selectedCurrency, setSelectedCurrency] = useState<PresaleCurrency>(PresaleCurrency.USDT);
   const [investmentAmount, setInvestmentAmount] = useState<string>('');
   const [baseTokens, setBaseTokens] = useState<number>(0);
   const [bonusTokens, setBonusTokens] = useState<number>(0);
   const [totalTokensReceived, setTotalTokensReceived] = useState<number>(0);
   const [hoveredDonut, setHoveredDonut] = useState<string | null>(null);
+  const [lastPurchaseDetails, setLastPurchaseDetails] = useState<PurchaseDetails | null>(null);
 
   // FOMO state
   const [fomoNotification, setFomoNotification] = useState<{name: string; amount: number; country: string; time: string} | null>(null);
@@ -262,7 +445,7 @@ function PresaleInner() {
       showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
       return;
     }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRC (incluyendo un bono de ${t(activeBonusNameKey)}). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
+    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (incluyendo un bono de ${t(activeBonusNameKey)}). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
     showAiModal('aiModalTitleInvestment', prompt);
   };
 
@@ -292,8 +475,16 @@ function PresaleInner() {
   const handlePurchase = useCallback(() => {
     const amount = parseFloat(investmentAmount) || 0;
     if (amount <= 0) return;
+    // Capture purchase details for the success popup
+    setLastPurchaseDetails({
+      amount: investmentAmount,
+      currency: selectedCurrency,
+      baseTokens,
+      bonusTokens,
+      totalTokens: totalTokensReceived,
+    });
     buyTokens(selectedCurrency, investmentAmount);
-  }, [investmentAmount, selectedCurrency, buyTokens]);
+  }, [investmentAmount, selectedCurrency, buyTokens, baseTokens, bonusTokens, totalTokensReceived]);
 
   const getCurrencyLogo = (currency: PresaleCurrency) => {
     switch (currency) {
@@ -319,7 +510,7 @@ function PresaleInner() {
       <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
 
       {/* Transaction Status Overlay */}
-      <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} />
+      <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} purchaseDetails={lastPurchaseDetails} />
 
       {/* FOMO Notification Toast */}
       <div role="status" aria-live="polite" className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
@@ -410,8 +601,8 @@ function PresaleInner() {
                 </div>
                 <div className="token-progress-bar"><div className="token-progress-fill bg-gradient-to-r from-brand-secondary to-brand-primary" style={{'--progress-width': `${Math.min(tokensProgress, 100)}%`} as React.CSSProperties}></div></div>
                 <div className="flex justify-between text-xs text-brand-text-secondary/60 mt-1 font-mono">
-                  <span>{tokensSold.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC</span>
-                  <span>{PRESALE_DATA.totalPresaleTokens.toLocaleString()} $DRC</span>
+                  <span>{tokensSold.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA</span>
+                  <span>{PRESALE_DATA.totalPresaleTokens.toLocaleString()} $DRACMA</span>
                 </div>
               </div>
 
@@ -490,13 +681,21 @@ function PresaleInner() {
               <div>
                 <label className="presale-step-label">{t('presaleSelectPayment')}</label>
                 <div className="grid grid-cols-3 gap-3">
-                  {Object.values(PresaleCurrency).map(currency => (
-                    <button key={currency} onClick={() => setSelectedCurrency(currency)} className={`payment-method-btn ${selectedCurrency === currency ? 'active' : ''}`}>
-                      {selectedCurrency === currency && <i className="fas fa-check-circle text-brand-primary animated-check mr-1.5"></i>}
-                      <img src={getCurrencyLogo(currency)} className="h-6 mr-1.5" alt={`${currency} logo`}/>
-                      <span className="text-sm font-medium text-brand-text-primary">{currency}</span>
-                    </button>
-                  ))}
+                  {Object.values(PresaleCurrency).map(currency => {
+                    const isDisabled = currency === PresaleCurrency.USDC;
+                    return (
+                      <button
+                        key={currency}
+                        onClick={() => !isDisabled && setSelectedCurrency(currency)}
+                        disabled={isDisabled}
+                        className={`payment-method-btn ${selectedCurrency === currency ? 'active' : ''} ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
+                      >
+                        {selectedCurrency === currency && !isDisabled && <i className="fas fa-check-circle text-brand-primary animated-check mr-1.5"></i>}
+                        <img src={getCurrencyLogo(currency)} className="h-6 mr-1.5" alt={`${currency} logo`}/>
+                        <span className="text-sm font-medium text-brand-text-primary">{isDisabled ? <s>{currency}</s> : currency}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -565,14 +764,22 @@ function PresaleInner() {
                       <button onClick={() => disconnect()} className="text-xs text-brand-text-secondary hover:text-brand-primary ml-2 underline">{t('btnDisconnect', 'Desconectar')}</button>
                     </div>
 
+                    {/* Min purchase warning */}
+                    {investmentAmount && parseFloat(investmentAmount) > 0 && parseFloat(investmentAmount) < 1 && (
+                      <p className="text-xs text-brand-accent-coral font-mono text-center">
+                        <i className="fas fa-exclamation-triangle mr-1"></i>
+                        {t('presaleMinPurchaseWarning', 'Compra mínima: 1 ' + selectedCurrency)}
+                      </p>
+                    )}
+
                     <button
                       onClick={handlePurchase}
-                      disabled={!investmentAmount || parseFloat(investmentAmount) <= 0 || txStep !== 'idle'}
+                      disabled={!investmentAmount || parseFloat(investmentAmount) < 1 || txStep !== 'idle'}
                       className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
                     >
                       <i className="fas fa-paper-plane mr-2.5"></i>
                       <span>
-                        {t('btnConfirmPurchase', 'Confirmar Compra')} — {totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC
+                        {t('btnConfirmPurchase', 'Confirmar Compra')} — {totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA
                       </span>
                     </button>
 
@@ -586,7 +793,7 @@ function PresaleInner() {
                   <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
                     {isConnecting
                       ? <><i className="fas fa-spinner fa-spin mr-2.5"></i><span>{t('walletConnecting', 'Conectando...')}</span></>
-                      : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndConfirm')} (BSC)</span></>
+                      : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndConfirm')}</span></>
                     }
                   </button>
                 )}

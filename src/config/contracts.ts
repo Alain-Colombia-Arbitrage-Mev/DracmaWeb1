@@ -3,6 +3,9 @@ import { type Address } from 'viem';
 // BSC Mainnet contract addresses
 export const PRESALE_CONTRACT_ADDRESS: Address = '0xf012e31eFDC2485285E2E27175fa9397dF372bf7';
 
+// DRACMA token contract address (BSC)
+export const DRACMA_TOKEN_ADDRESS: Address = '0x8A9f07fdBc75144C9207373597136c6E280A872D';
+
 // BSC Mainnet token addresses
 export const USDT_ADDRESS: Address = '0x55d398326f99059fF775485246999027B3197955';
 export const USDC_ADDRESS: Address = '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d';
