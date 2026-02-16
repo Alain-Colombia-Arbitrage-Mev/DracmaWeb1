@@ -878,17 +878,21 @@ function PresaleInner() {
               <div>
                 <label className="presale-step-label">{t('presaleSelectPayment')}</label>
                 <div className="grid grid-cols-3 gap-3">
-                  {Object.values(PresaleCurrency).map(currency => (
+                  {Object.values(PresaleCurrency).map(currency => {
+                    const isDisabled = currency === PresaleCurrency.WBNB;
+                    return (
                       <button
                         key={currency}
-                        onClick={() => setSelectedCurrency(currency)}
-                        className={`payment-method-btn ${selectedCurrency === currency ? 'active' : ''}`}
+                        onClick={() => !isDisabled && setSelectedCurrency(currency)}
+                        disabled={isDisabled}
+                        className={`payment-method-btn ${selectedCurrency === currency ? 'active' : ''} ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
                       >
-                        {selectedCurrency === currency && <i className="fas fa-check-circle text-brand-primary animated-check mr-1.5"></i>}
+                        {selectedCurrency === currency && !isDisabled && <i className="fas fa-check-circle text-brand-primary animated-check mr-1.5"></i>}
                         <img src={getCurrencyLogo(currency)} className="h-6 mr-1.5" alt={`${currency} logo`}/>
-                        <span className="text-sm font-medium text-brand-text-primary">{currency}</span>
+                        <span className="text-sm font-medium text-brand-text-primary">{isDisabled ? <s>{currency}</s> : currency}</span>
                       </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
