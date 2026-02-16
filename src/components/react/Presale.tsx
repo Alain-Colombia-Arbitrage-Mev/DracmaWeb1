@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
-import { $currentLang, $translations, showAiModal, $aiModalInfo } from '../../stores/appStore';
+import { formatUnits } from 'viem';
+import { $currentLang, $translations, showAiModal } from '../../stores/appStore';
 import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
+import { usePresale, type TxStep } from '../../hooks/usePresale';
+import { PRESALE_CONTRACT_ADDRESS } from '../../config/contracts';
 import Web3Provider from './Web3Provider';
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
@@ -19,12 +22,13 @@ function getRandomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const getBscScanTxUrl = (hash: string) => `https://bscscan.com/tx/${hash}`;
+
 // Memoized countdown so FOMO state changes don't re-render it
 const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDate: Date; t: (key: string, fallback?: string) => string }) {
   const [countdown, setCountdown] = useState<CountdownDigits>(initialCountdown);
 
   useEffect(() => {
-    // Calculate immediately on mount
     const calc = () => {
       const now = Date.now();
       const distance = endDate.getTime() - now;
@@ -57,6 +61,98 @@ const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDat
   );
 });
 
+// Transaction status overlay
+function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t }: {
+  txStep: TxStep;
+  txHash: string | null;
+  errorMessage: string | null;
+  onReset: () => void;
+  t: (key: string, fallback?: string) => string;
+}) {
+  if (txStep === 'idle') return null;
+
+  const isProcessing = txStep === 'switching-chain' || txStep === 'approving' || txStep === 'approved' || txStep === 'buying';
+  const isSuccess = txStep === 'success';
+  const isError = txStep === 'error';
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
+      <div className="rounded-2xl p-6 md:p-8 max-w-md w-full text-center" style={{ background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)', boxShadow: 'var(--th-shadow-lg)' }}>
+        {isProcessing && (
+          <>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--th-primary-muted)' }}>
+              <i className="fas fa-spinner fa-spin text-3xl text-brand-primary"></i>
+            </div>
+            <h3 className="text-xl font-bold text-brand-text-primary mb-2">
+              {txStep === 'switching-chain' && t('txSwitchingChain', 'Cambiando a BSC...')}
+              {txStep === 'approving' && t('txApproving', 'Aprobando token...')}
+              {txStep === 'approved' && t('txWaitingApproval', 'Esperando confirmación...')}
+              {txStep === 'buying' && t('txBuying', 'Comprando $DRC...')}
+            </h3>
+            <p className="text-sm text-brand-text-secondary">
+              {txStep === 'approving'
+                ? t('txApproveHint', 'Confirma la aprobación en tu wallet')
+                : txStep === 'buying'
+                ? t('txBuyHint', 'Confirma la compra en tu wallet')
+                : t('txProcessing', 'Procesando transacción...')}
+            </p>
+            <p className="text-xs text-brand-text-secondary/60 mt-3 font-mono">
+              {t('txDoNotClose', 'No cierres esta ventana')}
+            </p>
+          </>
+        )}
+
+        {isSuccess && (
+          <>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-green-500/20">
+              <i className="fas fa-check-circle text-4xl text-success-green"></i>
+            </div>
+            <h3 className="text-xl font-bold text-success-green mb-2">
+              {t('txSuccess', '¡Compra Exitosa!')}
+            </h3>
+            <p className="text-sm text-brand-text-secondary mb-4">
+              {t('txSuccessDesc', 'Tus tokens $DRC han sido comprados exitosamente.')}
+            </p>
+            {txHash && (
+              <a
+                href={getBscScanTxUrl(txHash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-mono text-brand-primary hover:text-brand-secondary transition-colors mb-4"
+              >
+                <i className="fas fa-external-link-alt"></i>
+                {t('txViewBscScan', 'Ver en BscScan')}
+              </a>
+            )}
+            <div>
+              <button onClick={onReset} className="btn-primary w-full mt-2">
+                {t('txClose', 'Cerrar')}
+              </button>
+            </div>
+          </>
+        )}
+
+        {isError && (
+          <>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--th-danger-muted)' }}>
+              <i className="fas fa-times-circle text-4xl text-brand-accent-coral"></i>
+            </div>
+            <h3 className="text-xl font-bold text-brand-accent-coral mb-2">
+              {t('txError', 'Error en la Transacción')}
+            </h3>
+            <p className="text-sm text-brand-text-secondary mb-4 break-words">
+              {errorMessage || t('txErrorGeneric', 'Ocurrió un error inesperado.')}
+            </p>
+            <button onClick={onReset} className="btn-primary w-full">
+              {t('txTryAgain', 'Intentar de Nuevo')}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function PresaleInner() {
   const currentLang = useStore($currentLang);
   const translations = useStore($translations);
@@ -67,6 +163,16 @@ function PresaleInner() {
   const { disconnect } = useDisconnect();
   const connectors = useConnectors();
 
+  // Presale contract hook
+  const {
+    userBalance,
+    txStep,
+    txHash,
+    errorMessage,
+    buyTokens,
+    reset: resetTx,
+  } = usePresale();
+
   const truncatedAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : '';
@@ -74,7 +180,6 @@ function PresaleInner() {
   const [currentBonus, setCurrentBonus] = useState(0);
   const [activeBonusNameKey, setActiveBonusNameKey] = useState("presaleBonusEndedName");
   const [activeBonusInfoKey, setActiveBonusInfoKey] = useState("presaleBonusEndedInfo");
-  const [selectedBlockchain, setSelectedBlockchain] = useState<PresaleBlockchain>(BLOCKCHAIN_NETWORKS[0].id);
   const [selectedCurrency, setSelectedCurrency] = useState<PresaleCurrency>(PresaleCurrency.USDC);
   const [investmentAmount, setInvestmentAmount] = useState<string>('');
   const [baseTokens, setBaseTokens] = useState<number>(0);
@@ -102,9 +207,7 @@ function PresaleInner() {
       setTimeout(() => setFomoVisible(false), 4000);
     };
 
-    // First notification after 5 seconds
     const initialTimer = setTimeout(showNotification, 5000);
-    // Then every 8-15 seconds
     const interval = setInterval(() => {
       showNotification();
       setLiveInvestors(prev => prev + Math.floor(Math.random() * 3));
@@ -138,8 +241,6 @@ function PresaleInner() {
     return () => clearInterval(timer);
   }, [updateActiveBonus]);
 
-  // Countdown is now handled by the memoized CountdownDisplay component
-
   const calculateTokens = useCallback(() => {
     const amountUSD = parseFloat(investmentAmount) || 0;
     const base = amountUSD / TOKEN_PRICE;
@@ -161,19 +262,38 @@ function PresaleInner() {
       showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
       return;
     }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red ${selectedBlockchain}, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRC (incluyendo un bono de ${t(activeBonusNameKey)}). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
+    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRC (incluyendo un bono de ${t(activeBonusNameKey)}). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
     showAiModal('aiModalTitleInvestment', prompt);
   };
 
+  // Mobile-friendly wallet connection
   const handleConnectWallet = useCallback(() => {
-    const hasInjected = typeof window !== 'undefined' && !!window.ethereum;
-    const connector = hasInjected
-      ? connectors.find(c => c.id === 'injected')
-      : connectors.find(c => c.id === 'walletConnect');
+    const isMobile = typeof window !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const hasInjected = typeof window !== 'undefined' && !!(window as any).ethereum;
+
+    let connector;
+    if (isMobile && !hasInjected) {
+      // Mobile without dApp browser → WalletConnect (opens Trust Wallet, MetaMask app, etc.)
+      connector = connectors.find(c => c.id === 'walletConnect');
+    } else if (hasInjected) {
+      // Inside dApp browser or desktop with extension
+      connector = connectors.find(c => c.id === 'injected');
+    } else {
+      // Desktop without extension → WalletConnect QR
+      connector = connectors.find(c => c.id === 'walletConnect');
+    }
+
     if (connector) {
       connect({ connector });
     }
   }, [connect, connectors]);
+
+  // Handle purchase — calls approve + buyTokens on-chain
+  const handlePurchase = useCallback(() => {
+    const amount = parseFloat(investmentAmount) || 0;
+    if (amount <= 0) return;
+    buyTokens(selectedCurrency, investmentAmount);
+  }, [investmentAmount, selectedCurrency, buyTokens]);
 
   const getCurrencyLogo = (currency: PresaleCurrency) => {
     switch (currency) {
@@ -187,12 +307,19 @@ function PresaleInner() {
   const tokensSold = PRESALE_DATA.raisedUSD / TOKEN_PRICE;
   const tokensProgress = (tokensSold / PRESALE_DATA.totalPresaleTokens) * 100;
 
+  // Format user balance for display
+  const formattedBalance = userBalance !== undefined
+    ? parseFloat(formatUnits(userBalance, 18)).toLocaleString(undefined, { maximumFractionDigits: 2 })
+    : null;
+
   return (
     <section id="presale" className="py-16 bg-brand-background relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-[0.03]" style={{backgroundImage: "repeating-linear-gradient(45deg, rgba(99,102,241,0.06), rgba(99,102,241,0.06) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(139,92,246,0.04), rgba(139,92,246,0.04) 1px, transparent 1px, transparent 15px)", animation: "backgroundGridScroll 80s linear infinite"}}></div>
-      {/* Gradient mesh orbs */}
       <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
       <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
+
+      {/* Transaction Status Overlay */}
+      <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} />
 
       {/* FOMO Notification Toast */}
       <div role="status" aria-live="polite" className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
@@ -243,7 +370,6 @@ function PresaleInner() {
           <div className="w-36 h-1 mx-auto mb-6 rounded-full" style={{background: 'var(--th-primary)', opacity: 0.5}}></div>
           <p className="text-lg md:text-xl text-brand-text-secondary max-w-3xl mx-auto leading-relaxed">{t('presaleSubtitle')}</p>
 
-          {/* Urgency / Scarcity Banner */}
           <div className="mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5" style={{background: 'var(--th-accent-muted)', border: '1px solid rgba(245,158,11,0.2)'}}>
             <i className="fas fa-fire text-amber-400"></i>
             <span className="text-sm font-medium text-amber-300">{t('fomoUrgency', '⚡ Solo queda el 55% de los tokens — No te quedes afuera')}</span>
@@ -256,6 +382,7 @@ function PresaleInner() {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start">
+          {/* LEFT — Status */}
           <div className="lg:col-span-2 card-ui glass-card-premium p-6 md:p-8 animate-slide-in-left">
             <h3 className="text-2xl font-bold mb-6 title-section-display brand-accent-gold-text relative pb-3 title-underline-animated animate-on-visible">{t('presaleStatusTitle')}</h3>
             <div className="space-y-5">
@@ -287,6 +414,26 @@ function PresaleInner() {
                   <span>{PRESALE_DATA.totalPresaleTokens.toLocaleString()} $DRC</span>
                 </div>
               </div>
+
+              {/* On-chain contract link */}
+              <div className="pt-2">
+                <div className="flex items-center gap-2 rounded-lg p-3" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                  <i className="fas fa-file-contract text-brand-primary text-sm"></i>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-brand-text-secondary/60 font-mono">{t('presaleContract', 'Contrato BSC')}</p>
+                    <a
+                      href={`https://bscscan.com/address/${PRESALE_CONTRACT_ADDRESS}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-mono text-brand-primary hover:text-brand-secondary transition-colors truncate block"
+                    >
+                      {PRESALE_CONTRACT_ADDRESS.slice(0, 10)}...{PRESALE_CONTRACT_ADDRESS.slice(-8)}
+                    </a>
+                  </div>
+                  <i className="fas fa-external-link-alt text-brand-text-secondary/40 text-[10px]"></i>
+                </div>
+              </div>
+
               <div className="pt-3">
                 <h4 className="font-semibold mb-2 title-section-display brand-accent-gold-text text-lg">{t('presaleActiveBonus')}</h4>
                 <div className="p-4 rounded-lg text-center shadow-sm" style={{background: 'var(--th-primary-muted)', border: '1px solid var(--th-border-accent)'}}>
@@ -298,7 +445,7 @@ function PresaleInner() {
                 </div>
               </div>
 
-              {/* FOMO: Recent activity summary */}
+              {/* Recent activity */}
               <div className="rounded-lg p-3 mt-4" style={{background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border)'}}>
                 <p className="text-xs font-semibold text-brand-text-primary flex items-center gap-1.5 mb-2">
                   <i className="fas fa-chart-line text-brand-secondary"></i> {t('fomoActivityTitle', 'Actividad reciente')}
@@ -326,9 +473,11 @@ function PresaleInner() {
             </div>
           </div>
 
+          {/* RIGHT — Purchase Form */}
           <div className="lg:col-span-3 card-ui glass-card-premium p-6 md:p-8 animate-slide-in-right">
             <h3 className="text-2xl font-bold mb-6 title-main-display brand-primary-text relative pb-3 title-underline-animated animate-on-visible">{t('presaleInvestTitle')}</h3>
             <div className="space-y-6">
+              {/* Blockchain */}
               <div>
                 <div className="flex items-center gap-2 mb-3 rounded-lg px-4 py-2.5" style={{background: 'var(--th-surface-raised)', border: '1px solid var(--th-border)'}}>
                   <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png?v=032" alt="BSC" className="h-6 w-6" />
@@ -336,6 +485,8 @@ function PresaleInner() {
                   <i className="fas fa-check-circle text-brand-secondary ml-auto"></i>
                 </div>
               </div>
+
+              {/* Currency */}
               <div>
                 <label className="presale-step-label">{t('presaleSelectPayment')}</label>
                 <div className="grid grid-cols-3 gap-3">
@@ -348,6 +499,8 @@ function PresaleInner() {
                   ))}
                 </div>
               </div>
+
+              {/* Amount */}
               <div>
                 <label className="presale-step-label">{t('presaleEnterAmount')} ({selectedCurrency} on BSC):</label>
                 <div className="relative flex items-center">
@@ -355,12 +508,32 @@ function PresaleInner() {
                   <input type="number" inputMode="decimal" min="0" step="any" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} className="presale-input presale-input-with-icon flex-grow" placeholder="0.00" aria-label={t('presaleEnterAmount', 'Investment amount')} />
                   <span className="absolute right-4 text-brand-text-secondary/60 font-mono text-sm">{selectedCurrency}</span>
                 </div>
+
+                {/* User balance */}
+                {isConnected && formattedBalance !== null && (
+                  <div className="flex items-center justify-between mt-1.5 px-1">
+                    <span className="text-xs text-brand-text-secondary/60 font-mono">
+                      {t('presaleBalance', 'Balance')}: {formattedBalance} {selectedCurrency}
+                    </span>
+                    {userBalance && userBalance > BigInt(0) && (
+                      <button
+                        onClick={() => setInvestmentAmount(formatUnits(userBalance, 18))}
+                        className="text-xs text-brand-primary hover:text-brand-secondary font-mono transition-colors"
+                      >
+                        MAX
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
                   {[100, 500, 1000, 'MAX' as const].map(val => (
                     <button key={val} onClick={() => handlePresetAmount(val)} className="btn-preset-amount text-xs py-2">{val === 'MAX' ? t('btnMax') : `$${val}`}</button>
                   ))}
                 </div>
               </div>
+
+              {/* Token calc */}
               <div className="rounded-lg p-4 space-y-2.5" style={{background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)'}}>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-brand-text-secondary/90">{t('presaleBaseTokens')}</span>
@@ -376,20 +549,38 @@ function PresaleInner() {
                   <span className="font-bold brand-accent-gold-text text-3xl font-display">{totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
                 </div>
               </div>
+
+              {/* AI button */}
               <button onClick={handleAnalyzeInvestment} className="btn-ai-feature w-full">
                 <i className="fas fa-magic mr-2"></i> <span>{t('btnAnalyzeInvestment')}</span>
               </button>
+
+              {/* Wallet & Purchase */}
               <div className="pt-2">
                 {isConnected ? (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-center gap-2 rounded-lg py-2.5 px-4" style={{background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)'}}>
                       <i className="fas fa-check-circle text-brand-secondary"></i>
                       <span className="text-sm font-mono text-brand-secondary">{truncatedAddress}</span>
                       <button onClick={() => disconnect()} className="text-xs text-brand-text-secondary hover:text-brand-primary ml-2 underline">{t('btnDisconnect', 'Desconectar')}</button>
                     </div>
-                    <button className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
-                      <i className="fas fa-paper-plane mr-2.5"></i> <span>{t('btnConfirmPurchase', 'Confirmar Compra')} (BSC)</span>
+
+                    <button
+                      onClick={handlePurchase}
+                      disabled={!investmentAmount || parseFloat(investmentAmount) <= 0 || txStep !== 'idle'}
+                      className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
+                    >
+                      <i className="fas fa-paper-plane mr-2.5"></i>
+                      <span>
+                        {t('btnConfirmPurchase', 'Confirmar Compra')} — {totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC
+                      </span>
                     </button>
+
+                    <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text-secondary/50 font-mono">
+                      <span><i className="fas fa-lock mr-1"></i>{t('presaleSecure', 'Seguro')}</span>
+                      <span><i className="fas fa-shield-alt mr-1"></i>BSC</span>
+                      <span><i className="fas fa-file-contract mr-1"></i>{t('presaleVerified', 'Verificado')}</span>
+                    </div>
                   </div>
                 ) : (
                   <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
@@ -399,7 +590,6 @@ function PresaleInner() {
                     }
                   </button>
                 )}
-                {/* FOMO under CTA */}
                 <p className="text-xs text-center mt-2 text-brand-accent-coral font-semibold">
                   <i className="fas fa-users mr-1"></i> {t('fomoCTAMessage', `${liveInvestors}+ personas ya invirtieron. ¿Y tú?`)}
                 </p>
@@ -409,6 +599,7 @@ function PresaleInner() {
           </div>
         </div>
 
+        {/* Token Distribution */}
         <div className="mt-16 max-w-5xl mx-auto animate-fade-in-zoom">
           <h3 className="text-2xl font-bold mb-10 text-center title-section-display brand-accent-gold-text relative pb-3 title-underline-animated animate-on-visible">{t('tokenDistributionTitle')}</h3>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">

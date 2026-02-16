@@ -8,9 +8,18 @@ export const wagmiConfig = createConfig({
   chains: [bsc],
   connectors: [
     injected(),
-    walletConnect({ projectId, showQrModal: true }),
+    walletConnect({
+      projectId,
+      showQrModal: true,
+      metadata: {
+        name: 'DRACMA Presale',
+        description: 'Compra tokens $DRC en la preventa de DRACMA',
+        url: typeof window !== 'undefined' ? window.location.origin : 'https://dracma.org',
+        icons: ['https://dracma.org/favicon.ico'],
+      },
+    }),
   ],
   transports: {
-    [bsc.id]: http(),
+    [bsc.id]: http('https://bsc-dataseed.binance.org'),
   },
 });

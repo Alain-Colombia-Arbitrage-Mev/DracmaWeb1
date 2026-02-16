@@ -52,7 +52,7 @@ function NavbarInner() {
   const handleConnectWallet = useCallback(() => {
     // Use injected wallet if available (MetaMask, Trust Wallet in-app browser),
     // otherwise fall back to WalletConnect (QR code / deep link for mobile)
-    const hasInjected = typeof window !== 'undefined' && !!window.ethereum;
+    const hasInjected = typeof window !== 'undefined' && !!(window as any).ethereum;
     const connector = hasInjected
       ? connectors.find(c => c.id === 'injected')
       : connectors.find(c => c.id === 'walletConnect');
