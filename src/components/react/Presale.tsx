@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
 import { formatUnits } from 'viem';
 import { $currentLang, $translations, showAiModal } from '../../stores/appStore';
-import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
+import { PRESALE_DATA, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
@@ -66,8 +66,6 @@ const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDat
 interface PurchaseDetails {
   amount: string;
   currency: string;
-  baseTokens: number;
-  bonusTokens: number;
   totalTokens: number;
 }
 
@@ -212,21 +210,15 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
                   <span className="text-brand-text-secondary">{t('txDetailAmount', 'Monto pagado')}</span>
                   <span className="font-bold text-brand-text-primary font-mono">{parseFloat(purchaseDetails.amount).toLocaleString()} {purchaseDetails.currency}</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-brand-text-secondary">{t('txDetailBaseTokens', 'Tokens base')}</span>
-                  <span className="font-bold brand-accent-gold-text font-mono">{purchaseDetails.baseTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                </div>
-                {purchaseDetails.bonusTokens > 0 && (
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-brand-text-secondary">{t('txDetailBonusTokens', 'Tokens bonus')}</span>
-                    <span className="font-bold text-success-green font-mono">+{purchaseDetails.bonusTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                  </div>
-                )}
                 <hr style={{ borderColor: 'var(--th-border)' }} />
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-brand-text-primary">{t('txDetailTotal', 'Total $DRACMA')}</span>
                   <span className="font-bold brand-accent-gold-text text-xl font-display">{purchaseDetails.totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                 </div>
+                <p className="text-xs text-brand-text-secondary/60 font-mono">
+                  <i className="fas fa-info-circle mr-1"></i>
+                  {t('txDetail5050', '50% entregado al instante, 50% en vesting')}
+                </p>
               </div>
             )}
 
@@ -545,6 +537,7 @@ function PresaleInner() {
   // Presale contract hook
   const {
     userBalance,
+    tokenPrice,
     txStep,
     txHash,
     errorMessage,
@@ -552,17 +545,15 @@ function PresaleInner() {
     reset: resetTx,
   } = usePresale();
 
+  // On-chain price in USD (tokenPrice is in wei, e.g. 0.2e18 = $0.20)
+  const onChainPrice = tokenPrice ? Number(tokenPrice) / 1e18 : 0.20;
+
   const truncatedAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : '';
 
-  const [currentBonus, setCurrentBonus] = useState(0);
-  const [activeBonusNameKey, setActiveBonusNameKey] = useState("presaleBonusEndedName");
-  const [activeBonusInfoKey, setActiveBonusInfoKey] = useState("presaleBonusEndedInfo");
   const [selectedCurrency, setSelectedCurrency] = useState<PresaleCurrency>(PresaleCurrency.USDT);
   const [investmentAmount, setInvestmentAmount] = useState<string>('');
-  const [baseTokens, setBaseTokens] = useState<number>(0);
-  const [bonusTokens, setBonusTokens] = useState<number>(0);
   const [totalTokensReceived, setTotalTokensReceived] = useState<number>(0);
   const [hoveredDonut, setHoveredDonut] = useState<string | null>(null);
   const [lastPurchaseDetails, setLastPurchaseDetails] = useState<PurchaseDetails | null>(null);
@@ -597,38 +588,14 @@ function PresaleInner() {
     return () => { clearTimeout(initialTimer); clearInterval(interval); };
   }, []);
 
-  const updateActiveBonus = useCallback(() => {
-    const now = new Date();
-    let activeBonusRate = 0;
-    let currentNameKey = "presaleBonusEndedName";
-    let currentInfoKey = "presaleBonusEndedInfo";
-    for (const tier of PRESALE_DATA.bonusTiers) {
-      if (now >= tier.start && now <= tier.end) {
-        activeBonusRate = tier.rate;
-        currentNameKey = tier.nameKey;
-        currentInfoKey = tier.infoKey;
-        break;
-      }
-    }
-    setCurrentBonus(activeBonusRate);
-    setActiveBonusNameKey(currentNameKey);
-    setActiveBonusInfoKey(currentInfoKey);
-  }, []);
-
-  useEffect(() => {
-    updateActiveBonus();
-    const timer = setInterval(updateActiveBonus, 60000);
-    return () => clearInterval(timer);
-  }, [updateActiveBonus]);
-
   const calculateTokens = useCallback(() => {
     const amountUSD = parseFloat(investmentAmount) || 0;
-    const base = amountUSD / TOKEN_PRICE;
-    const bonus = base * currentBonus;
-    setBaseTokens(base);
-    setBonusTokens(bonus);
-    setTotalTokensReceived(base + bonus);
-  }, [investmentAmount, currentBonus]);
+    if (onChainPrice > 0) {
+      setTotalTokensReceived(amountUSD / onChainPrice);
+    } else {
+      setTotalTokensReceived(0);
+    }
+  }, [investmentAmount, onChainPrice]);
 
   useEffect(() => { calculateTokens(); }, [calculateTokens]);
 
@@ -642,7 +609,7 @@ function PresaleInner() {
       showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
       return;
     }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (incluyendo un bono de ${t(activeBonusNameKey)}). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
+    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${onChainPrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
     showAiModal('aiModalTitleInvestment', prompt);
   };
 
@@ -676,12 +643,10 @@ function PresaleInner() {
     setLastPurchaseDetails({
       amount: investmentAmount,
       currency: selectedCurrency,
-      baseTokens,
-      bonusTokens,
       totalTokens: totalTokensReceived,
     });
     buyTokens(selectedCurrency, investmentAmount);
-  }, [investmentAmount, selectedCurrency, buyTokens, baseTokens, bonusTokens, totalTokensReceived]);
+  }, [investmentAmount, selectedCurrency, buyTokens, totalTokensReceived]);
 
   const getCurrencyLogo = (currency: PresaleCurrency) => {
     switch (currency) {
@@ -692,7 +657,7 @@ function PresaleInner() {
   };
 
   const overallProgress = (PRESALE_DATA.raisedUSD / PRESALE_DATA.targetUSD) * 100;
-  const tokensSold = PRESALE_DATA.raisedUSD / TOKEN_PRICE;
+  const tokensSold = onChainPrice > 0 ? PRESALE_DATA.raisedUSD / onChainPrice : 0;
   const tokensProgress = (tokensSold / PRESALE_DATA.totalPresaleTokens) * 100;
 
   // Format user balance for display
@@ -777,7 +742,7 @@ function PresaleInner() {
               <div>
                 <div className="flex justify-between mb-1.5 text-sm items-baseline">
                   <span className="text-brand-text-secondary/80 font-mono">{t('presaleTokenPrice')}</span>
-                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${TOKEN_PRICE.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
+                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${onChainPrice.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
                 </div>
               </div>
               <div className="pt-1">
@@ -823,13 +788,11 @@ function PresaleInner() {
               </div>
 
               <div className="pt-3">
-                <h4 className="font-semibold mb-2 title-section-display brand-accent-gold-text text-lg">{t('presaleActiveBonus')}</h4>
                 <div className="p-4 rounded-lg text-center shadow-sm" style={{background: 'var(--th-primary-muted)', border: '1px solid var(--th-border-accent)'}}>
                   <div className="flex items-center justify-center">
-                    <i className="fas fa-star text-brand-accent-gold mr-2 animate-sparkle text-lg"></i>
-                    <span className="text-xl font-bold text-success-green font-display tracking-wider">{t(activeBonusNameKey)}</span>
+                    <i className="fas fa-lock text-brand-accent-gold mr-2 text-lg"></i>
+                    <span className="text-sm font-semibold text-brand-text-primary">{t('presaleVestingInfo', '50% entrega inmediata + 50% vesting 6 meses')}</span>
                   </div>
-                  <p className="text-xs text-brand-text-secondary/70 font-mono mt-1.5">{t(activeBonusInfoKey)}</p>
                 </div>
               </div>
 
@@ -932,17 +895,21 @@ function PresaleInner() {
               {/* Token calc */}
               <div className="rounded-lg p-4 space-y-2.5" style={{background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)'}}>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-brand-text-secondary/90">{t('presaleBaseTokens')}</span>
-                  <span className="font-bold brand-accent-gold-text text-lg font-mono">{baseTokens.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-brand-text-secondary/90">{t('presaleCurrentBonus')} ({currentBonus*100}%):</span>
-                  <span className="font-bold text-success-green text-lg font-mono">+{bonusTokens.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                  <span className="text-brand-text-secondary/90">{t('presaleTokenPrice', 'Precio por token')}</span>
+                  <span className="font-bold brand-accent-gold-text font-mono">${onChainPrice.toFixed(2)} USD</span>
                 </div>
                 <hr className="my-2" style={{borderColor: 'var(--th-border)'}}/>
                 <div className="flex justify-between items-center">
                   <span className="text-brand-text-primary font-semibold text-lg">{t('presaleTotalReceive')}</span>
                   <span className="font-bold brand-accent-gold-text text-3xl font-display">{totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-brand-text-secondary/60 font-mono">
+                  <span>{t('presaleInstant', '50% inmediato')}</span>
+                  <span>{Math.floor(totalTokensReceived / 2).toLocaleString()} $DRACMA</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-brand-text-secondary/60 font-mono">
+                  <span>{t('presaleVesting', '50% vesting (6 meses)')}</span>
+                  <span>{Math.floor(totalTokensReceived / 2).toLocaleString()} $DRACMA</span>
                 </div>
               </div>
 
