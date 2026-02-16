@@ -26,7 +26,6 @@ export interface PresaleData {
 export enum PresaleCurrency {
   USDC = 'USDC',
   USDT = 'USDT',
-  WBNB = 'WBNB',
 }
 
 export enum PresaleBlockchain {

@@ -34,29 +34,7 @@ export const PRESALE_DATA: PresaleData = {
   raisedUSD: 36000000,
   totalPresaleTokens: 400000000,
   endDate: new Date(PRESALE_START.getTime() + 120 * DAY_MS),
-  bonusTiers: [
-    {
-      start: PRESALE_START,
-      end: new Date(PRESALE_START.getTime() + 40 * DAY_MS),
-      rate: 0.15,
-      nameKey: 'presaleBonusPhase1Name',
-      infoKey: 'presaleBonusPhase1Info',
-    },
-    {
-      start: new Date(PRESALE_START.getTime() + 40 * DAY_MS + 1),
-      end: new Date(PRESALE_START.getTime() + 80 * DAY_MS),
-      rate: 0.10,
-      nameKey: 'presaleBonusPhase2Name',
-      infoKey: 'presaleBonusPhase2Info',
-    },
-    {
-      start: new Date(PRESALE_START.getTime() + 80 * DAY_MS + 1),
-      end: new Date(PRESALE_START.getTime() + 120 * DAY_MS),
-      rate: 0.05,
-      nameKey: 'presaleBonusPhase3Name',
-      infoKey: 'presaleBonusPhase3Info',
-    },
-  ],
+  bonusTiers: [],
 };
 
 // ---------------------------------------------------------------------------
