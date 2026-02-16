@@ -5,6 +5,9 @@ dist/
 
 # dependencies
 node_modules/
+@contracts/preventa.sol
+claude.md 
+CLAUDE.md
 
 # logs
 npm-debug.log*
@@ -16,6 +19,12 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+
+# Foundry artifacts
+contracts/out/
+contracts/cache/
+contracts/lib/
+contracts/broadcast/
 
 # macOS-specific files
 .DS_Store

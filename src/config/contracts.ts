@@ -1,7 +1,8 @@
 import { type Address } from 'viem';
 
 // BSC Mainnet contract addresses
-export const PRESALE_CONTRACT_ADDRESS: Address = '0xf012e31eFDC2485285E2E27175fa9397dF372bf7';
+export const PRESALE_CONTRACT_ADDRESS: Address = '0x13fE106497Ddc966caF6E788833c5F872BF95549';
+export const VESTING_VAULT_ADDRESS: Address = '0x9F984B6f8E414765263Ac4b64C4E7c876900785A';
 
 // DRACMA token contract address (BSC)
 export const DRACMA_TOKEN_ADDRESS: Address = '0x8A9f07fdBc75144C9207373597136c6E280A872D';
@@ -11,10 +12,11 @@ export const USDT_ADDRESS: Address = '0x55d398326f99059fF775485246999027B3197955
 export const USDC_ADDRESS: Address = '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d';
 export const WBNB_ADDRESS: Address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
 
-// Token indices in the presale contract
+// Token indices in the presale contract (must match preventa.sol)
 export const TOKEN_INDEX = {
   USDT: 0,
   USDC: 1,
+  WBNB: 2,
 } as const;
 
 // Token decimals
@@ -62,7 +64,7 @@ export const ERC20_ABI = [
   },
 ] as const;
 
-// Presale contract ABI (only the functions we need)
+// Presale contract ABI (must match preventa.sol)
 export const PRESALE_ABI = [
   {
     inputs: [
@@ -83,13 +85,14 @@ export const PRESALE_ABI = [
       { name: 'timeRemaining', type: 'uint256' },
       { name: 'isEnded', type: 'bool' },
       { name: 'currentTime', type: 'uint256' },
+      { name: 'currentPrice', type: 'uint256' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
-    name: 'tokenPrice',
+    name: 'getCurrentPrice',
     outputs: [{ name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -124,7 +127,35 @@ export const PRESALE_ABI = [
   },
   {
     inputs: [],
-    name: 'MIN_PURCHASE_STABLE',
+    name: 'currentTokenPrice',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'secondPhasePrice',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'presaleEndTime',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'priceChangeTime',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'MIN_PURCHASE',
     outputs: [{ name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -151,9 +182,8 @@ export const PRESALE_ABI = [
     name: 'acceptedTokens',
     outputs: [
       { name: 'token', type: 'address' },
-      { name: 'isEnabled', type: 'bool' },
-      { name: 'symbol', type: 'string' },
       { name: 'decimals', type: 'uint8' },
+      { name: 'isEnabled', type: 'bool' },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -172,15 +202,92 @@ export const PRESALE_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [],
+    name: 'WBNB_INDEX',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
   // Events
   {
     anonymous: false,
     inputs: [
       { indexed: true, name: 'buyer', type: 'address' },
-      { indexed: false, name: 'amount', type: 'uint256' },
-      { indexed: false, name: 'tokenIndex', type: 'uint256' },
+      { indexed: true, name: 'tokenIndex', type: 'uint256' },
+      { indexed: false, name: 'paymentAmount', type: 'uint256' },
+      { indexed: false, name: 'tokenAmount', type: 'uint256' },
     ],
     name: 'TokensPurchased',
+    type: 'event',
+  },
+] as const;
+
+// VestingVault ABI (must match VestingVault.sol)
+export const VESTING_ABI = [
+  {
+    inputs: [],
+    name: 'claim',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'user', type: 'address' }],
+    name: 'getUserVesting',
+    outputs: [
+      { name: 'total', type: 'uint256' },
+      { name: 'vested', type: 'uint256' },
+      { name: 'claimed', type: 'uint256' },
+      { name: 'claimable', type: 'uint256' },
+      { name: 'remaining', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'user', type: 'address' }],
+    name: 'getClaimable',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'vestingStart',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'vestingDuration',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalDeposited',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalClaimed',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  // Events
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'beneficiary', type: 'address' },
+      { indexed: false, name: 'amount', type: 'uint256' },
+    ],
+    name: 'Claimed',
     type: 'event',
   },
 ] as const;
@@ -199,6 +306,6 @@ export function getTokenIndex(currency: 'USDT' | 'USDC' | 'WBNB'): number {
   switch (currency) {
     case 'USDT': return TOKEN_INDEX.USDT;
     case 'USDC': return TOKEN_INDEX.USDC;
-    case 'WBNB': return 2; // WBNB is typically index 2
+    case 'WBNB': return TOKEN_INDEX.WBNB;
   }
 }

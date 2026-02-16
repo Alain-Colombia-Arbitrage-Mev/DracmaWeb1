@@ -31,6 +31,7 @@ interface UsePresaleReturn {
     tokensAvailable: bigint;
     timeRemaining: bigint;
     isEnded: boolean;
+    currentPrice: bigint;
   } | null;
   tokenPrice: bigint | undefined;
   totalTokensSold: bigint | undefined;
@@ -69,7 +70,7 @@ export function usePresale(): UsePresaleReturn {
   const { data: tokenPrice } = useReadContract({
     address: PRESALE_CONTRACT_ADDRESS,
     abi: PRESALE_ABI,
-    functionName: 'tokenPrice',
+    functionName: 'getCurrentPrice',
     query: { refetchInterval: 60_000 },
   });
 
@@ -118,6 +119,7 @@ export function usePresale(): UsePresaleReturn {
         tokensAvailable: presaleStatusRaw[1],
         timeRemaining: presaleStatusRaw[2],
         isEnded: presaleStatusRaw[3],
+        currentPrice: presaleStatusRaw[5],
       }
     : null;
 
@@ -244,7 +246,7 @@ export function usePresale(): UsePresaleReturn {
             message = `Compra mínima: ${MIN_PURCHASE_AMOUNT} ${selectedCurrency || currency}`;
           } else if (err.message.includes('ExceedsMaximumPurchase')) {
             message = 'Cantidad excede el máximo de compra';
-          } else if (err.message.includes('PresaleEndedError') || err.message.includes('PresaleTimeExpired')) {
+          } else if (err.message.includes('PresaleHasEnded') || err.message.includes('PresaleTimeExpired')) {
             message = 'La preventa ha terminado';
           } else if (err.message.includes('EnforcedPause')) {
             message = 'La preventa está pausada';

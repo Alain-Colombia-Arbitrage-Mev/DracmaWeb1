@@ -7,7 +7,8 @@ import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
-import { PRESALE_CONTRACT_ADDRESS, DRACMA_TOKEN_ADDRESS } from '../../config/contracts';
+import { useVesting, type ClaimStep } from '../../hooks/useVesting';
+import { PRESALE_CONTRACT_ADDRESS, DRACMA_TOKEN_ADDRESS, VESTING_VAULT_ADDRESS } from '../../config/contracts';
 import Web3Provider from './Web3Provider';
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
@@ -109,7 +110,17 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
-      <div className="rounded-2xl p-6 md:p-8 max-w-md w-full text-center" style={{ background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)', boxShadow: 'var(--th-shadow-lg)' }}>
+      <div className="rounded-2xl p-6 md:p-8 max-w-md w-full text-center relative" style={{ background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)', boxShadow: 'var(--th-shadow-lg)' }}>
+        {/* Close button — visible on success and error states */}
+        {(isSuccess || isError) && (
+          <button
+            onClick={onReset}
+            className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-brand-text-secondary/60 hover:text-brand-text-primary hover:bg-brand-text-secondary/10 transition-colors"
+            aria-label="Cerrar"
+          >
+            <i className="fas fa-times"></i>
+          </button>
+        )}
         {isProcessing && (
           <>
             <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--th-primary-muted)' }}>
@@ -330,6 +341,192 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
             </div>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+// Vesting Claim Section
+function VestingClaimSection({ t }: { t: (key: string, fallback?: string) => string }) {
+  const { address, isConnected } = useAccount();
+  const {
+    vestingData,
+    vestingStart,
+    vestingDuration,
+    claimStep,
+    claimTxHash,
+    claimError,
+    claimTokens,
+    resetClaim,
+  } = useVesting();
+
+  if (!isConnected || !vestingData || vestingData.total === BigInt(0)) return null;
+
+  const fmt = (val: bigint) => parseFloat(formatUnits(val, 18)).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const fmtInt = (val: bigint) => parseFloat(formatUnits(val, 18)).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+  // Calculate vesting progress percentage
+  const vestingPercent = vestingData.total > BigInt(0)
+    ? Number((vestingData.vested * BigInt(10000)) / vestingData.total) / 100
+    : 0;
+
+  // Calculate time info
+  const now = Math.floor(Date.now() / 1000);
+  const vStart = vestingStart ? Number(vestingStart) : 0;
+  const vDuration = vestingDuration ? Number(vestingDuration) : 0;
+  const vEnd = vStart + vDuration;
+  const vestingNotStarted = now < vStart;
+  const vestingComplete = vestingPercent >= 100;
+
+  const formatDate = (ts: number) => {
+    if (ts === 0) return '—';
+    return new Date(ts * 1000).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  const daysRemaining = vestingComplete ? 0 : Math.max(0, Math.ceil((vEnd - now) / 86400));
+
+  const isClaimProcessing = claimStep === 'claiming' || claimStep === 'confirming';
+
+  return (
+    <div className="mt-10 card-ui glass-card-premium p-6 md:p-8 animate-fade-in-zoom max-w-5xl mx-auto">
+      <h3 className="text-2xl font-bold mb-6 title-section-display brand-primary-text relative pb-3 title-underline-animated animate-on-visible">
+        <i className="fas fa-lock mr-2"></i>
+        {t('vestingTitle', 'Vesting de Tokens')}
+      </h3>
+
+      {/* Vesting Progress Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between mb-1.5 text-sm">
+          <span className="text-brand-text-secondary/80 font-mono">{t('vestingProgress', 'Progreso del vesting')}</span>
+          <span className="font-bold brand-secondary-text font-mono">{vestingPercent.toFixed(1)}%</span>
+        </div>
+        <div className="token-progress-bar">
+          <div
+            className="token-progress-fill bg-gradient-to-r from-brand-secondary to-brand-primary"
+            style={{ '--progress-width': `${Math.min(vestingPercent, 100)}%` } as React.CSSProperties}
+          ></div>
+        </div>
+        <div className="flex justify-between text-xs text-brand-text-secondary/60 mt-1 font-mono">
+          <span>{formatDate(vStart)}</span>
+          <span>{daysRemaining > 0 ? `${daysRemaining} ${t('vestingDaysLeft', 'días restantes')}` : t('vestingCompleted', 'Completado')}</span>
+          <span>{formatDate(vEnd)}</span>
+        </div>
+      </div>
+
+      {/* Vesting Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="rounded-lg p-3 text-center" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+          <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-1">{t('vestingTotal', 'Total bloqueado')}</p>
+          <p className="text-lg font-bold brand-accent-gold-text font-mono">{fmtInt(vestingData.total)}</p>
+        </div>
+        <div className="rounded-lg p-3 text-center" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+          <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-1">{t('vestingVested', 'Desbloqueado')}</p>
+          <p className="text-lg font-bold brand-secondary-text font-mono">{fmtInt(vestingData.vested)}</p>
+        </div>
+        <div className="rounded-lg p-3 text-center" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+          <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-1">{t('vestingClaimed', 'Reclamado')}</p>
+          <p className="text-lg font-bold text-brand-text-primary font-mono">{fmtInt(vestingData.claimed)}</p>
+        </div>
+        <div className="rounded-lg p-3 text-center" style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)' }}>
+          <p className="text-[10px] text-brand-text-secondary/60 font-mono uppercase tracking-wider mb-1">{t('vestingClaimable', 'Disponible')}</p>
+          <p className="text-lg font-bold text-success-green font-mono">{fmt(vestingData.claimable)}</p>
+        </div>
+      </div>
+
+      {/* Info note about 50/50 split */}
+      <div className="rounded-lg p-3 mb-5 flex items-start gap-2" style={{ background: 'var(--th-primary-muted)', border: '1px solid var(--th-border)' }}>
+        <i className="fas fa-info-circle text-brand-primary mt-0.5 flex-shrink-0"></i>
+        <p className="text-xs text-brand-text-secondary">
+          {t('vestingInfo', 'El 50% de tus tokens de preventa se entregaron al instante. El otro 50% se libera linealmente durante el período de vesting.')}
+        </p>
+      </div>
+
+      {/* Claim Button & Status */}
+      {claimStep === 'success' ? (
+        <div className="text-center p-4 rounded-lg relative" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+          <button
+            onClick={resetClaim}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-brand-text-secondary/60 hover:text-brand-text-primary hover:bg-brand-text-secondary/10 transition-colors"
+            aria-label="Cerrar"
+          >
+            <i className="fas fa-times text-sm"></i>
+          </button>
+          <i className="fas fa-check-circle text-success-green text-3xl mb-2"></i>
+          <p className="text-sm font-semibold text-success-green mb-1">{t('vestingClaimSuccess', 'Tokens reclamados exitosamente')}</p>
+          {claimTxHash && (
+            <a
+              href={`https://bscscan.com/tx/${claimTxHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono text-brand-primary hover:text-brand-secondary transition-colors"
+            >
+              {claimTxHash.slice(0, 16)}...{claimTxHash.slice(-8)} <i className="fas fa-external-link-alt text-[10px]"></i>
+            </a>
+          )}
+          <button onClick={resetClaim} className="mt-3 text-xs text-brand-primary hover:text-brand-secondary underline">
+            {t('vestingDismiss', 'Cerrar')}
+          </button>
+        </div>
+      ) : claimStep === 'error' ? (
+        <div className="text-center p-4 rounded-lg relative" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+          <button
+            onClick={resetClaim}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-brand-text-secondary/60 hover:text-brand-text-primary hover:bg-brand-text-secondary/10 transition-colors"
+            aria-label="Cerrar"
+          >
+            <i className="fas fa-times text-sm"></i>
+          </button>
+          <i className="fas fa-exclamation-triangle text-brand-accent-coral text-3xl mb-2"></i>
+          <p className="text-sm font-semibold text-brand-accent-coral mb-1">{claimError}</p>
+          <button onClick={resetClaim} className="mt-3 text-xs text-brand-primary hover:text-brand-secondary underline">
+            {t('vestingTryAgain', 'Intentar de nuevo')}
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={claimTokens}
+          disabled={vestingData.claimable === BigInt(0) || isClaimProcessing || vestingNotStarted}
+          className="w-full btn-primary py-3.5 text-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
+        >
+          {isClaimProcessing ? (
+            <>
+              <i className="fas fa-spinner fa-spin mr-2.5"></i>
+              <span>{claimStep === 'claiming' ? t('vestingClaiming', 'Reclamando...') : t('vestingConfirming', 'Confirmando...')}</span>
+            </>
+          ) : vestingNotStarted ? (
+            <>
+              <i className="fas fa-clock mr-2.5"></i>
+              <span>{t('vestingNotStarted', 'Vesting aún no inicia')}</span>
+            </>
+          ) : vestingData.claimable === BigInt(0) ? (
+            <>
+              <i className="fas fa-hourglass-half mr-2.5"></i>
+              <span>{t('vestingNothingToClaim', 'Sin tokens disponibles')}</span>
+            </>
+          ) : (
+            <>
+              <i className="fas fa-unlock mr-2.5"></i>
+              <span>{t('vestingClaimBtn', 'Reclamar')} {fmt(vestingData.claimable)} $DRACMA</span>
+            </>
+          )}
+        </button>
+      )}
+
+      {/* Vault contract link */}
+      <div className="flex items-center gap-2 rounded-lg p-3 mt-4" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+        <i className="fas fa-vault text-brand-primary text-sm"></i>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] text-brand-text-secondary/60 font-mono">{t('vestingContract', 'Contrato Vesting BSC')}</p>
+          <a
+            href={`https://bscscan.com/address/${VESTING_VAULT_ADDRESS}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono text-brand-primary hover:text-brand-secondary transition-colors truncate block"
+          >
+            {VESTING_VAULT_ADDRESS.slice(0, 10)}...{VESTING_VAULT_ADDRESS.slice(-8)}
+          </a>
+        </div>
+        <i className="fas fa-external-link-alt text-brand-text-secondary/40 text-[10px]"></i>
       </div>
     </div>
   );
@@ -821,6 +1018,9 @@ function PresaleInner() {
             ))}
           </div>
         </div>
+
+        {/* Vesting Claim Section — only visible when user has vesting tokens */}
+        <VestingClaimSection t={t} />
       </div>
     </section>
   );

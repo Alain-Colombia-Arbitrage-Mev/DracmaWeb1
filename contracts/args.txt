@@ -1,0 +1,55 @@
+
+══════════════════════════════════════════════════════════════
+  DEPLOY: FixedPricePresale + VestingVault (BSC Mainnet)
+══════════════════════════════════════════════════════════════
+
+── 1. FixedPricePresale Constructor ────────────────────────
+
+_saleToken (address): 0x8A9f07fdBc75144C9207373597136c6E280A872D
+_usdt (address): 0x55d398326f99059fF775485246999027B3197955
+_usdc (address): 0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d
+_wbnb (address): 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+_ownerWallet (address): 0xbf646CD04B14eb9159d2000e73C4C339A3C980d9
+_liquidityWallet (address): 0x745A5680B16547177D0EF5f0B0e9B0F2BFe4Bd3a
+_stakingWallet (address): 0x7B732b87471736a64EbF9D7e1e327AC8519D7C96
+_adminWallet (address): 0xbf646CD04B14eb9159d2000e73C4C339A3C980d9
+_initialPrice (uint256): 200000000000000000 (0.20 USD = 0.2e18)
+_secondPhasePrice (uint256): 500000000000000000 (0.50 USD = 0.5e18)
+_presaleDurationDays (uint256): 120
+_priceChangeDays (uint256): 30
+
+── 2. VestingVault Constructor ─────────────────────────────
+
+_token (address): 0x8A9f07fdBc75144C9207373597136c6E280A872D (DRACMA)
+_presaleContract (address): <dirección del presale deployado en paso 1>
+_vestingStartTimestamp (uint256): <block.timestamp + 120 days> (cuando termina la preventa)
+_vestingDurationDays (uint256): 180 (6 meses de vesting lineal)
+
+── 3. Conectar contratos ───────────────────────────────────
+
+Llamar en FixedPricePresale: setVestingVault(<dirección del vault>)
+
+══════════════════════════════════════════════════════════════
+  COMANDO DE DEPLOY (todo en un solo script)
+══════════════════════════════════════════════════════════════
+
+forge script script/DeployAll.s.sol:DeployAll \
+  --rpc-url https://bsc-dataseed.binance.org/ \
+  --broadcast \
+  --verify \
+  --etherscan-api-key <TU_BSCSCAN_API_KEY> \
+  -vvvv
+
+══════════════════════════════════════════════════════════════
+  POST-DEPLOY (después de ejecutar el script)
+══════════════════════════════════════════════════════════════
+
+1. Copiar las direcciones del output del script
+2. Transferir tokens DRACMA al contrato de presale:
+   cast send 0x8A9f07fdBc75144C9207373597136c6E280A872D \
+     "transfer(address,uint256)" <PRESALE_ADDRESS> <CANTIDAD_TOKENS> \
+     --rpc-url https://bsc-dataseed.binance.org/ \
+     --private-key <DEPLOYER_KEY>
+3. Actualizar en src/config/contracts.ts:
+   - PRESALE_CONTRACT_ADDRESS = <nueva dirección del presale>
+   - VESTING_VAULT_ADDRESS = <dirección del vault>
