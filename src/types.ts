@@ -7,20 +7,11 @@ export interface LanguageData {
   [langCode: string]: Translations;
 }
 
-export interface BonusTier {
-  start: Date;
-  end: Date;
-  rate: number;
-  nameKey: string;
-  infoKey: string;
-}
-
 export interface PresaleData {
   targetUSD: number;
   raisedUSD: number;
   totalPresaleTokens: number;
   endDate: Date;
-  bonusTiers: BonusTier[];
 }
 
 export enum PresaleCurrency {

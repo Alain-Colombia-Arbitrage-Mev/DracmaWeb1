@@ -34,7 +34,6 @@ export const PRESALE_DATA: PresaleData = {
   raisedUSD: 36000000,
   totalPresaleTokens: 400000000,
   endDate: new Date(PRESALE_START.getTime() + 120 * DAY_MS),
-  bonusTiers: [],
 };
 
 // ---------------------------------------------------------------------------
