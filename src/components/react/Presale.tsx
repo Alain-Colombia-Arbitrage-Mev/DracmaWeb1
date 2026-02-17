@@ -618,7 +618,7 @@ function PresaleInner() {
       showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
       return;
     }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${onChainPrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 14% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
+    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${onChainPrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 10% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
     showAiModal('aiModalTitleInvestment', prompt);
   };
 

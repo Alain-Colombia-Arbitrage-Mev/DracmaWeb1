@@ -3,6 +3,7 @@ import { type Address } from 'viem';
 // BSC Mainnet contract addresses
 export const PRESALE_CONTRACT_ADDRESS: Address = '0x13fE106497Ddc966caF6E788833c5F872BF95549';
 export const VESTING_VAULT_ADDRESS: Address = '0x9F984B6f8E414765263Ac4b64C4E7c876900785A';
+export const STAKING_ADDRESS: Address = '0xdb15c426c241E91b045265E55a1a1c9eC4EdD28C';
 
 // DRACMA token contract address (BSC)
 export const DRACMA_TOKEN_ADDRESS: Address = '0x8A9f07fdBc75144C9207373597136c6E280A872D';
@@ -288,6 +289,98 @@ export const VESTING_ABI = [
       { indexed: false, name: 'amount', type: 'uint256' },
     ],
     name: 'Claimed',
+    type: 'event',
+  },
+] as const;
+
+// DracmaStaking ABI (must match DracmaStaking.sol)
+export const STAKING_ABI = [
+  {
+    inputs: [{ name: 'amount', type: 'uint256' }],
+    name: 'stake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'amount', type: 'uint256' }],
+    name: 'unstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'claimRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'user', type: 'address' }],
+    name: 'getUserStake',
+    outputs: [
+      { name: 'stakedAmount', type: 'uint256' },
+      { name: 'pendingRewards', type: 'uint256' },
+      { name: 'lastClaimTime', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'aprBasisPoints',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalStaked',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'rewardPoolBalance',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'paused',
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  // Events
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'user', type: 'address' },
+      { indexed: false, name: 'amount', type: 'uint256' },
+    ],
+    name: 'Staked',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'user', type: 'address' },
+      { indexed: false, name: 'amount', type: 'uint256' },
+    ],
+    name: 'Unstaked',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'user', type: 'address' },
+      { indexed: false, name: 'amount', type: 'uint256' },
+    ],
+    name: 'RewardsClaimed',
     type: 'event',
   },
 ] as const;
