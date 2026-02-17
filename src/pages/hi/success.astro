@@ -1,0 +1,178 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/react/Navbar.tsx';
+import ThreeBackground from '../../components/react/ThreeBackground.tsx';
+import Footer from '../../components/astro/Footer.astro';
+import { getTranslationsForLang } from '../../i18n/utils';
+
+const lang = 'hi';
+const t = getTranslationsForLang(lang);
+---
+
+<BaseLayout lang={lang} title="DRACMA - Purchase Successful">
+  <ThreeBackground client:only="react" />
+  <Navbar client:load />
+
+  <main class="min-h-screen flex items-center justify-center px-4 py-24">
+    <div class="max-w-2xl w-full">
+      <div class="relative bg-brand-card/80 backdrop-blur-xl border border-brand-border/30 rounded-3xl p-8 md:p-12 text-center shadow-2xl">
+        <div class="mb-6 animate-bounce-in">
+          <div class="w-24 h-24 mx-auto rounded-full bg-success-green/20 flex items-center justify-center mb-4">
+            <i class="fas fa-check-circle text-6xl text-success-green"></i>
+          </div>
+          <h1 class="text-3xl md:text-4xl font-bold text-success-green font-display mb-2">
+            {t['successTitle'] || 'Purchase Successful!'}
+          </h1>
+          <p class="text-brand-text-secondary text-lg">
+            {t['successSubtitle'] || 'Your $DRACMA investment has been processed successfully.'}
+          </p>
+        </div>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-brand-border/50 to-transparent my-6"></div>
+
+        <div id="tx-details" class="space-y-4 mb-8 text-left hidden">
+          <h2 class="text-lg font-semibold text-brand-text-primary font-display text-center mb-4">
+            {t['successDetailsTitle'] || 'Transaction Details'}
+          </h2>
+          <div class="bg-brand-bg/50 rounded-2xl p-5 space-y-3 border border-brand-border/20">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-brand-text-secondary">{t['successAmount'] || 'Amount invested:'}</span>
+              <span id="tx-amount" class="font-bold text-brand-text-primary font-mono"></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-brand-text-secondary">{t['successTokens'] || '$DRACMA Tokens:'}</span>
+              <span id="tx-tokens" class="font-bold brand-accent-gold-text text-lg font-display"></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-brand-text-secondary">{t['successInstant'] || '50% Instant:'}</span>
+              <span id="tx-instant" class="font-semibold text-success-green font-mono"></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-brand-text-secondary">{t['successVesting'] || '50% Vesting:'}</span>
+              <span id="tx-vesting" class="font-semibold text-brand-text-primary font-mono"></span>
+            </div>
+          </div>
+          <div id="tx-hash-section" class="hidden">
+            <a id="tx-hash-link" href="#" target="_blank" rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-mono">
+              <i class="fas fa-external-link-alt"></i>
+              <span id="tx-hash-text"></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div class="bg-brand-bg/50 rounded-xl p-4 border border-brand-border/20 text-left">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                <i class="fas fa-bolt text-indigo-400"></i>
+              </div>
+              <h3 class="font-semibold text-brand-text-primary text-sm">{t['successInstantTitle'] || '50% Instant'}</h3>
+            </div>
+            <p class="text-xs text-brand-text-secondary leading-relaxed">
+              {t['successInstantDesc'] || 'Half of your tokens are available immediately in your wallet.'}
+            </p>
+          </div>
+          <div class="bg-brand-bg/50 rounded-xl p-4 border border-brand-border/20 text-left">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                <i class="fas fa-clock text-amber-400"></i>
+              </div>
+              <h3 class="font-semibold text-brand-text-primary text-sm">{t['successVestingTitle'] || '50% Linear Vesting'}</h3>
+            </div>
+            <p class="text-xs text-brand-text-secondary leading-relaxed">
+              {t['successVestingDesc'] || 'The other half unlocks gradually. You can claim tokens from the presale section.'}
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-5 border border-indigo-500/20 mb-8 text-left">
+          <h3 class="font-semibold text-brand-text-primary text-sm mb-3 flex items-center gap-2">
+            <i class="fas fa-lightbulb text-amber-400"></i>
+            {t['successNextSteps'] || 'What\'s next?'}
+          </h3>
+          <ul class="space-y-2 text-xs text-brand-text-secondary">
+            <li class="flex items-start gap-2">
+              <i class="fas fa-check text-success-green mt-0.5"></i>
+              <span>{t['successStep1'] || 'Your instant tokens are already in your wallet.'}</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-check text-success-green mt-0.5"></i>
+              <span>{t['successStep2'] || 'Add $DRACMA to MetaMask (BSC) to see them.'}</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-check text-success-green mt-0.5"></i>
+              <span>{t['successStep3'] || 'Claim vesting tokens from the presale when they unlock.'}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/hi/"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 text-sm">
+            <i class="fas fa-rocket"></i>
+            {t['successBuyMore'] || 'Buy more $DRACMA'}
+          </a>
+          <a href="/hi/#presale"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand-card border border-brand-border/30 hover:border-brand-border/60 text-brand-text-primary font-semibold rounded-xl transition-all duration-300 text-sm">
+            <i class="fas fa-coins"></i>
+            {t['successClaimVesting'] || 'Claim Vesting'}
+          </a>
+        </div>
+
+        <div class="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-success-green/60 to-transparent"></div>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<style>
+  @keyframes bounce-in {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out;
+  }
+</style>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const amount = params.get('amount');
+  const currency = params.get('currency');
+  const tokens = params.get('tokens');
+  const txHash = params.get('tx');
+
+  if (amount && currency && tokens) {
+    const detailsEl = document.getElementById('tx-details');
+    if (detailsEl) detailsEl.classList.remove('hidden');
+
+    const amountEl = document.getElementById('tx-amount');
+    if (amountEl) amountEl.textContent = `${parseFloat(amount).toLocaleString()} ${currency}`;
+
+    const totalTokens = parseFloat(tokens);
+    const tokensEl = document.getElementById('tx-tokens');
+    if (tokensEl) tokensEl.textContent = `${totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 })} $DRACMA`;
+
+    const instantEl = document.getElementById('tx-instant');
+    if (instantEl) instantEl.textContent = `${Math.floor(totalTokens / 2).toLocaleString()} $DRACMA`;
+
+    const vestingEl = document.getElementById('tx-vesting');
+    if (vestingEl) vestingEl.textContent = `${Math.floor(totalTokens / 2).toLocaleString()} $DRACMA`;
+  }
+
+  if (txHash) {
+    const hashSection = document.getElementById('tx-hash-section');
+    if (hashSection) hashSection.classList.remove('hidden');
+
+    const hashLink = document.getElementById('tx-hash-link') as HTMLAnchorElement;
+    if (hashLink) hashLink.href = `https://bscscan.com/tx/${txHash}`;
+
+    const hashText = document.getElementById('tx-hash-text');
+    if (hashText) hashText.textContent = `${txHash.slice(0, 16)}...${txHash.slice(-8)}`;
+  }
+</script>

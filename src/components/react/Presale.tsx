@@ -251,6 +251,15 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
                 <i className="fas fa-plus-circle"></i>
                 {t('txAddToWallet', 'Agregar DRACMA a tu Wallet')}
               </button>
+              {purchaseDetails && (
+                <a
+                  href={`/${(window as any).__DRACMA_LANG__ === 'es' ? '' : ((window as any).__DRACMA_LANG__ || 'es') + '/'}success?amount=${encodeURIComponent(purchaseDetails.amount)}&currency=${encodeURIComponent(purchaseDetails.currency)}&tokens=${encodeURIComponent(purchaseDetails.totalTokens.toString())}${txHash ? '&tx=' + encodeURIComponent(txHash) : ''}`}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
+                >
+                  <i className="fas fa-receipt"></i>
+                  {t('txViewDetails', 'Ver detalles completos')}
+                </a>
+              )}
               <button onClick={onReset} className="btn-primary w-full">
                 {t('txClose', 'Cerrar')}
               </button>
