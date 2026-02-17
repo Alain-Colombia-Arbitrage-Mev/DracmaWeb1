@@ -1,4 +1,6 @@
 ---
+import { getTranslationsForLang } from '../i18n/utils';
+
 interface Props {
   lang?: string;
   title?: string;
@@ -7,11 +9,84 @@ interface Props {
 
 const {
   lang = 'es',
-  title = 'DRACMA - El Futuro del Valor, Hoy',
-  description = 'Un holding Web3 de vanguardia que fusiona IA, Blockchain y proyectos de impacto real.'
+  title,
+  description,
 } = Astro.props;
 
 import '../styles/global.css';
+
+// Resolve localized title/description from translations if not passed as props
+const t = getTranslationsForLang(lang);
+const isSuccessPage = Astro.url.pathname.includes('/success');
+const resolvedTitle = title
+  ?? (isSuccessPage ? t['seoSuccessTitle'] : t['seoTitle'])
+  ?? 'DRACMA - El Futuro del Valor, Hoy | Token Web3';
+const resolvedDescription = description
+  ?? (isSuccessPage ? t['seoSuccessDescription'] : t['seoDescription'])
+  ?? 'Un holding Web3 de vanguardia que fusiona IA, Blockchain y proyectos de impacto real.';
+
+// Canonical URL construction
+const SITE = 'https://dracma.org';
+const canonicalPath = Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, SITE).toString();
+
+// hreflang alternate URLs
+const LOCALES = ['es', 'en', 'fr', 'hi', 'ar', 'ru', 'zh'] as const;
+
+function stripLangPrefix(pathname: string): string {
+  for (const l of LOCALES) {
+    if (l === 'es') continue;
+    if (pathname === `/${l}` || pathname === `/${l}/`) return '/';
+    if (pathname.startsWith(`/${l}/`)) return pathname.slice(l.length + 1);
+  }
+  return pathname;
+}
+
+const slug = stripLangPrefix(canonicalPath);
+const hreflangLinks = LOCALES.map((locale) => {
+  const href = locale === 'es'
+    ? `${SITE}${slug}`
+    : `${SITE}/${locale}${slug === '/' ? '/' : slug}`;
+  return { locale, href };
+});
+const xDefaultHref = `${SITE}${slug}`;
+
+// OG locale mapping
+const OG_LOCALE_MAP: Record<string, string> = {
+  es: 'es_ES', en: 'en_US', fr: 'fr_FR', hi: 'hi_IN', ar: 'ar_SA', ru: 'ru_RU', zh: 'zh_CN',
+};
+const ogLocale = OG_LOCALE_MAP[lang] ?? 'es_ES';
+const ogImage = `${SITE}/og-image.png`;
+
+// JSON-LD structured data
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      "name": "DRACMA",
+      "url": SITE,
+      "logo": { "@type": "ImageObject", "url": `${SITE}/favicon.svg` },
+      "sameAs": [
+        "https://x.com/dracma_community",
+        "https://t.me/dracma_updates"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "info@dracma.org",
+        "contactType": "customer support"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      "url": SITE,
+      "name": "DRACMA",
+      "publisher": { "@id": `${SITE}/#organization` }
+    }
+  ]
+};
 ---
 
 <!DOCTYPE html>
@@ -19,13 +94,46 @@ import '../styles/global.css';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title}</title>
-  <meta name="description" content={description} />
+  <meta name="theme-color" content="#4f46e5" />
 
-  <!-- OG Tags -->
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
+  <!-- Primary SEO -->
+  <title>{resolvedTitle}</title>
+  <meta name="description" content={resolvedDescription} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- hreflang alternates -->
+  {hreflangLinks.map(({ locale, href }) => (
+    <link rel="alternate" hreflang={locale} href={href} />
+  ))}
+  <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={resolvedTitle} />
+  <meta property="og:description" content={resolvedDescription} />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:locale" content={ogLocale} />
+  <meta property="og:site_name" content="DRACMA" />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="DRACMA - Web3 Token" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@dracma_community" />
+  <meta name="twitter:title" content={resolvedTitle} />
+  <meta name="twitter:description" content={resolvedDescription} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <!-- Google Fonts — critical (Inter) loaded eagerly, rest deferred -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,17 +142,17 @@ import '../styles/global.css';
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 
-  <!-- Font Awesome -->
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Font Awesome (non-blocking) -->
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" onload="this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </noscript>
 
   <!-- Inline script to prevent flash of wrong theme + sync language -->
   <script is:inline>
     (function() {
       var saved = localStorage.getItem('dracma-theme');
-      // Default to light — only dark if user explicitly chose it
       if (saved !== 'dark') document.documentElement.classList.add('theme-light');
-      // Store page language globally so React islands can read it on mount
       window.__DRACMA_LANG__ = document.documentElement.lang || 'es';
     })();
   </script>
@@ -62,7 +170,6 @@ import '../styles/global.css';
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               entry.target.classList.add('is-visible');
-              // For title underline animation
               if (entry.target.classList.contains('title-underline-animated')) {
                 entry.target.classList.add('animate-on-visible');
               }
@@ -89,7 +196,6 @@ import '../styles/global.css';
 
       // Listen for whitepaper modal open event (dispatched from Footer)
       window.addEventListener('open-whitepaper', () => {
-        // Import the store dynamically
         import('../stores/appStore').then(({ showWhitepaperModal }) => {
           showWhitepaperModal();
         });
