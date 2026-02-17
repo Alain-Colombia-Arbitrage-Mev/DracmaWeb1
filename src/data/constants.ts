@@ -56,6 +56,7 @@ export const NAV_LINKS: NavLinkItem[] = [
   { href: '#ecosystem', key: 'navEcosystem' },
   { href: '#crowdfunding', key: 'navCrowdfunding' },
   { href: '#presale', key: 'navPresale', isActive: true },
+  { href: '#staking', key: 'navStaking' },
   { href: '#contact', key: 'navContact' },
 ];
 
@@ -305,6 +306,7 @@ export const FOOTER_SECTIONS_DATA: FooterSection[] = [
       { key: 'navEcosystem', href: '#ecosystem' },
       { key: 'navCrowdfunding', href: '#crowdfunding' },
       { key: 'navPresale', href: '#presale' },
+      { key: 'navStaking', href: '#staking' },
     ],
   },
   {

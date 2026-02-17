@@ -7,6 +7,7 @@ import SectionDivider from '../../components/astro/SectionDivider.astro';
 import Ecosystem from '../../components/astro/Ecosystem.astro';
 import Crowdfunding from '../../components/astro/Crowdfunding.astro';
 import Presale from '../../components/react/Presale.tsx';
+import Staking from '../../components/react/Staking.tsx';
 import Contact from '../../components/react/Contact.tsx';
 import Footer from '../../components/astro/Footer.astro';
 import AiModal from '../../components/react/AiModal.tsx';
@@ -24,6 +25,7 @@ const lang = 'fr';
   <main>
     <Hero lang={lang} />
     <Presale client:visible />
+    <Staking client:visible />
     <SectionDivider />
     <Ecosystem lang={lang} />
     <SectionDivider />
