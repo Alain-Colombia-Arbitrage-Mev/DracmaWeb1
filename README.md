@@ -65,3 +65,25 @@ Useful endpoints:
 - `POST /api/webhooks/nowpayments`
 
 Do not commit real NOWPayments, Cloudflare, SSH, or distributor private keys. Use `.env.example` as the template and keep real values in server/hosting secrets.
+
+### Huff token distributor
+
+The backend contract distribution mode calls:
+
+```text
+releaseTokens(address recipient, uint256 amount, string orderId)
+```
+
+The Huff distributor lives at `contracts/src/TokenDistributor.huff` and blocks duplicate `orderId` releases. Test it locally with:
+
+```shell
+npm run test:huff
+```
+
+Deploy it to BSC with:
+
+```shell
+npm run deploy:huff:distributor
+```
+
+Required deploy env vars: `BSC_RPC_URL`, `TOKEN_DISTRIBUTOR_PRIVATE_KEY`, and optionally `TOKEN_DISTRIBUTOR_OWNER`. After deploy, transfer the DRACMA inventory to the distributor contract and set `TOKEN_DISTRIBUTION_MODE=contract`, `TOKEN_DISTRIBUTOR_CONTRACT_ADDRESS`, and `TOKEN_DISTRIBUTOR_FUNCTION=releaseTokens` in the backend `.env`.

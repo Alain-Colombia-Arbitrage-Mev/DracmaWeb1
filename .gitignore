@@ -33,6 +33,7 @@ pnpm-debug.log*
 
 # Local payment/order state
 server/.data/
+contracts/.huff-test-deps/
 
 # Foundry artifacts
 contracts/out/

@@ -25,15 +25,16 @@ export const TOKEN_PRICE = 0.30;
 // ---------------------------------------------------------------------------
 // 2. Presale Data
 // ---------------------------------------------------------------------------
-// Fixed presale start date — change this once to set the 120-day window
+// Fixed presale start date — base 120-day window plus 90-day extension.
 const PRESALE_START = new Date('2026-02-08T00:00:00Z');
 const DAY_MS = 24 * 60 * 60 * 1000;
+const PRESALE_DURATION_DAYS = 210;
 
 export const PRESALE_DATA: PresaleData = {
   targetUSD: 80000000,
   raisedUSD: 36000000,
   totalPresaleTokens: 400000000,
-  endDate: new Date(PRESALE_START.getTime() + 120 * DAY_MS),
+  endDate: new Date(PRESALE_START.getTime() + PRESALE_DURATION_DAYS * DAY_MS),
 };
 
 // ---------------------------------------------------------------------------

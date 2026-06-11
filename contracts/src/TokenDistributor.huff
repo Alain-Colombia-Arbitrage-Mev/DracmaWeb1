@@ -1,0 +1,211 @@
+#define function initialize(address,address) nonpayable returns ()
+#define function owner() view returns (address)
+#define function saleToken() view returns (address)
+#define function isOrderReleased(bytes32) view returns (bool)
+#define function releaseTokens(address,uint256,string) nonpayable returns ()
+#define function transferOwnership(address) nonpayable returns ()
+#define function withdrawTokens(address,uint256) nonpayable returns ()
+
+#define event TokensReleased(address indexed,uint256,bytes32 indexed)
+
+#define constant TOKEN_SLOT = 0x00
+#define constant OWNER_SLOT = 0x01
+#define constant RELEASED_ORDERS_SLOT = 0x02
+
+#define constant INITIALIZE_SELECTOR = 0x485cc955
+#define constant OWNER_SELECTOR = 0x8da5cb5b
+#define constant SALE_TOKEN_SELECTOR = 0xe985e367
+#define constant IS_ORDER_RELEASED_SELECTOR = 0x5b022f41
+#define constant RELEASE_TOKENS_SELECTOR = 0xb13996c6
+#define constant TRANSFER_OWNERSHIP_SELECTOR = 0xf2fde38b
+#define constant WITHDRAW_TOKENS_SELECTOR = 0x06b091f9
+#define constant ERC20_TRANSFER_SELECTOR = 0xa9059cbb
+#define constant TOKENS_RELEASED_TOPIC = 0x8f727436c690c3a1fe818a59973c2620ec6cd323a15b9aad6810f6dc64ae4bd4
+
+#define macro ONLY_OWNER() = takes (0) returns (0) {
+    caller
+    [OWNER_SLOT] sload
+    eq
+    only_owner_ok jumpi
+    0x00 0x00 revert
+    only_owner_ok:
+}
+
+#define macro HASH_ORDER_ID() = takes (0) returns (1) {
+    0x44 calldataload
+    0x04 add
+    dup1 calldataload
+    0x60 mstore
+    0x20 add
+    0x60 mload
+    swap1
+    0x00 calldatacopy
+    0x60 mload
+    0x00 sha3
+}
+
+#define macro SAFE_TRANSFER() = takes (2) returns (0) {
+    [ERC20_TRANSFER_SELECTOR]
+    0xe0 shl
+    0x00 mstore
+
+    dup2
+    0x04 mstore
+
+    dup1
+    0x24 mstore
+
+    pop
+    pop
+
+    0x20
+    0x00
+    0x44
+    0x00
+    0x00
+    [TOKEN_SLOT] sload
+    gas
+    call
+
+    transfer_call_ok jumpi
+    0x00 0x00 revert
+
+    transfer_call_ok:
+        returndatasize
+        iszero
+        transfer_done jumpi
+
+        0x00 mload
+        0x01
+        eq
+        transfer_done jumpi
+
+        0x00 0x00 revert
+
+    transfer_done:
+}
+
+#define macro MAIN() = takes (0) returns (0) {
+    0x00 calldataload
+    0xe0 shr
+
+    dup1 [INITIALIZE_SELECTOR] eq initialize jumpi
+    dup1 [OWNER_SELECTOR] eq get_owner jumpi
+    dup1 [SALE_TOKEN_SELECTOR] eq get_sale_token jumpi
+    dup1 [IS_ORDER_RELEASED_SELECTOR] eq is_order_released jumpi
+    dup1 [RELEASE_TOKENS_SELECTOR] eq release_tokens jumpi
+    dup1 [TRANSFER_OWNERSHIP_SELECTOR] eq transfer_ownership jumpi
+    dup1 [WITHDRAW_TOKENS_SELECTOR] eq withdraw_tokens jumpi
+
+    0x00 0x00 revert
+
+    initialize:
+        pop
+        [OWNER_SLOT] sload
+        iszero
+        initialize_empty jumpi
+        0x00 0x00 revert
+
+        initialize_empty:
+            0x04 calldataload
+            dup1 iszero initialize_invalid jumpi
+            [TOKEN_SLOT] sstore
+
+            0x24 calldataload
+            dup1 iszero initialize_invalid jumpi
+            [OWNER_SLOT] sstore
+            stop
+
+    get_owner:
+        pop
+        [OWNER_SLOT] sload
+        0x00 mstore
+        0x20 0x00 return
+
+    get_sale_token:
+        pop
+        [TOKEN_SLOT] sload
+        0x00 mstore
+        0x20 0x00 return
+
+    is_order_released:
+        pop
+        0x04 calldataload
+        0x00 mstore
+        [RELEASED_ORDERS_SLOT]
+        0x20 mstore
+        0x40 0x00 sha3
+        sload
+        0x00 mstore
+        0x20 0x00 return
+
+    release_tokens:
+        pop
+        ONLY_OWNER()
+
+        0x04 calldataload
+        dup1 iszero release_invalid jumpi
+        0x24 calldataload
+        dup1 iszero release_invalid jumpi
+
+        HASH_ORDER_ID()
+        dup1
+        0x00 mstore
+        [RELEASED_ORDERS_SLOT]
+        0x20 mstore
+        0x40 0x00 sha3
+        dup1
+        sload
+        iszero
+        release_order_unused jumpi
+        0x00 0x00 revert
+
+        release_order_unused:
+            0x01
+            swap1
+            sstore
+            0xa0 mstore
+
+            SAFE_TRANSFER()
+
+            0x24 calldataload
+            0x00 mstore
+            0xa0 mload
+            0x04 calldataload
+            [TOKENS_RELEASED_TOPIC]
+            0x20 0x00 log3
+            stop
+
+    transfer_ownership:
+        pop
+        ONLY_OWNER()
+
+        0x04 calldataload
+        dup1 iszero transfer_owner_invalid jumpi
+        [OWNER_SLOT] sstore
+        stop
+
+    withdraw_tokens:
+        pop
+        ONLY_OWNER()
+
+        0x04 calldataload
+        dup1 iszero withdraw_invalid jumpi
+        0x24 calldataload
+        dup1 iszero withdraw_invalid jumpi
+
+        SAFE_TRANSFER()
+        stop
+
+    initialize_invalid:
+        0x00 0x00 revert
+
+    release_invalid:
+        0x00 0x00 revert
+
+    transfer_owner_invalid:
+        0x00 0x00 revert
+
+    withdraw_invalid:
+        0x00 0x00 revert
+}
