@@ -33,6 +33,7 @@ All commands are run from the root of the project, from a terminal:
 | :------------------------ | :----------------------------------------------- |
 | `npm install`             | Installs dependencies                            |
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run api`             | Starts the DRACMA payment API at `localhost:8787` |
 | `npm run build`           | Build your production site to `./dist/`          |
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
@@ -41,3 +42,26 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## DRACMA Presale API
+
+The backend in `server/` creates NOWPayments invoices, receives IPN webhooks, tracks reserved/sold tokens, and blocks over-sales with `MAX_SALE_TOKENS`.
+
+Key production values:
+
+- Webhook URL: `https://dracma.club/api/webhooks/nowpayments`
+- Sale token: `0x8A9f07fdBc75144C9207373597136c6E280A872D`
+- Base price: `BASE_TOKEN_PRICE_USD=0.30`
+- Price step: `PRICE_STEP_TOKENS=100000`
+- Step increase: `PRICE_STEP_INCREASE_RATE=0.10`
+- Max sale inventory: `MAX_SALE_TOKENS=400000000`
+
+Useful endpoints:
+
+- `GET /api/presale/pricing`
+- `GET /api/presale/ledger`
+- `POST /api/presale/quote`
+- `POST /api/payments/nowpayments`
+- `POST /api/webhooks/nowpayments`
+
+Do not commit real NOWPayments, Cloudflare, SSH, or distributor private keys. Use `.env.example` as the template and keep real values in server/hosting secrets.

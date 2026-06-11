@@ -18,7 +18,21 @@ pnpm-debug.log*
 
 # environment variables
 .env
+.env.*
+!.env.example
 .env.production
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+.ssh_known_hosts_*
+.dev.vars
+.wrangler/
+*.tgz
+
+# Local payment/order state
+server/.data/
 
 # Foundry artifacts
 contracts/out/
@@ -28,6 +42,8 @@ contracts/broadcast/
 
 # macOS-specific files
 .DS_Store
+._*
+**/._*
 
 # jetbrains setting folder
 .idea/

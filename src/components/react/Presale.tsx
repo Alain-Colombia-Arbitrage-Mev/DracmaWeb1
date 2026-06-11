@@ -9,6 +9,12 @@ import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
 import { useVesting, type ClaimStep } from '../../hooks/useVesting';
 import { PRESALE_CONTRACT_ADDRESS, DRACMA_TOKEN_ADDRESS, VESTING_VAULT_ADDRESS } from '../../config/contracts';
+import {
+  createNowPaymentsInvoice,
+  getPresalePricing,
+  type NowPaymentsInvoiceResponse,
+  type PricingState,
+} from '../../services/nowPaymentsService';
 import Web3Provider from './Web3Provider';
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
@@ -566,6 +572,11 @@ function PresaleInner() {
   const [totalTokensReceived, setTotalTokensReceived] = useState<number>(0);
   const [hoveredDonut, setHoveredDonut] = useState<string | null>(null);
   const [lastPurchaseDetails, setLastPurchaseDetails] = useState<PurchaseDetails | null>(null);
+  const [pricingState, setPricingState] = useState<PricingState | null>(null);
+  const [pricingError, setPricingError] = useState<string | null>(null);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [invoiceError, setInvoiceError] = useState<string | null>(null);
+  const [paymentCheckout, setPaymentCheckout] = useState<NowPaymentsInvoiceResponse | null>(null);
 
   // FOMO state
   const [fomoNotification, setFomoNotification] = useState<{name: string; amount: number; country: string; time: string} | null>(null);
@@ -597,19 +608,50 @@ function PresaleInner() {
     return () => { clearTimeout(initialTimer); clearInterval(interval); };
   }, []);
 
+  const backendPrice = pricingState?.currentPriceUsd;
+  const effectivePrice = backendPrice ?? onChainPrice;
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadPricing = async () => {
+      try {
+        const pricing = await getPresalePricing();
+        if (!isCancelled) {
+          setPricingState(pricing);
+          setPricingError(null);
+        }
+      } catch {
+        if (!isCancelled) {
+          setPricingError('No se pudo leer el inventario del backend.');
+        }
+      }
+    };
+
+    loadPricing();
+    const timer = setInterval(loadPricing, 30000);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(timer);
+    };
+  }, []);
+
   const calculateTokens = useCallback(() => {
     const amountUSD = parseFloat(investmentAmount) || 0;
-    if (onChainPrice > 0) {
-      setTotalTokensReceived(amountUSD / onChainPrice);
+    if (effectivePrice > 0) {
+      setTotalTokensReceived(amountUSD / effectivePrice);
     } else {
       setTotalTokensReceived(0);
     }
-  }, [investmentAmount, onChainPrice]);
+  }, [investmentAmount, effectivePrice]);
 
   useEffect(() => { calculateTokens(); }, [calculateTokens]);
 
   const handlePresetAmount = (amount: number | 'MAX') => {
     setInvestmentAmount(amount === 'MAX' ? '10000' : String(amount));
+    setInvoiceError(null);
+    setPaymentCheckout(null);
   };
 
   const handleAnalyzeInvestment = () => {
@@ -618,7 +660,7 @@ function PresaleInner() {
       showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
       return;
     }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${onChainPrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 10% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
+    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${effectivePrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 10% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
     showAiModal('aiModalTitleInvestment', prompt);
   };
 
@@ -657,6 +699,29 @@ function PresaleInner() {
     buyTokens(selectedCurrency, investmentAmount);
   }, [investmentAmount, selectedCurrency, buyTokens, totalTokensReceived]);
 
+  const handleNowPaymentsPurchase = useCallback(async () => {
+    if (!address || totalTokensReceived <= 0) return;
+
+    setIsCreatingInvoice(true);
+    setInvoiceError(null);
+    setPaymentCheckout(null);
+
+    try {
+      const checkout = await createNowPaymentsInvoice({
+        walletAddress: address,
+        tokenAmount: totalTokensReceived,
+      });
+      setPaymentCheckout(checkout);
+      if (checkout.invoiceUrl) {
+        window.open(checkout.invoiceUrl, '_blank', 'noopener,noreferrer');
+      }
+    } catch (error) {
+      setInvoiceError(error instanceof Error ? error.message : 'No se pudo crear el pago.');
+    } finally {
+      setIsCreatingInvoice(false);
+    }
+  }, [address, totalTokensReceived]);
+
   const getCurrencyLogo = (currency: PresaleCurrency) => {
     switch (currency) {
       case PresaleCurrency.USDC: return 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=032';
@@ -665,8 +730,12 @@ function PresaleInner() {
   };
 
   const overallProgress = (PRESALE_DATA.raisedUSD / PRESALE_DATA.targetUSD) * 100;
-  const tokensSold = onChainPrice > 0 ? PRESALE_DATA.raisedUSD / onChainPrice : 0;
-  const tokensProgress = (tokensSold / PRESALE_DATA.totalPresaleTokens) * 100;
+  const totalPresaleTokens = pricingState?.maxSaleTokens ?? PRESALE_DATA.totalPresaleTokens;
+  const tokensSold = pricingState?.tokensSold ?? (effectivePrice > 0 ? PRESALE_DATA.raisedUSD / effectivePrice : 0);
+  const tokensReserved = pricingState?.tokensReserved ?? 0;
+  const tokensAllocated = pricingState?.tokensAllocated ?? tokensSold + tokensReserved;
+  const tokensAvailable = pricingState?.tokensAvailable ?? Math.max(totalPresaleTokens - tokensAllocated, 0);
+  const tokensProgress = totalPresaleTokens > 0 ? (tokensAllocated / totalPresaleTokens) * 100 : 0;
 
   // Format user balance for display
   const formattedBalance = userBalance !== undefined
@@ -750,8 +819,11 @@ function PresaleInner() {
               <div>
                 <div className="flex justify-between mb-1.5 text-sm items-baseline">
                   <span className="text-brand-text-secondary/80 font-mono">{t('presaleTokenPrice')}</span>
-                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${onChainPrice.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
+                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${effectivePrice.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
                 </div>
+                <p className="text-xs text-brand-text-secondary/60 font-mono">
+                  {backendPrice ? t('presaleBackendPriceNote', 'Precio backend con incremento 10% por cada 100,000 tokens vendidos.') : t('presaleOnChainPriceNote', 'Mostrando precio on-chain mientras carga el backend.')}
+                </p>
               </div>
               <div className="pt-1">
                 <div className="flex justify-between mb-1.5 text-sm">
@@ -771,10 +843,33 @@ function PresaleInner() {
                 </div>
                 <div className="token-progress-bar"><div className="token-progress-fill bg-gradient-to-r from-brand-secondary to-brand-primary" style={{'--progress-width': `${Math.min(tokensProgress, 100)}%`} as React.CSSProperties}></div></div>
                 <div className="flex justify-between text-xs text-brand-text-secondary/60 mt-1 font-mono">
-                  <span>{tokensSold.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA</span>
-                  <span>{PRESALE_DATA.totalPresaleTokens.toLocaleString()} $DRACMA</span>
+                  <span>{tokensAllocated.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA</span>
+                  <span>{totalPresaleTokens.toLocaleString()} $DRACMA</span>
                 </div>
               </div>
+              {pricingState && (
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="rounded-lg p-3" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                    <p className="text-brand-text-secondary/70">{t('presaleSold', 'Vendidos')}</p>
+                    <p className="font-bold text-brand-text-primary">{tokensSold.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className="rounded-lg p-3" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                    <p className="text-brand-text-secondary/70">{t('presaleReserved', 'Reservados')}</p>
+                    <p className="font-bold text-brand-text-primary">{tokensReserved.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className="rounded-lg p-3" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
+                    <p className="text-brand-text-secondary/70">{t('presaleAvailable', 'Disponibles')}</p>
+                    <p className="font-bold text-brand-text-primary">{tokensAvailable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className="rounded-lg p-3" style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border)' }}>
+                    <p className="text-brand-text-secondary/70">{t('presaleNextIncrease', 'Proxima subida')}</p>
+                    <p className="font-bold text-brand-text-primary">{pricingState.nextIncreaseAt.toLocaleString()}</p>
+                  </div>
+                </div>
+              )}
+              {pricingError && (
+                <p className="text-xs text-brand-accent-coral font-mono">{pricingError}</p>
+              )}
 
               {/* On-chain contract link */}
               <div className="pt-2">
@@ -868,7 +963,21 @@ function PresaleInner() {
                 <label className="presale-step-label">{t('presaleEnterAmount')} ({selectedCurrency} on BSC):</label>
                 <div className="relative flex items-center">
                   <i className="fas fa-coins text-brand-text-secondary/50 absolute left-3.5 top-1/2 transform -translate-y-1/2 pointer-events-none text-lg"></i>
-                  <input type="number" inputMode="decimal" min="0" step="any" value={investmentAmount} onChange={(e) => setInvestmentAmount(e.target.value)} className="presale-input presale-input-with-icon flex-grow" placeholder="0.00" aria-label={t('presaleEnterAmount', 'Investment amount')} />
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    value={investmentAmount}
+                    onChange={(e) => {
+                      setInvestmentAmount(e.target.value);
+                      setInvoiceError(null);
+                      setPaymentCheckout(null);
+                    }}
+                    className="presale-input presale-input-with-icon flex-grow"
+                    placeholder="0.00"
+                    aria-label={t('presaleEnterAmount', 'Investment amount')}
+                  />
                   <span className="absolute right-4 text-brand-text-secondary/60 font-mono text-sm">{selectedCurrency}</span>
                 </div>
 
@@ -900,7 +1009,7 @@ function PresaleInner() {
               <div className="rounded-lg p-4 space-y-2.5" style={{background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)'}}>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-brand-text-secondary/90">{t('presaleTokenPrice', 'Precio por token')}</span>
-                  <span className="font-bold brand-accent-gold-text font-mono">${onChainPrice.toFixed(2)} USD</span>
+                  <span className="font-bold brand-accent-gold-text font-mono">${effectivePrice.toFixed(2)} USD</span>
                 </div>
                 <hr className="my-2" style={{borderColor: 'var(--th-border)'}}/>
                 <div className="flex justify-between items-center">
@@ -921,6 +1030,40 @@ function PresaleInner() {
               <button onClick={handleAnalyzeInvestment} className="btn-ai-feature w-full">
                 <i className="fas fa-magic mr-2"></i> <span>{t('btnAnalyzeInvestment')}</span>
               </button>
+
+              {invoiceError && (
+                <div className="rounded-lg p-3 text-sm text-brand-accent-coral" style={{ background: 'var(--th-danger-muted)', border: '1px solid var(--th-border)' }}>
+                  <i className="fas fa-triangle-exclamation mr-2"></i>
+                  {invoiceError}
+                </div>
+              )}
+
+              {paymentCheckout && (
+                <div className="rounded-xl p-4 space-y-3" style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)' }}>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                      <i className="fas fa-check text-success-green"></i>
+                    </div>
+                    <div>
+                      <p className="font-bold text-brand-text-primary">{t('nowPaymentsCreated', 'Pago creado en NOWPayments')}</p>
+                      <p className="text-sm text-brand-text-secondary">
+                        {paymentCheckout.orderId} · ${paymentCheckout.priceAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD · {paymentCheckout.tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} $DRACMA
+                      </p>
+                    </div>
+                  </div>
+                  {paymentCheckout.invoiceUrl && (
+                    <a
+                      href={paymentCheckout.invoiceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary w-full py-2.5 flex items-center justify-center"
+                    >
+                      <i className="fas fa-arrow-up-right-from-square mr-2"></i>
+                      {t('openNowPaymentsCheckout', 'Abrir checkout')}
+                    </a>
+                  )}
+                </div>
+              )}
 
               {/* Wallet & Purchase */}
               <div className="pt-2">
@@ -949,6 +1092,16 @@ function PresaleInner() {
                       <span>
                         {t('btnConfirmPurchase', 'Confirmar Compra')} — {totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA
                       </span>
+                    </button>
+
+                    <button
+                      onClick={handleNowPaymentsPurchase}
+                      disabled={!investmentAmount || parseFloat(investmentAmount) < 100 || txStep !== 'idle' || isCreatingInvoice}
+                      className="w-full py-3 rounded-xl text-base font-semibold flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)', color: 'var(--th-primary)' }}
+                    >
+                      <i className={`fas ${isCreatingInvoice ? 'fa-spinner fa-spin' : 'fa-coins'} mr-2.5`}></i>
+                      <span>{isCreatingInvoice ? t('creatingNowPayments', 'Creando pago...') : t('payWithNowPayments', 'Pagar con multiples criptomonedas')}</span>
                     </button>
 
                     <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text-secondary/50 font-mono">
