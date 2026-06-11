@@ -1,5 +1,6 @@
 ---
 import { getTranslationsForLang } from '../../i18n/utils';
+import { TOKEN_PRICE } from '../../data/constants';
 
 interface Props {
   lang: string;
@@ -61,7 +62,7 @@ const t = getTranslationsForLang(lang);
         <div class="grid grid-cols-2 gap-3">
           <div class="glass-stat-card rounded-xl p-5">
             <div class="text-xs font-medium uppercase tracking-wider mb-1" style="color: var(--th-text-tertiary);">Token Price</div>
-            <div class="text-2xl font-bold" style="color: var(--th-text);">$0.20</div>
+            <div class="text-2xl font-bold" style="color: var(--th-text);">${TOKEN_PRICE.toFixed(2)}</div>
             <div class="text-xs mt-1" style="color: var(--th-secondary);">50% instant + 50% vesting</div>
           </div>
           <div class="glass-stat-card rounded-xl p-5">

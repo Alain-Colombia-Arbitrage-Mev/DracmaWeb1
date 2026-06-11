@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
 import { formatUnits } from 'viem';
 import { $currentLang, $translations, showAiModal } from '../../stores/appStore';
-import { PRESALE_DATA, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
+import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
 import { PresaleCurrency, PresaleBlockchain } from '../../types';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
@@ -552,16 +552,12 @@ function PresaleInner() {
   // Presale contract hook
   const {
     userBalance,
-    tokenPrice,
     txStep,
     txHash,
     errorMessage,
     buyTokens,
     reset: resetTx,
   } = usePresale();
-
-  // On-chain price in USD (tokenPrice is in wei, e.g. 0.2e18 = $0.20)
-  const onChainPrice = tokenPrice ? Number(tokenPrice) / 1e18 : 0.20;
 
   const truncatedAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -609,7 +605,7 @@ function PresaleInner() {
   }, []);
 
   const backendPrice = pricingState?.currentPriceUsd;
-  const effectivePrice = backendPrice ?? onChainPrice;
+  const effectivePrice = backendPrice ?? TOKEN_PRICE;
 
   useEffect(() => {
     let isCancelled = false;
@@ -822,7 +818,7 @@ function PresaleInner() {
                   <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${effectivePrice.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
                 </div>
                 <p className="text-xs text-brand-text-secondary/60 font-mono">
-                  {backendPrice ? t('presaleBackendPriceNote', 'Precio backend con incremento 10% por cada 100,000 tokens vendidos.') : t('presaleOnChainPriceNote', 'Mostrando precio on-chain mientras carga el backend.')}
+                  {backendPrice ? t('presaleBackendPriceNote', 'Precio backend con incremento 10% por cada 100,000 tokens vendidos.') : t('presaleBackendFallbackPriceNote', 'Precio base local mientras carga el backend.')}
                 </p>
               </div>
               <div className="pt-1">
