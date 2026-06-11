@@ -13,10 +13,12 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { AiModal } from './components/AiModal';
 import { WhitepaperModal } from './components/WhitepaperModal';
+import { WalletModalWrapper } from './components/WalletModalWrapper';
 import { SectionDivider } from './components/SectionDivider';
-import { TRANSLATIONS, PRESALE_DATA, LANGUAGES, NAV_LINKS, BLOCKCHAIN_NETWORKS } from './constants';
-import { Translations, LanguageData, AiModalInfo, WhitepaperModalInfo, PresaleBlockchain } from './types';
+import { TRANSLATIONS, PRESALE_DATA, LANGUAGES, NAV_LINKS } from './constants';
+import { Translations, LanguageData, AiModalInfo, WhitepaperModalInfo } from './types';
 import { callGeminiAPI } from './services/geminiService';
+import { WalletProvider } from './contexts/WalletContext';
 
 // Context for managing language
 export const LanguageContext = React.createContext<{
@@ -133,26 +135,6 @@ const App: React.FC = () => {
     setWhitepaperModalInfo({ isOpen: false });
   }, []);
 
-  const handleConnectWallet = useCallback((selectedNetwork?: PresaleBlockchain) => {
-    const networkName = selectedNetwork ? getTranslation(BLOCKCHAIN_NETWORKS.find(n => n.id === selectedNetwork)?.nameKey || '', selectedNetwork) : '';
-    const connectingText = networkName 
-      ? `${getTranslation('walletConnecting')} (${networkName})`
-      : getTranslation('walletConnecting');
-
-    showAiModal('walletConnecting', undefined, `<div class="flex items-center justify-center mb-3"><i class="fas fa-spinner fa-spin text-2xl mr-3"></i><span class="text-lg">${connectingText}</span></div><p class="text-xs font-sans text-brand-text-secondary/80">${getTranslation('walletSim')}</p><div class="w-full h-1 bg-brand-primary/30 rounded-full mt-4 overflow-hidden"><div class="h-full bg-brand-primary animate-pulse" style="width: 0%; animation: fakeLoad 3s linear forwards;"></div></div><style> @keyframes fakeLoad { 0% { width: 0%; } 100% { width: 100%; } } </style>`);
-    setTimeout(() => {
-        // Check if the modal is still the wallet connecting one before closing
-        // This avoids closing a different AI modal that might have opened in the meantime
-        setAiModalInfo(currentInfo => {
-            if (currentInfo.isOpen && currentInfo.titleKey === 'walletConnecting') {
-                return { ...currentInfo, isOpen: false };
-            }
-            return currentInfo;
-        });
-    }, 3500);
-  }, [showAiModal, getTranslation]);
-
-
   useEffect(() => {
     const animatedElements = appRef.current?.querySelectorAll('.animate-slide-in-left, .animate-slide-in-right, .animate-fade-in-zoom, .animate-on-visible');
     if (!animatedElements) return;
@@ -189,41 +171,43 @@ const App: React.FC = () => {
 
   return (
     <LanguageContext.Provider value={{ translations, currentLang, changeLanguage, getTranslation }}>
-      <AiModalContext.Provider value={{ aiModalInfo, showAiModal, closeAiModal, setAiModalInfo }}>
-        <WhitepaperModalContext.Provider value={{ whitepaperModalInfo, showWhitepaperModal, closeWhitepaperModal }}>
-          <div ref={appRef} className={`antialiased font-sans text-brand-text-secondary lang-${currentLang}`}> {/* Removed bg-brand-background from here; body style handles it */}
-            <Navbar
-              navLinks={NAV_LINKS}
-              languages={LANGUAGES}
-              isMobileMenuOpen={isMobileMenuOpen}
-              toggleMobileMenu={toggleMobileMenu}
-              onConnectWallet={handleConnectWallet}
-              onNavLinkClick={handleSectionScroll}
-            />
-            <main>
-              <Hero />
-              <Vision />
-              <SectionDivider />
-              <Ecosystem />
-              <SectionDivider />
-              <Crowdfunding />
-              <SectionDivider />
-              <Membership />
-              <SectionDivider />
-              <Presale presaleData={PRESALE_DATA} onConnectWallet={handleConnectWallet} />
-              <SectionDivider />
-              <Roadmap />
-              <SectionDivider />
-              <Ambassadors />
-              <SectionDivider />
-              <Contact />
-            </main>
-            <Footer onConnectWallet={handleConnectWallet} onNavLinkClick={handleSectionScroll} />
-            <AiModal />
-            <WhitepaperModal />
-          </div>
-        </WhitepaperModalContext.Provider>
-      </AiModalContext.Provider>
+      <WalletProvider>
+        <AiModalContext.Provider value={{ aiModalInfo, showAiModal, closeAiModal, setAiModalInfo }}>
+          <WhitepaperModalContext.Provider value={{ whitepaperModalInfo, showWhitepaperModal, closeWhitepaperModal }}>
+            <div ref={appRef} className={`antialiased font-sans text-brand-text-secondary lang-${currentLang}`}>
+              <Navbar
+                navLinks={NAV_LINKS}
+                languages={LANGUAGES}
+                isMobileMenuOpen={isMobileMenuOpen}
+                toggleMobileMenu={toggleMobileMenu}
+                onNavLinkClick={handleSectionScroll}
+              />
+              <main>
+                <Hero />
+                <Vision />
+                <SectionDivider />
+                <Ecosystem />
+                <SectionDivider />
+                <Crowdfunding />
+                <SectionDivider />
+                <Membership />
+                <SectionDivider />
+                <Presale presaleData={PRESALE_DATA} />
+                <SectionDivider />
+                <Roadmap />
+                <SectionDivider />
+                <Ambassadors />
+                <SectionDivider />
+                <Contact />
+              </main>
+              <Footer onNavLinkClick={handleSectionScroll} />
+              <AiModal />
+              <WhitepaperModal />
+              <WalletModalWrapper />
+            </div>
+          </WhitepaperModalContext.Provider>
+        </AiModalContext.Provider>
+      </WalletProvider>
     </LanguageContext.Provider>
   );
 };

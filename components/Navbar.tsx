@@ -1,7 +1,8 @@
 
 import React, { useContext } from 'react';
-import { NavLinkItem, Translations } from '../types';
+import { NavLinkItem } from '../types';
 import { LanguageContext } from '../App';
+import { WalletContext } from '../contexts/WalletContext';
 
 interface Language {
   code: string;
@@ -12,7 +13,6 @@ interface NavbarProps {
   languages: Language[];
   isMobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
-  onConnectWallet: ()  => void;
   onNavLinkClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
@@ -24,13 +24,50 @@ const NavLogo: React.FC = () => (
   </svg>
 );
 
+const WalletButton: React.FC<{ className?: string }> = ({ className = '' }) => {
+  const { getTranslation } = useContext(LanguageContext);
+  const { wallet, connectWallet, disconnectWallet, switchNetwork } = useContext(WalletContext);
+
+  if (wallet.isConnected) {
+    return (
+      <div className={`flex items-center space-x-2 ${className}`}>
+        {!wallet.isCorrectNetwork && (
+          <button onClick={switchNetwork} className="bg-yellow-500/90 text-white py-1.5 px-3 rounded-lg text-xs font-semibold hover:bg-yellow-600 transition-colors">
+            {getTranslation('switchToBSC')}
+          </button>
+        )}
+        <div className="flex items-center bg-brand-background/80 rounded-full py-1.5 px-3 border border-gray-200 shadow-sm">
+          {wallet.isCorrectNetwork && (
+            <div className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+          )}
+          <span className="text-xs font-mono text-brand-text-primary">
+            {wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}
+          </span>
+        </div>
+        <button
+          onClick={disconnectWallet}
+          className="text-xs text-brand-text-secondary hover:text-red-500 transition p-1.5 rounded-md hover:bg-red-50"
+          title={getTranslation('btnDisconnectWallet')}
+        >
+          <i className="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button onClick={connectWallet} className={`btn-primary py-2.5 px-6 text-sm ${className}`}>
+      {getTranslation('btnConnectWallet')}
+    </button>
+  );
+};
+
 
 export const Navbar: React.FC<NavbarProps> = ({
   navLinks,
   languages,
   isMobileMenuOpen,
   toggleMobileMenu,
-  onConnectWallet,
   onNavLinkClick
 }) => {
   const { getTranslation, currentLang, changeLanguage } = useContext(LanguageContext);
@@ -85,9 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
           <div className="hidden md:block ml-4">
-            <button onClick={onConnectWallet} className="btn-primary py-2.5 px-6 text-sm">
-              {getTranslation('btnConnectWallet')}
-            </button>
+            <WalletButton />
           </div>
           <div className="-mr-2 flex md:hidden items-center">
             <div className="language-selector mr-2">
@@ -138,9 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200 px-5">
-            <button onClick={onConnectWallet} className="w-full btn-primary py-2.5">
-              {getTranslation('btnConnectWallet')}
-            </button>
+            <WalletButton className="w-full" />
           </div>
         </div>
       )}

@@ -12,6 +12,27 @@ dist
 dist-ssr
 *.local
 
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+.ssh_known_hosts_*
+*.tgz
+.dev.vars
+.wrangler/
+
+# Local payment/order state
+server/.data/
+
+# macOS AppleDouble metadata copied from archives/drives
+._*
+**/._*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

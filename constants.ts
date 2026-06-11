@@ -1,25 +1,35 @@
 
-import { LanguageData, PresaleData, NavLinkItem, VisionCardData, EcosystemCardData, MembershipTierData, TokenDistributionItem, RoadmapItemData, AmbassadorTierData, ContactPoint, SocialLink, FooterSection, PresaleBlockchain, BlockchainNetwork, CrowdfundingFeatureData, CrowdfundingProjectData } from './types';
+import { LanguageData, PresaleData, NavLinkItem, VisionCardData, EcosystemCardData, MembershipTierData, TokenDistributionItem, RoadmapItemData, AmbassadorTierData, ContactPoint, SocialLink, FooterSection, CrowdfundingFeatureData, CrowdfundingProjectData } from './types';
 
-export const TOKEN_PRICE = 0.20;
+// === BSC Network Configuration ===
+export const BSC_CHAIN_ID = 56;
+export const BSC_CHAIN_ID_HEX = '0x38';
+
+export const BSC_NETWORK_CONFIG = {
+  chainId: BSC_CHAIN_ID_HEX,
+  chainName: 'BNB Smart Chain',
+  nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+  rpcUrls: ['https://bsc-dataseed.binance.org/', 'https://bsc-dataseed1.defibit.io/'],
+  blockExplorerUrls: ['https://bscscan.com'],
+};
+
+export const PRESALE_CONTRACT_ADDRESS = '0xf012e31eFDC2485285E2E27175fa9397dF372bf7';
+export const SALE_TOKEN_ADDRESS = '0x8A9f07fdBc75144C9207373597136c6E280A872D';
+export const USDT_BSC_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+export const USDC_BSC_ADDRESS = '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d';
+export const STABLE_DECIMALS = 18;
+export const BSCSCAN_TX_URL = 'https://bscscan.com/tx/';
+export const BSCSCAN_ADDRESS_URL = 'https://bscscan.com/address/';
+
+export const TOKEN_PRICE = 0.30;
 
 export const PRESALE_DATA: PresaleData = {
     targetUSD: 80000000,
     raisedUSD: 36000000, // Example value
     totalPresaleTokens: 400000000,
-    endDate: new Date(Date.UTC(2025, 11, 31, 23, 59, 59)), // End of 2025
-    bonusTiers: [
-        { start: new Date(Date.UTC(2025, 5, 1)), end: new Date(Date.UTC(2025, 5, 28, 23, 59, 59)), rate: 0.15, nameKey: "presaleBonusPhase1Name", infoKey: "presaleBonusPhase1Info" },
-        { start: new Date(Date.UTC(2025, 5, 29)), end: new Date(Date.UTC(2025, 6, 26, 23, 59, 59)), rate: 0.10, nameKey: "presaleBonusPhase2Name", infoKey: "presaleBonusPhase2Info" },
-        { start: new Date(Date.UTC(2025, 6, 27)), end: new Date(Date.UTC(2025, 7, 23, 23, 59, 59)), rate: 0.05, nameKey: "presaleBonusPhase3Name", infoKey: "presaleBonusPhase3Info" },
-    ]
+    endDate: new Date(Date.UTC(2026, 11, 31, 23, 59, 59)),
+    bonusTiers: []
 };
-
-export const BLOCKCHAIN_NETWORKS: BlockchainNetwork[] = [
-    { id: PresaleBlockchain.ETH, nameKey: "blockchainEthereum", iconClass: "fab fa-ethereum", nativeCoin: "ETH", logoUrl: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=032" },
-    { id: PresaleBlockchain.BSC, nameKey: "blockchainBSC", iconClass: "fab fa-hive", nativeCoin: "BNB", logoUrl: "https://cryptologos.cc/logos/bnb-bnb-logo.png?v=032" }, // Using Hive for Binance, or use a generic one if specific icon not available or desired
-    { id: PresaleBlockchain.POLYGON, nameKey: "blockchainPolygon", iconClass: "fas fa-dice-d20", nativeCoin: "MATIC", logoUrl: "https://cryptologos.cc/logos/polygon-matic-logo.png?v=032" },
-];
 
 
 export const NAV_LINKS: NavLinkItem[] = [
@@ -120,9 +130,8 @@ export const TRANSLATIONS: LanguageData = {
     presaleBonusPhase3Name: "FASE 3: 5% BONUS", presaleBonusPhase3Info: "¡APROVECHA LA FASE 3!",
     presaleBonusEndedName: "BONUS FINALIZADO", presaleBonusEndedInfo: "La preventa continúa sin bonus adicional.",
     presaleMinInvestment: "Mínima inversión: $100 USD.", presaleTokenDistribution: "Tokens distribuidos post-TGE con vesting.",
-    presaleInvestTitle: "Invierte en el Futuro DRACMA", 
-    presaleSelectBlockchain: "0. Selecciona Red Blockchain:",
-    presaleSelectPayment: "1. Selecciona Criptomoneda de Pago:", 
+    presaleInvestTitle: "Invierte en el Futuro DRACMA",
+    presaleSelectPayment: "1. Selecciona Criptomoneda de Pago:",
     presaleEnterAmount: "2. Ingresa Monto de Inversión",
     btnMax: "MAX", presaleBaseTokens: "Tokens $DRC Base:", presaleCurrentBonus: "Bono Actual", presaleTotalReceive: "Total $DRC a Recibir:",
     btnAnalyzeInvestment: "Analizar Inversión con IA ✨", btnGeneratePitch: "Generar Pitch de Embajador con IA ✨",
@@ -159,12 +168,29 @@ export const TRANSLATIONS: LanguageData = {
     whitepaperIntroText: "En la cúspide de una revolución digital sin precedentes, DRACMA emerge como un paradigma transformador en el universo Web3. Nuestra visión es construir un holding empresarial descentralizado que armonice la solidez intrínseca de los Activos del Mundo Real (RWA) con la agilidad y transparencia de la tecnología blockchain, potenciado por la inteligencia artificial (IA) de vanguardia. Este whitepaper es el mapa estelar de DRACMA, detallando nuestra arquitectura tecnológica, estrategia de mercado, tokenomics y el modelo de gobernanza que nos impulsará hacia la democratización del acceso a oportunidades de inversión de alto calibre, fomentando un ecosistema de valor sostenible y crecimiento compartido. Invitamos a visionarios, inversores y constructores a unirse a nosotros en esta travesía para redefinir el futuro del valor.",
     whitepaperFullContentPlaceholder: "Cargando el futuro... El contenido completo del Whitepaper DRACMA v3.0, incluyendo análisis de mercado, tokenomics detallados, arquitectura técnica, equipo y asesores, gobernanza DAO, y proyecciones financieras, estará disponible aquí. Prepárate para sumergirte en el blueprint de la próxima generación de inversión descentralizada.",
     walletConnecting: "CONECTANDO A LA RED DRACMA...", walletSim: "(Simulación. Funcionalidad de wallet multi-cadena en desarrollo.)",
+    wrongNetwork: "Red incorrecta. Por favor cambia a BSC.", switchToBSC: "Cambiar a BSC",
+    walletNotInstalled: "No se detectó wallet. Por favor instala MetaMask o abre desde tu wallet móvil.",
+    installMetaMask: "Instalar MetaMask", yourBalance: "Tu saldo",
+    walletSelectTitle: "Conectar Wallet", walletMobileDesc: "Selecciona tu wallet para abrir DRACMA en su navegador integrado.",
+    walletOpenInApp: "Abrir en la app", walletDesktopHint: "Instala una extensión de wallet en tu navegador para conectarte.",
+    btnBuyTokens: "Comprar Tokens $DRC", btnDisconnectWallet: "Desconectar",
+    connectedTo: "Conectado", networkBSC: "BNB Smart Chain",
+    txApproving: "Aprobando...", txApprovePending: "Aprobación pendiente...",
+    txBuying: "Comprando...", txBuyPending: "Compra pendiente...",
+    txSuccess: "¡Compra exitosa!", txFailed: "Transacción fallida",
+    txRejected: "Transacción rechazada por el usuario",
+    insufficientBalance: "Saldo insuficiente",
+    belowMinPurchase: "Monto por debajo del mínimo de compra",
+    exceedsMaxPurchase: "Monto excede el máximo de compra",
+    presaleEndedMsg: "La preventa ha terminado", presalePausedMsg: "La preventa está pausada actualmente",
+    viewOnBSCScan: "Ver en BSCScan", buyMore: "Comprar Más",
+    approveStep: "Paso 1: Aprobar", buyStep: "Paso 2: Comprar",
+    txPleaseApprove: "Por favor aprueba en MetaMask...", txPleaseConfirm: "Por favor confirma en MetaMask...",
     formSending: "Enviando Mensaje...", formSent: "Mensaje Enviado con Éxito",
     aiModalTitleInvestment: "Análisis de Inversión IA ✨", aiModalTitlePitch: "Pitch de Embajador IA ✨", 
     aiModalTitleEcosystem: "IA Explica: Ecosistema DRACMA ✨", aiModalTitleMembership: "Recomendación de Membresía IA ✨",
     aiModalLoading: "DRACMA IA está analizando... un momento.", aiModalError: "Error al conectar con DRACMA IA. Inténtalo más tarde.",
     btnCopyText: "Copiar Texto", btnCopied: "¡Texto Copiado!",
-    blockchainEthereum: "Ethereum", blockchainBSC: "BNB Smart Chain", blockchainPolygon: "Polygon",
     altHeroAbstract: "[Representación Abstracta de DRACMA y el futuro del valor]",
     simulatedResponsePhilosophy: `La filosofía de DRACMA se centra en fusionar la estabilidad de activos reales con la innovación de Web3 y IA, creando un ecosistema financiero transparente y accesible para todos. Buscamos empoderar a nuestra comunidad mediante inversiones inteligentes en oro, bienes raíces, energía y agricultura, forjando un futuro próspero y equitativo.`,
     simulatedResponseInvestment: `Tu inversión en la presale de DRACMA parece prometedora. Con el respaldo de activos reales y la potencia de la IA, junto con el atractivo APR de staking, $DRC tiene un gran potencial de crecimiento. ¡Es un excelente momento para unirse a la vanguardia de la innovación financiera!`,
@@ -252,9 +278,8 @@ export const TRANSLATIONS: LanguageData = {
     presaleBonusPhase3Name: "PHASE 3: 5% BONUS", presaleBonusPhase3Info: "GET INTO PHASE 3!",
     presaleBonusEndedName: "BONUS ENDED", presaleBonusEndedInfo: "Presale continues without additional bonus.",
     presaleMinInvestment: "Minimum investment: $100 USD.", presaleTokenDistribution: "Tokens distributed post-TGE with vesting.",
-    presaleInvestTitle: "Invest in DRACMA's Future", 
-    presaleSelectBlockchain: "0. Select Blockchain Network:",
-    presaleSelectPayment: "1. Select Payment Cryptocurrency:", 
+    presaleInvestTitle: "Invest in DRACMA's Future",
+    presaleSelectPayment: "1. Select Payment Cryptocurrency:",
     presaleEnterAmount: "2. Enter Investment Amount",
     btnMax: "MAX", presaleBaseTokens: "$DRC Base Tokens:", presaleCurrentBonus: "Current Bonus", presaleTotalReceive: "Total $DRC to Receive:",
     btnAnalyzeInvestment: "Analyze Investment with AI ✨", btnGeneratePitch: "Generate Ambassador Pitch with AI ✨",
@@ -291,12 +316,29 @@ export const TRANSLATIONS: LanguageData = {
     whitepaperIntroText: "At the cusp of an unprecedented digital revolution, DRACMA emerges as a transformative paradigm in the Web3 universe. Our vision is to build a decentralized business holding that harmonizes the intrinsic stability of Real-World Assets (RWA) with the agility and transparency of blockchain technology, supercharged by cutting-edge Artificial Intelligence (AI). This whitepaper is DRACMA's star chart, detailing our technological architecture, go-to-market strategy, tokenomics, and the governance model that will propel us towards democratizing access to high-caliber investment opportunities, fostering an ecosystem of sustainable value and shared growth. We invite visionaries, investors, and builders to join us on this journey to redefine the future of value.",
     whitepaperFullContentPlaceholder: "Loading the future... The full content of the DRACMA Whitepaper v3.0, including market analysis, detailed tokenomics, technical architecture, team and advisors, DAO governance, and financial projections, will be available here. Prepare to dive into the blueprint of the next generation of decentralized investment.",
     walletConnecting: "CONNECTING TO DRACMA NETWORK...", walletSim: "(Simulation. Multi-chain wallet functionality in development.)",
+    wrongNetwork: "Wrong network. Please switch to BSC.", switchToBSC: "Switch to BSC",
+    walletNotInstalled: "No wallet detected. Please install MetaMask or open from your mobile wallet.",
+    installMetaMask: "Install MetaMask", yourBalance: "Your Balance",
+    walletSelectTitle: "Connect Wallet", walletMobileDesc: "Select your wallet to open DRACMA in its built-in browser.",
+    walletOpenInApp: "Open in app", walletDesktopHint: "Install a wallet browser extension to connect.",
+    btnBuyTokens: "Buy $DRC Tokens", btnDisconnectWallet: "Disconnect",
+    connectedTo: "Connected", networkBSC: "BNB Smart Chain",
+    txApproving: "Approving...", txApprovePending: "Approval pending...",
+    txBuying: "Purchasing...", txBuyPending: "Purchase pending...",
+    txSuccess: "Purchase successful!", txFailed: "Transaction failed",
+    txRejected: "Transaction rejected by user",
+    insufficientBalance: "Insufficient balance",
+    belowMinPurchase: "Amount below minimum purchase",
+    exceedsMaxPurchase: "Amount exceeds maximum purchase",
+    presaleEndedMsg: "The presale has ended", presalePausedMsg: "The presale is currently paused",
+    viewOnBSCScan: "View on BSCScan", buyMore: "Buy More",
+    approveStep: "Step 1: Approve", buyStep: "Step 2: Purchase",
+    txPleaseApprove: "Please approve in MetaMask...", txPleaseConfirm: "Please confirm in MetaMask...",
     formSending: "Sending Message...", formSent: "Message Sent Successfully",
     aiModalTitleInvestment: "AI Investment Analysis ✨", aiModalTitlePitch: "AI Ambassador Pitch ✨", 
     aiModalTitleEcosystem: "AI Explains: DRACMA Ecosystem ✨", aiModalTitleMembership: "AI Membership Recommendation ✨",
     aiModalLoading: "DRACMA AI is analyzing... one moment.", aiModalError: "Error connecting to DRACMA AI. Please try again later.",
     btnCopyText: "Copy Text", btnCopied: "Text Copied!",
-    blockchainEthereum: "Ethereum", blockchainBSC: "BNB Smart Chain", blockchainPolygon: "Polygon",
     altHeroAbstract: "[Abstract Representation of DRACMA and the future of value]",
     simulatedResponsePhilosophy: `DRACMA's philosophy centers on merging the stability of real assets with Web3 and AI innovation, creating a transparent, accessible financial ecosystem for all. We aim to empower our community through smart investments in gold, real estate, energy, and agriculture, forging a prosperous and equitable future.`,
     simulatedResponseInvestment: `Your investment in DRACMA's presale looks promising. Backed by real assets and AI power, along with attractive staking APR, $DRC holds significant growth potential. It's an excellent time to join the forefront of financial innovation!`,
@@ -330,8 +372,22 @@ export const TRANSLATIONS: LanguageData = {
     crowdfundingBtnViewProject: "Voir & Investir", crowdfundingEstROILabel: "ROI Est.:",
     crowdfundingROISolar: "8-12% TAE", crowdfundingROIRealEstate: "7-10% Rendement", crowdfundingROIAgriculture: "9-14% TAE",
     crowdfundingDisclaimer: "Note: Projets illustratifs.", presaleGoalLabel: "But:",
-    blockchainEthereum: "Ethereum", blockchainBSC: "BNB Smart Chain", blockchainPolygon: "Polygon",
-    btnCopyText: "Copier le texte", btnCopied: "Copié !"
+    btnCopyText: "Copier le texte", btnCopied: "Copié !",
+    wrongNetwork: "Mauvais réseau. Veuillez passer au BSC.", switchToBSC: "Passer au BSC",
+    walletNotInstalled: "Aucun wallet détecté. Installez MetaMask ou ouvrez depuis votre wallet mobile.", installMetaMask: "Installer MetaMask",
+    walletSelectTitle: "Connecter Wallet", walletMobileDesc: "Sélectionnez votre wallet pour ouvrir DRACMA dans son navigateur intégré.",
+    walletOpenInApp: "Ouvrir dans l'app", walletDesktopHint: "Installez une extension wallet dans votre navigateur.",
+    yourBalance: "Votre solde", btnBuyTokens: "Acheter des tokens $DRC", btnDisconnectWallet: "Déconnecter",
+    connectedTo: "Connecté", networkBSC: "BNB Smart Chain",
+    txApproving: "Approbation...", txApprovePending: "Approbation en cours...",
+    txBuying: "Achat...", txBuyPending: "Achat en cours...",
+    txSuccess: "Achat réussi !", txFailed: "Transaction échouée", txRejected: "Transaction rejetée par l'utilisateur",
+    insufficientBalance: "Solde insuffisant", belowMinPurchase: "Montant inférieur au minimum",
+    exceedsMaxPurchase: "Montant supérieur au maximum",
+    presaleEndedMsg: "La prévente est terminée", presalePausedMsg: "La prévente est actuellement en pause",
+    viewOnBSCScan: "Voir sur BSCScan", buyMore: "Acheter Plus",
+    approveStep: "Étape 1: Approuver", buyStep: "Étape 2: Acheter",
+    txPleaseApprove: "Veuillez approuver dans MetaMask...", txPleaseConfirm: "Veuillez confirmer dans MetaMask..."
   },
   hi: { 
     navVision: "दृष्टिकोण", navEcosystem: "पारिस्थितिकी तंत्र", navCrowdfunding: "P2P क्राउडफंडिंग", navMembership: "सदस्यता", navPresale: "प्रीसेल", navRoadmap: "रोडमैप", navAmbassadors: "राजदूत", navContact: "संपर्क",
@@ -355,8 +411,22 @@ export const TRANSLATIONS: LanguageData = {
     crowdfundingBtnViewProject: "विवरण देखें और निवेश करें", crowdfundingEstROILabel: "अनुमानित ROI:",
     crowdfundingROISolar: "8-12% APR", crowdfundingROIRealEstate: "7-10% यील्ड", crowdfundingROIAgriculture: "9-14% APR",
     crowdfundingDisclaimer: "नोट: परियोजनाएं केवल उदाहरण के लिए हैं।", presaleGoalLabel: "लक्ष्य:",
-    blockchainEthereum: "एथेरियम", blockchainBSC: "बीएनबी स्मार्ट चेन", blockchainPolygon: "पॉलीगॉन",
-    btnCopyText: "टेक्स्ट कॉपी करें", btnCopied: "कॉपी किया गया!"
+    btnCopyText: "टेक्स्ट कॉपी करें", btnCopied: "कॉपी किया गया!",
+    wrongNetwork: "गलत नेटवर्क। कृपया BSC पर स्विच करें।", switchToBSC: "BSC पर स्विच करें",
+    walletNotInstalled: "कोई वॉलेट नहीं मिला। MetaMask इंस्टॉल करें या मोबाइल वॉलेट से खोलें।", installMetaMask: "MetaMask स्थापित करें",
+    walletSelectTitle: "वॉलेट कनेक्ट करें", walletMobileDesc: "DRACMA को इसके बिल्ट-इन ब्राउज़र में खोलने के लिए अपना वॉलेट चुनें।",
+    walletOpenInApp: "ऐप में खोलें", walletDesktopHint: "कनेक्ट करने के लिए वॉलेट ब्राउज़र एक्सटेंशन इंस्टॉल करें।",
+    yourBalance: "आपका शेष", btnBuyTokens: "$DRC टोकन खरीदें", btnDisconnectWallet: "डिस्कनेक्ट",
+    connectedTo: "कनेक्टेड", networkBSC: "BNB स्मार्ट चेन",
+    txApproving: "स्वीकृति हो रही है...", txApprovePending: "स्वीकृति लंबित...",
+    txBuying: "खरीद रहा है...", txBuyPending: "खरीद लंबित...",
+    txSuccess: "खरीद सफल!", txFailed: "लेनदेन विफल", txRejected: "उपयोगकर्ता द्वारा लेनदेन अस्वीकार",
+    insufficientBalance: "अपर्याप्त शेष", belowMinPurchase: "न्यूनतम खरीद से कम",
+    exceedsMaxPurchase: "अधिकतम खरीद से अधिक",
+    presaleEndedMsg: "प्रीसेल समाप्त हो गई है", presalePausedMsg: "प्रीसेल वर्तमान में रुकी हुई है",
+    viewOnBSCScan: "BSCScan पर देखें", buyMore: "और खरीदें",
+    approveStep: "चरण 1: स्वीकृति", buyStep: "चरण 2: खरीदें",
+    txPleaseApprove: "कृपया MetaMask में स्वीकृत करें...", txPleaseConfirm: "कृपया MetaMask में पुष्टि करें..."
   },
   ar: { 
     navVision: "رؤيتنا", navEcosystem: "النظام البيئي", navCrowdfunding: "التمويل الجماعي P2P", navMembership: "العضوية", navPresale: "ما قبل البيع", navRoadmap: "خريطة الطريق", navAmbassadors: "السفراء", navContact: "اتصال",
@@ -380,8 +450,22 @@ export const TRANSLATIONS: LanguageData = {
     crowdfundingBtnViewProject: "عرض التفاصيل والاستثمار", crowdfundingEstROILabel: "العائد على الاستثمار المقدر:",
     crowdfundingROISolar: "8-12% APR", crowdfundingROIRealEstate: "7-10% عائد", crowdfundingROIAgriculture: "9-14% APR",
     crowdfundingDisclaimer: "ملاحظة: المشاريع المعروضة هي لأغراض توضيحية فقط.", presaleGoalLabel: "الهدف:",
-    blockchainEthereum: "إيثيريوم", blockchainBSC: "سلسلة BNB الذكية", blockchainPolygon: "بوليجون",
-    btnCopyText: "نسخ النص", btnCopied: "تم النسخ!"
+    btnCopyText: "نسخ النص", btnCopied: "تم النسخ!",
+    wrongNetwork: "شبكة خاطئة. يرجى التبديل إلى BSC.", switchToBSC: "التبديل إلى BSC",
+    walletNotInstalled: "لم يتم اكتشاف محفظة. يرجى تثبيت MetaMask أو الفتح من محفظتك المحمولة.", installMetaMask: "تثبيت MetaMask",
+    walletSelectTitle: "توصيل المحفظة", walletMobileDesc: "اختر محفظتك لفتح DRACMA في متصفحها المدمج.",
+    walletOpenInApp: "فتح في التطبيق", walletDesktopHint: "قم بتثبيت إضافة محفظة في متصفحك للاتصال.",
+    yourBalance: "رصيدك", btnBuyTokens: "شراء رموز $DRC", btnDisconnectWallet: "قطع الاتصال",
+    connectedTo: "متصل", networkBSC: "سلسلة BNB الذكية",
+    txApproving: "جاري الموافقة...", txApprovePending: "الموافقة معلقة...",
+    txBuying: "جاري الشراء...", txBuyPending: "الشراء معلق...",
+    txSuccess: "تم الشراء بنجاح!", txFailed: "فشلت المعاملة", txRejected: "تم رفض المعاملة من قبل المستخدم",
+    insufficientBalance: "رصيد غير كافي", belowMinPurchase: "المبلغ أقل من الحد الأدنى للشراء",
+    exceedsMaxPurchase: "المبلغ يتجاوز الحد الأقصى للشراء",
+    presaleEndedMsg: "انتهى البيع المسبق", presalePausedMsg: "البيع المسبق متوقف حاليًا",
+    viewOnBSCScan: "عرض على BSCScan", buyMore: "شراء المزيد",
+    approveStep: "الخطوة 1: الموافقة", buyStep: "الخطوة 2: الشراء",
+    txPleaseApprove: "يرجى الموافقة في MetaMask...", txPleaseConfirm: "يرجى التأكيد في MetaMask..."
   },
   ru: { 
     navVision: "Видение", navEcosystem: "Экосистема", navCrowdfunding: "P2P Краудфандинг", navMembership: "Членство", navPresale: "Предпродажа", navRoadmap: "Дорожная карта", navAmbassadors: "Амбассадоры", navContact: "Контакт",
@@ -405,8 +489,22 @@ export const TRANSLATIONS: LanguageData = {
     crowdfundingBtnViewProject: "Посмотреть детали и инвестировать", crowdfundingEstROILabel: "Ожидаемый ROI:",
     crowdfundingROISolar: "8-12% годовых", crowdfundingROIRealEstate: "7-10% доходность", crowdfundingROIAgriculture: "9-14% годовых",
     crowdfundingDisclaimer: "Примечание: Представленные проекты являются иллюстративными.", presaleGoalLabel: "Цель:",
-    blockchainEthereum: "Эфириум", blockchainBSC: "BNB Smart Chain", blockchainPolygon: "Polygon",
-    btnCopyText: "Скопировать текст", btnCopied: "Скопировано!"
+    btnCopyText: "Скопировать текст", btnCopied: "Скопировано!",
+    wrongNetwork: "Неверная сеть. Переключитесь на BSC.", switchToBSC: "Переключиться на BSC",
+    walletNotInstalled: "Кошелек не обнаружен. Установите MetaMask или откройте из мобильного кошелька.", installMetaMask: "Установить MetaMask",
+    walletSelectTitle: "Подключить кошелек", walletMobileDesc: "Выберите кошелек, чтобы открыть DRACMA во встроенном браузере.",
+    walletOpenInApp: "Открыть в приложении", walletDesktopHint: "Установите расширение кошелька в браузере для подключения.",
+    yourBalance: "Ваш баланс", btnBuyTokens: "Купить токены $DRC", btnDisconnectWallet: "Отключить",
+    connectedTo: "Подключено", networkBSC: "BNB Smart Chain",
+    txApproving: "Одобрение...", txApprovePending: "Ожидание одобрения...",
+    txBuying: "Покупка...", txBuyPending: "Ожидание покупки...",
+    txSuccess: "Покупка успешна!", txFailed: "Транзакция не удалась", txRejected: "Транзакция отклонена пользователем",
+    insufficientBalance: "Недостаточный баланс", belowMinPurchase: "Сумма ниже минимальной покупки",
+    exceedsMaxPurchase: "Сумма превышает максимальную покупку",
+    presaleEndedMsg: "Предпродажа завершена", presalePausedMsg: "Предпродажа приостановлена",
+    viewOnBSCScan: "Посмотреть на BSCScan", buyMore: "Купить ещё",
+    approveStep: "Шаг 1: Одобрить", buyStep: "Шаг 2: Купить",
+    txPleaseApprove: "Одобрите в MetaMask...", txPleaseConfirm: "Подтвердите в MetaMask..."
   },
   zh: { 
     navVision: "愿景", navEcosystem: "生态系统", navCrowdfunding: "P2P众筹", navMembership: "会员资格", navPresale: "预售", navRoadmap: "路线图", navAmbassadors: "大使", navContact: "联系方式",
@@ -430,8 +528,22 @@ export const TRANSLATIONS: LanguageData = {
     crowdfundingBtnViewProject: "查看详情并投资", crowdfundingEstROILabel: "预计投资回报率：",
     crowdfundingROISolar: "8-12% 年化收益率", crowdfundingROIRealEstate: "7-10% 收益率", crowdfundingROIAgriculture: "9-14% 年化收益率",
     crowdfundingDisclaimer: "注：所示项目仅供参考。", presaleGoalLabel: "目标：",
-    blockchainEthereum: "以太坊", blockchainBSC: "BNB智能链", blockchainPolygon: "Polygon",
-    btnCopyText: "复制文本", btnCopied: "已复制!"
+    btnCopyText: "复制文本", btnCopied: "已复制!",
+    wrongNetwork: "网络错误。请切换到BSC。", switchToBSC: "切换到BSC",
+    walletNotInstalled: "未检测到钱包。请安装MetaMask或从移动钱包打开。", installMetaMask: "安装MetaMask",
+    walletSelectTitle: "连接钱包", walletMobileDesc: "选择您的钱包以在其内置浏览器中打开DRACMA。",
+    walletOpenInApp: "在应用中打开", walletDesktopHint: "在浏览器中安装钱包扩展以连接。",
+    yourBalance: "您的余额", btnBuyTokens: "购买$DRC代币", btnDisconnectWallet: "断开连接",
+    connectedTo: "已连接", networkBSC: "BNB智能链",
+    txApproving: "审批中...", txApprovePending: "审批待确认...",
+    txBuying: "购买中...", txBuyPending: "购买待确认...",
+    txSuccess: "购买成功！", txFailed: "交易失败", txRejected: "用户拒绝交易",
+    insufficientBalance: "余额不足", belowMinPurchase: "金额低于最低购买额",
+    exceedsMaxPurchase: "金额超过最高购买额",
+    presaleEndedMsg: "预售已结束", presalePausedMsg: "预售当前暂停",
+    viewOnBSCScan: "在BSCScan上查看", buyMore: "继续购买",
+    approveStep: "步骤1：授权", buyStep: "步骤2：购买",
+    txPleaseApprove: "请在MetaMask中授权...", txPleaseConfirm: "请在MetaMask中确认..."
   }
 };
 

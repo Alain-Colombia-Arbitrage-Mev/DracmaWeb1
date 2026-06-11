@@ -5,14 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "api": "node server/index.mjs",
+    "dev:api": "node --watch server/index.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "^1.0.1",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "three": "^0.176.0",
-    "@google/genai": "^1.0.1"
+    "three": "^0.176.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

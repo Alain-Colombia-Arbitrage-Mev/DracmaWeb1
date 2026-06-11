@@ -1,10 +1,10 @@
 
 import React, { useContext } from 'react';
 import { LanguageContext, WhitepaperModalContext } from '../App';
+import { WalletContext } from '../contexts/WalletContext';
 import { FOOTER_SECTIONS_DATA, FOOTER_SOCIAL_LINKS } from '../constants';
 
 interface FooterProps {
-    onConnectWallet: () => void;
     onNavLinkClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
@@ -15,9 +15,10 @@ const FooterLogo: React.FC = () => (
     </svg>
 );
 
-export const Footer: React.FC<FooterProps> = ({ onConnectWallet, onNavLinkClick }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavLinkClick }) => {
   const { getTranslation } = useContext(LanguageContext);
   const { showWhitepaperModal } = useContext(WhitepaperModalContext);
+  const { wallet, connectWallet } = useContext(WalletContext);
 
   const handleFooterLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isWhitepaper?: boolean) => {
     if (isWhitepaper) {
@@ -38,7 +39,16 @@ export const Footer: React.FC<FooterProps> = ({ onConnectWallet, onNavLinkClick 
               DRACMA
             </a>
             <p className="text-brand-text-secondary/70 text-sm mb-6">{getTranslation('footerDesc')}</p>
-            <button onClick={onConnectWallet} className="btn-primary py-2.5 px-5 text-sm">{getTranslation('btnConnectWallet')}</button>
+            {wallet.isConnected ? (
+              <div className="flex items-center bg-brand-background/80 rounded-full py-1.5 px-3 border border-gray-200 shadow-sm inline-flex">
+                <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                <span className="text-xs font-mono text-brand-text-primary">
+                  {wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}
+                </span>
+              </div>
+            ) : (
+              <button onClick={connectWallet} className="btn-primary py-2.5 px-5 text-sm">{getTranslation('btnConnectWallet')}</button>
+            )}
           </div>
           {FOOTER_SECTIONS_DATA.map(section => (
             <div key={section.titleKey}>
@@ -46,8 +56,8 @@ export const Footer: React.FC<FooterProps> = ({ onConnectWallet, onNavLinkClick 
               <ul className="space-y-2 text-sm">
                 {section.links.map(link => (
                   <li key={link.key}>
-                    <a 
-                        href={link.href} 
+                    <a
+                        href={link.href}
                         onClick={(e) => handleFooterLinkClick(e, link.href, link.isWhitepaperModalTrigger)}
                         className={`text-brand-text-secondary/80 transition ${
                             section.titleColorClass === 'brand-accent-gold-text' ? 'hover:text-brand-accent-gold' :

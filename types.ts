@@ -23,28 +23,6 @@ export interface PresaleData {
   bonusTiers: BonusTier[];
 }
 
-export enum PresaleCurrency {
-  ETH = 'ETH',
-  USDC = 'USDC',
-  USDT = 'USDT',
-  // Potentially add more or filter based on blockchain
-}
-
-export enum PresaleBlockchain {
-  ETH = 'Ethereum',
-  BSC = 'BSC', // Binance Smart Chain
-  POLYGON = 'Polygon',
-  // Add more blockchains as needed
-}
-
-export interface BlockchainNetwork {
-  id: PresaleBlockchain;
-  nameKey: string; // Translation key for the name
-  iconClass: string; // e.g., 'fab fa-ethereum'
-  nativeCoin?: string; // e.g., 'ETH'
-  logoUrl?: string; // Optional direct URL for logo if not using FontAwesome
-}
-
 
 export interface NavLinkItem {
   href: string;
@@ -165,6 +143,53 @@ export interface AiModalInfo {
 
 export interface WhitepaperModalInfo {
   isOpen: boolean;
+}
+
+// === Web3 / Wallet Types ===
+
+export enum TransactionStatus {
+  IDLE = 'idle',
+  AWAITING_APPROVAL = 'awaiting_approval',
+  APPROVAL_PENDING = 'approval_pending',
+  AWAITING_PURCHASE = 'awaiting_purchase',
+  PURCHASE_PENDING = 'purchase_pending',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
+export enum PresalePaymentCurrency {
+  USDT = 'USDT',
+  USDC = 'USDC',
+  BNB = 'BNB',
+}
+
+export interface WalletState {
+  isConnected: boolean;
+  address: string | null;
+  chainId: number | null;
+  isCorrectNetwork: boolean;
+  balanceBNB: string | null;
+  balanceUSDT: string | null;
+  balanceUSDC: string | null;
+}
+
+export interface PresaleContractData {
+  tokenPrice: bigint | null;
+  tokenPriceFormatted: number;
+  totalTokensSold: bigint | null;
+  tokensAvailable: bigint | null;
+  presaleEnded: boolean;
+  paused: boolean;
+  minPurchaseStable: bigint | null;
+  maxPurchase: bigint | null;
+  usdtIndex: number;
+  usdcIndex: number;
+}
+
+export interface TransactionState {
+  status: TransactionStatus;
+  txHash: string | null;
+  errorMessage: string | null;
 }
 
 export interface CrowdfundingFeatureData {
