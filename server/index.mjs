@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import { getAddress, isAddress } from 'ethers';
+import { getAddress, isAddress } from 'viem';
 import { config } from './config.mjs';
 import { createNowPaymentsInvoice } from './nowPaymentsClient.mjs';
 import { distributeTokens } from './tokenDistributor.mjs';

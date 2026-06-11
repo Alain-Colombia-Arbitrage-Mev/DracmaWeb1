@@ -1,4 +1,12 @@
-import { BrowserProvider, Contract, parseUnits, formatUnits, formatEther } from 'ethers';
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  formatEther,
+  formatUnits,
+  parseUnits,
+} from 'viem';
+import type { Address, PublicClient, WalletClient } from 'viem';
 import PresaleABI from '../contracts/Presale.json';
 import IERC20ABI from '../contracts/IERC20.json';
 import {
@@ -61,24 +69,44 @@ export function isMetaMaskInstalled(): boolean {
   return hasWalletProvider();
 }
 
-export function getBrowserProvider(): BrowserProvider | null {
+export function getBrowserProvider(): PublicClient | null {
   if (!hasWalletProvider()) return null;
-  return new BrowserProvider(window.ethereum!);
+  return createPublicClient({
+    transport: custom(window.ethereum!),
+  });
+}
+
+function getWalletClient(): WalletClient | null {
+  if (!hasWalletProvider()) return null;
+  return createWalletClient({
+    transport: custom(window.ethereum!),
+  });
+}
+
+async function getConnectedAccount(): Promise<Address> {
+  const walletClient = getWalletClient();
+  if (!walletClient) throw new Error('NO_PROVIDER');
+
+  const [account] = await walletClient.getAddresses();
+  if (!account) throw new Error('NO_ACCOUNTS');
+  return account;
 }
 
 export async function connectWallet(): Promise<{ address: string; chainId: number }> {
   if (!hasWalletProvider()) {
     throw new Error('WALLET_NOT_INSTALLED');
   }
-  const provider = new BrowserProvider(window.ethereum!);
-  const accounts = await provider.send('eth_requestAccounts', []) as string[];
+  const walletClient = getWalletClient();
+  if (!walletClient) throw new Error('NO_PROVIDER');
+
+  const accounts = await walletClient.requestAddresses();
   if (!accounts || accounts.length === 0) {
     throw new Error('NO_ACCOUNTS');
   }
-  const network = await provider.getNetwork();
+  const chainId = await walletClient.getChainId();
   return {
     address: accounts[0],
-    chainId: Number(network.chainId),
+    chainId,
   };
 }
 
@@ -113,15 +141,19 @@ export function isCorrectNetwork(chainId: number): boolean {
 export async function getBNBBalance(address: string): Promise<string> {
   const provider = getBrowserProvider();
   if (!provider) return '0';
-  const balance = await provider.getBalance(address);
+  const balance = await provider.getBalance({ address: address as Address });
   return formatEther(balance);
 }
 
 export async function getERC20Balance(tokenAddress: string, userAddress: string): Promise<string> {
   const provider = getBrowserProvider();
   if (!provider) return '0';
-  const contract = new Contract(tokenAddress, IERC20ABI, provider);
-  const balance: bigint = await contract.balanceOf(userAddress);
+  const balance = await provider.readContract({
+    address: tokenAddress as Address,
+    abi: IERC20ABI,
+    functionName: 'balanceOf',
+    args: [userAddress as Address],
+  }) as bigint;
   return formatUnits(balance, STABLE_DECIMALS);
 }
 
@@ -136,8 +168,11 @@ export async function readPresaleStatus(): Promise<{
 }> {
   const provider = getBrowserProvider();
   if (!provider) throw new Error('NO_PROVIDER');
-  const contract = new Contract(PRESALE_CONTRACT_ADDRESS, PresaleABI, provider);
-  const result = await contract.getPresaleStatus();
+  const result = await provider.readContract({
+    address: PRESALE_CONTRACT_ADDRESS as Address,
+    abi: PresaleABI,
+    functionName: 'getPresaleStatus',
+  }) as readonly [bigint, bigint, bigint, boolean, bigint];
   return {
     tokensSold: result[0],
     tokensAvailable: result[1],
@@ -150,8 +185,11 @@ export async function readPresaleStatus(): Promise<{
 export async function readTokenPrice(): Promise<bigint> {
   const provider = getBrowserProvider();
   if (!provider) throw new Error('NO_PROVIDER');
-  const contract = new Contract(PRESALE_CONTRACT_ADDRESS, PresaleABI, provider);
-  return await contract.tokenPrice();
+  return await provider.readContract({
+    address: PRESALE_CONTRACT_ADDRESS as Address,
+    abi: PresaleABI,
+    functionName: 'tokenPrice',
+  }) as bigint;
 }
 
 export async function readContractConstants(): Promise<{
@@ -164,22 +202,45 @@ export async function readContractConstants(): Promise<{
 }> {
   const provider = getBrowserProvider();
   if (!provider) throw new Error('NO_PROVIDER');
-  const contract = new Contract(PRESALE_CONTRACT_ADDRESS, PresaleABI, provider);
   const [usdtIndex, usdcIndex, minPurchase, maxPurchase, paused, presaleEnded] = await Promise.all([
-    contract.USDT_INDEX(),
-    contract.USDC_INDEX(),
-    contract.MIN_PURCHASE_STABLE(),
-    contract.MAX_PURCHASE(),
-    contract.paused(),
-    contract.presaleEnded(),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'USDT_INDEX',
+    }),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'USDC_INDEX',
+    }),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'MIN_PURCHASE_STABLE',
+    }),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'MAX_PURCHASE',
+    }),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'paused',
+    }),
+    provider.readContract({
+      address: PRESALE_CONTRACT_ADDRESS as Address,
+      abi: PresaleABI,
+      functionName: 'presaleEnded',
+    }),
   ]);
   return {
     usdtIndex: Number(usdtIndex),
     usdcIndex: Number(usdcIndex),
-    minPurchase,
-    maxPurchase,
-    paused,
-    presaleEnded,
+    minPurchase: minPurchase as bigint,
+    maxPurchase: maxPurchase as bigint,
+    paused: paused as boolean,
+    presaleEnded: presaleEnded as boolean,
   };
 }
 
@@ -188,42 +249,63 @@ export async function readContractConstants(): Promise<{
 export async function checkAllowance(tokenAddress: string, ownerAddress: string): Promise<bigint> {
   const provider = getBrowserProvider();
   if (!provider) throw new Error('NO_PROVIDER');
-  const contract = new Contract(tokenAddress, IERC20ABI, provider);
-  return await contract.allowance(ownerAddress, PRESALE_CONTRACT_ADDRESS);
+  return await provider.readContract({
+    address: tokenAddress as Address,
+    abi: IERC20ABI,
+    functionName: 'allowance',
+    args: [ownerAddress as Address, PRESALE_CONTRACT_ADDRESS as Address],
+  }) as bigint;
 }
 
 export async function approveToken(tokenAddress: string, amount: bigint): Promise<string> {
   const provider = getBrowserProvider();
-  if (!provider) throw new Error('NO_PROVIDER');
-  const signer = await provider.getSigner();
-  const contract = new Contract(tokenAddress, IERC20ABI, signer);
-  const tx = await contract.approve(PRESALE_CONTRACT_ADDRESS, amount);
-  const receipt = await tx.wait();
-  return receipt.hash;
+  const walletClient = getWalletClient();
+  if (!provider || !walletClient) throw new Error('NO_PROVIDER');
+  const account = await getConnectedAccount();
+  const hash = await walletClient.writeContract({
+    account,
+    chain: null,
+    address: tokenAddress as Address,
+    abi: IERC20ABI,
+    functionName: 'approve',
+    args: [PRESALE_CONTRACT_ADDRESS as Address, amount],
+  });
+  await provider.waitForTransactionReceipt({ hash });
+  return hash;
 }
 
 // --- Purchase Functions ---
 
 export async function buyWithERC20(tokenIndex: number, amount: bigint): Promise<string> {
   const provider = getBrowserProvider();
-  if (!provider) throw new Error('NO_PROVIDER');
-  const signer = await provider.getSigner();
-  const contract = new Contract(PRESALE_CONTRACT_ADDRESS, PresaleABI, signer);
-  const tx = await contract.buyTokens(tokenIndex, amount);
-  const receipt = await tx.wait();
-  return receipt.hash;
+  const walletClient = getWalletClient();
+  if (!provider || !walletClient) throw new Error('NO_PROVIDER');
+  const account = await getConnectedAccount();
+  const hash = await walletClient.writeContract({
+    account,
+    chain: null,
+    address: PRESALE_CONTRACT_ADDRESS as Address,
+    abi: PresaleABI,
+    functionName: 'buyTokens',
+    args: [tokenIndex, amount],
+  });
+  await provider.waitForTransactionReceipt({ hash });
+  return hash;
 }
 
 export async function buyWithBNB(bnbAmountWei: bigint): Promise<string> {
   const provider = getBrowserProvider();
-  if (!provider) throw new Error('NO_PROVIDER');
-  const signer = await provider.getSigner();
-  const tx = await signer.sendTransaction({
-    to: PRESALE_CONTRACT_ADDRESS,
+  const walletClient = getWalletClient();
+  if (!provider || !walletClient) throw new Error('NO_PROVIDER');
+  const account = await getConnectedAccount();
+  const hash = await walletClient.sendTransaction({
+    account,
+    chain: null,
+    to: PRESALE_CONTRACT_ADDRESS as Address,
     value: bnbAmountWei,
   });
-  const receipt = await tx.wait();
-  return receipt!.hash;
+  await provider.waitForTransactionReceipt({ hash });
+  return hash;
 }
 
 // --- Utility ---

@@ -1,18 +1,36 @@
 import crypto from 'node:crypto';
-import { Contract, JsonRpcProvider, Wallet, isAddress, parseUnits } from 'ethers';
+import { createPublicClient, createWalletClient, http, isAddress, parseAbi, parseUnits } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { bsc } from 'viem/chains';
 import { config } from './config.mjs';
 
-const ERC20_ABI = [
+const ERC20_ABI = parseAbi([
   'function transfer(address to, uint256 amount) returns (bool)',
-];
+]);
 
-function getSigner() {
+function getClients() {
   if (!config.bscRpcUrl || !config.tokenDistributorPrivateKey) {
     return null;
   }
 
-  const provider = new JsonRpcProvider(config.bscRpcUrl);
-  return new Wallet(config.tokenDistributorPrivateKey, provider);
+  const privateKey = config.tokenDistributorPrivateKey.startsWith('0x')
+    ? config.tokenDistributorPrivateKey
+    : `0x${config.tokenDistributorPrivateKey}`;
+  const account = privateKeyToAccount(privateKey);
+  const transport = http(config.bscRpcUrl);
+
+  return {
+    account,
+    publicClient: createPublicClient({
+      chain: bsc,
+      transport,
+    }),
+    walletClient: createWalletClient({
+      account,
+      chain: bsc,
+      transport,
+    }),
+  };
 }
 
 function getDistributorAbi() {
@@ -20,9 +38,9 @@ function getDistributorAbi() {
     return JSON.parse(config.tokenDistributorAbiJson);
   }
 
-  return [
+  return parseAbi([
     `function ${config.tokenDistributorFunction}(address recipient, uint256 amount, string orderId)`,
-  ];
+  ]);
 }
 
 export function distributionIsConfigured() {
@@ -46,33 +64,41 @@ export async function distributeTokens({ walletAddress, tokenAmount, orderId }) 
     throw new Error('Invalid recipient wallet address.');
   }
 
-  const signer = getSigner();
-  if (!signer) {
+  const clients = getClients();
+  if (!clients) {
     throw new Error('Missing BSC signer configuration.');
   }
 
   const amount = parseUnits(String(tokenAmount), config.saleTokenDecimals);
 
   if (config.tokenDistributionMode === 'erc20-transfer') {
-    const token = new Contract(config.saleTokenAddress, ERC20_ABI, signer);
-    const tx = await token.transfer(walletAddress, amount);
-    const receipt = await tx.wait();
+    const txHash = await clients.walletClient.writeContract({
+      address: config.saleTokenAddress,
+      abi: ERC20_ABI,
+      functionName: 'transfer',
+      args: [walletAddress, amount],
+    });
+    await clients.publicClient.waitForTransactionReceipt({ hash: txHash });
 
     return {
       skipped: false,
       status: 'sent',
-      txHash: receipt?.hash || tx.hash,
+      txHash,
     };
   }
 
-  const distributor = new Contract(config.tokenDistributorContractAddress, getDistributorAbi(), signer);
-  const tx = await distributor[config.tokenDistributorFunction](walletAddress, amount, orderId);
-  const receipt = await tx.wait();
+  const txHash = await clients.walletClient.writeContract({
+    address: config.tokenDistributorContractAddress,
+    abi: getDistributorAbi(),
+    functionName: config.tokenDistributorFunction,
+    args: [walletAddress, amount, orderId],
+  });
+  await clients.publicClient.waitForTransactionReceipt({ hash: txHash });
 
   return {
     skipped: false,
     status: 'sent',
-    txHash: receipt?.hash || tx.hash,
+    txHash,
   };
 }
 
