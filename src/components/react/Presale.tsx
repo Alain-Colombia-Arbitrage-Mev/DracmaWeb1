@@ -1078,7 +1078,7 @@ function PresaleInner() {
                   <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
                     {isConnecting
                       ? <><i className="fas fa-spinner fa-spin mr-2.5"></i><span>{t('walletConnecting', 'Conectando...')}</span></>
-                      : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndConfirm')}</span></>
+                      : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndPayNowPayments', 'Conectar wallet y pagar con NOWPayments')}</span></>
                     }
                   </button>
                 )}

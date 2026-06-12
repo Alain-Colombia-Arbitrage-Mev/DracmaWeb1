@@ -22,6 +22,12 @@ test('primary purchase CTA creates a NOWPayments invoice', () => {
   assert.match(primaryCta, /parseFloat\(investmentAmount\) < 1(?!\d)/);
 });
 
+test('wallet connection CTA points users to NOWPayments', () => {
+  assert.doesNotMatch(source, /btnConnectAndConfirm/);
+  assert.match(source, /btnConnectAndPayNowPayments/);
+  assert.match(source, /Conectar wallet y pagar con NOWPayments/);
+});
+
 test('purchase form no longer exposes the direct on-chain buy flow', () => {
   assert.doesNotMatch(source, /const handlePurchase = useCallback/);
   assert.doesNotMatch(source, /buyTokens\(/);
