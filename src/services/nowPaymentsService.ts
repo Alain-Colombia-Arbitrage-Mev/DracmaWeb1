@@ -53,19 +53,10 @@ export interface NowPaymentsInvoiceResponse {
   status: string;
 }
 
-const productionApiBaseUrl = 'https://dracma-api-proxy.guardcolombia.workers.dev';
-
 function resolveApiBaseUrl() {
   const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   if (configuredApiBaseUrl) {
     return configuredApiBaseUrl.replace(/\/$/, '');
-  }
-
-  if (typeof window !== 'undefined') {
-    const { hostname } = window.location;
-    if (hostname === 'dracma.club' || hostname.endsWith('.dracma.club')) {
-      return productionApiBaseUrl;
-    }
   }
 
   return '';

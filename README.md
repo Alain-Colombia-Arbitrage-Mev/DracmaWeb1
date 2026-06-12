@@ -49,7 +49,8 @@ The backend in `server/` creates NOWPayments invoices, receives IPN webhooks, tr
 
 Key production values:
 
-- Webhook URL: `https://dracma.club/api/webhooks/nowpayments`
+- Current backend HTTPS origin: `https://32.196.242.92.sslip.io`
+- Preferred branded webhook after the Amplify rewrite is active: `https://dracma.club/api/webhooks/nowpayments`
 - Sale token: `0x8A9f07fdBc75144C9207373597136c6E280A872D`
 - Base price: `BASE_TOKEN_PRICE_USD=0.30`
 - Price step: `PRICE_STEP_TOKENS=100000`
@@ -64,7 +65,9 @@ Useful endpoints:
 - `POST /api/payments/nowpayments`
 - `POST /api/webhooks/nowpayments`
 
-Do not commit real NOWPayments, Cloudflare, SSH, or distributor private keys. Use `.env.example` as the template and keep real values in server/hosting secrets.
+Amplify Hosting must proxy `/api/<*>` to the HTTPS backend or set `VITE_API_BASE_URL` to the HTTPS backend. See `docs/amplify-nowpayments.md`.
+
+Do not commit real NOWPayments, SSH, AWS, or distributor private keys. Use `.env.example` as the template and keep real values in server/hosting secrets.
 
 ### Huff token distributor
 

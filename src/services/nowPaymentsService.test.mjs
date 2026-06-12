@@ -7,16 +7,17 @@ import { fileURLToPath } from 'node:url';
 const sourcePath = resolve(dirname(fileURLToPath(import.meta.url)), 'nowPaymentsService.ts');
 const source = readFileSync(sourcePath, 'utf8');
 
-test('dracma.club production frontend uses the HTTPS Worker API proxy by default', () => {
-  assert.match(source, /const productionApiBaseUrl = 'https:\/\/dracma-api-proxy\.guardcolombia\.workers\.dev'/);
-  assert.match(source, /hostname === 'dracma\.club'/);
-  assert.match(source, /hostname\.endsWith\('\.dracma\.club'\)/);
+test('frontend does not hard-code Cloudflare or another production API proxy', () => {
+  assert.doesNotMatch(source, /workers\.dev/);
+  assert.doesNotMatch(source, /dracma-api-proxy/);
+  assert.doesNotMatch(source, /hostname === 'dracma\.club'/);
 });
 
-test('explicit VITE_API_BASE_URL still overrides the production default', () => {
-  const configuredIndex = source.indexOf('import.meta.env.VITE_API_BASE_URL');
-  const productionHostCheckIndex = source.indexOf("hostname === 'dracma.club'");
+test('explicit VITE_API_BASE_URL overrides the same-origin Amplify proxy default', () => {
+  const configuredIndex = source.indexOf('const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL');
+  const defaultIndex = source.indexOf("return '';");
 
   assert.ok(configuredIndex >= 0, 'VITE_API_BASE_URL lookup not found');
-  assert.ok(productionHostCheckIndex > configuredIndex, 'configured API base URL must be checked first');
+  assert.ok(defaultIndex > configuredIndex, 'same-origin default must be used only after env lookup');
+  assert.match(source, /return configuredApiBaseUrl\.replace\(\/\\\/\$\/, ''\)/);
 });

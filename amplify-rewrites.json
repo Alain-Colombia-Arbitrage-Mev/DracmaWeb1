@@ -1,0 +1,8 @@
+[
+  {
+    "source": "/api/<*>",
+    "target": "https://32.196.242.92.sslip.io/api/<*>",
+    "status": "200",
+    "condition": null
+  }
+]
