@@ -8,9 +8,13 @@
     "dev:api": "node --watch server/index.mjs",
     "build": "astro build",
     "test:min-purchase": "node --test server/minPurchase.test.mjs",
+    "test:api-proxy": "node --test functions/apiProxy.test.mjs",
+    "test:worker-proxy": "node --test workers/dracma-api-proxy.test.mjs",
+    "test:nowpayments-service": "node --test src/services/nowPaymentsService.test.mjs",
     "test:no-ai-cta": "node --test src/components/no-ai-cta.test.mjs",
     "test:presale-nowpayments": "node --test src/components/react/Presale.nowpayments.test.mjs",
     "test:huff": "node --test contracts/test/TokenDistributor.huff.test.mjs",
+    "deploy:worker:api": "npx wrangler@latest deploy workers/dracma-api-proxy.js --name dracma-api-proxy --compatibility-date 2026-06-12",
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",
     "astro": "astro"
