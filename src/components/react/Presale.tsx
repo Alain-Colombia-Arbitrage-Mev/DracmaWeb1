@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useChainId, useConnect, useDisconnect, useConnectors, useSwitchChain } from 'wagmi';
 import { bsc } from 'wagmi/chains';
@@ -30,6 +30,24 @@ function getRandomItem<T>(arr: T[]): T {
 }
 
 const getBscScanTxUrl = (hash: string) => `https://bscscan.com/tx/${hash}`;
+
+function openNowPaymentsWindow() {
+  if (typeof window === 'undefined') return null;
+
+  const paymentWindow = window.open('about:blank', '_blank');
+  if (!paymentWindow) return null;
+
+  paymentWindow.opener = null;
+  paymentWindow.document.title = 'NOWPayments';
+  paymentWindow.document.body.innerHTML = `
+    <main style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 32px; color: #111827;">
+      <h1 style="font-size: 20px; margin: 0 0 8px;">Preparando checkout seguro...</h1>
+      <p style="margin: 0; color: #4b5563;">Confirma la red BSC si tu wallet lo solicita.</p>
+    </main>
+  `;
+
+  return paymentWindow;
+}
 
 // Memoized countdown so FOMO state changes don't re-render it
 const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDate: Date; t: (key: string, fallback?: string) => string }) {
@@ -570,6 +588,8 @@ function PresaleInner() {
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
   const [paymentCheckout, setPaymentCheckout] = useState<NowPaymentsInvoiceResponse | null>(null);
+  const [pendingNowPaymentsCheckout, setPendingNowPaymentsCheckout] = useState(false);
+  const pendingPaymentWindowRef = useRef<Window | null>(null);
 
   // FOMO state
   const [fomoNotification, setFomoNotification] = useState<{name: string; amount: number; country: string; time: string} | null>(null);
@@ -682,24 +702,13 @@ function PresaleInner() {
       return;
     }
 
+    setPendingNowPaymentsCheckout(false);
     setIsCreatingInvoice(true);
     setInvoiceError(null);
     setPaymentCheckout(null);
 
-    const paymentWindow = typeof window !== 'undefined'
-      ? window.open('about:blank', '_blank')
-      : null;
-
-    if (paymentWindow) {
-      paymentWindow.opener = null;
-      paymentWindow.document.title = 'NOWPayments';
-      paymentWindow.document.body.innerHTML = `
-        <main style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 32px; color: #111827;">
-          <h1 style="font-size: 20px; margin: 0 0 8px;">Preparando checkout seguro...</h1>
-          <p style="margin: 0; color: #4b5563;">Confirma la red BSC si tu wallet lo solicita.</p>
-        </main>
-      `;
-    }
+    const paymentWindow = pendingPaymentWindowRef.current || openNowPaymentsWindow();
+    pendingPaymentWindowRef.current = null;
 
     try {
       if (chainId !== bsc.id) {
@@ -730,6 +739,39 @@ function PresaleInner() {
       setIsCreatingInvoice(false);
     }
   }, [address, chainId, investmentAmount, switchChainAsync, totalTokensReceived]);
+
+  const handleStartNowPaymentsCheckout = useCallback(() => {
+    const amountUsd = parseFloat(investmentAmount) || 0;
+
+    if (amountUsd < 1 || totalTokensReceived <= 0) {
+      setInvoiceError('La compra minima es de $1 USD.');
+      return;
+    }
+
+    setInvoiceError(null);
+    setPaymentCheckout(null);
+
+    if (isConnected && address) {
+      handleNowPaymentsPurchase();
+      return;
+    }
+
+    pendingPaymentWindowRef.current = openNowPaymentsWindow();
+    setPendingNowPaymentsCheckout(true);
+    handleConnectWallet();
+  }, [
+    address,
+    handleConnectWallet,
+    handleNowPaymentsPurchase,
+    investmentAmount,
+    isConnected,
+    totalTokensReceived,
+  ]);
+
+  useEffect(() => {
+    if (!pendingNowPaymentsCheckout || !isConnected || !address) return;
+    handleNowPaymentsPurchase();
+  }, [address, handleNowPaymentsPurchase, isConnected, pendingNowPaymentsCheckout]);
 
   const overallProgress = (PRESALE_DATA.raisedUSD / PRESALE_DATA.targetUSD) * 100;
   const totalPresaleTokens = pricingState?.maxSaleTokens ?? PRESALE_DATA.totalPresaleTokens;
@@ -1075,7 +1117,7 @@ function PresaleInner() {
                     </div>
                   </div>
                 ) : (
-                  <button onClick={handleConnectWallet} disabled={isConnecting} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary">
+                  <button onClick={handleStartNowPaymentsCheckout} disabled={!investmentAmount || parseFloat(investmentAmount) < 1 || isConnecting || isCreatingInvoice} className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none">
                     {isConnecting
                       ? <><i className="fas fa-spinner fa-spin mr-2.5"></i><span>{t('walletConnecting', 'Conectando...')}</span></>
                       : <><i className="fas fa-wallet mr-2.5"></i><span>{t('btnConnectAndPayNowPayments', 'Conectar wallet y pagar con NOWPayments')}</span></>

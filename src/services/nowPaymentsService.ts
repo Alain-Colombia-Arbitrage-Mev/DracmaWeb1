@@ -53,6 +53,8 @@ export interface NowPaymentsInvoiceResponse {
   status: string;
 }
 
+const backendFallbackApiBaseUrl = 'https://32.196.242.92.sslip.io';
+
 function resolveApiBaseUrl() {
   const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   if (configuredApiBaseUrl) {
@@ -64,10 +66,24 @@ function resolveApiBaseUrl() {
 
 const apiBaseUrl = resolveApiBaseUrl();
 
+function buildApiUrl(path: string, baseUrl = apiBaseUrl) {
+  return `${baseUrl}${path}`;
+}
+
+async function fetchApi(path: string, init?: RequestInit) {
+  const response = await fetch(buildApiUrl(path), init);
+
+  if (apiBaseUrl || response.status !== 404) {
+    return response;
+  }
+
+  return fetch(buildApiUrl(path, backendFallbackApiBaseUrl), init);
+}
+
 export async function createNowPaymentsInvoice(
   input: CreateNowPaymentsInvoiceInput,
 ): Promise<NowPaymentsInvoiceResponse> {
-  const response = await fetch(`${apiBaseUrl}/api/payments/nowpayments`, {
+  const response = await fetchApi('/api/payments/nowpayments', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -86,7 +102,7 @@ export async function createNowPaymentsInvoice(
 }
 
 export async function getPresalePricing(): Promise<PricingState> {
-  const response = await fetch(`${apiBaseUrl}/api/presale/pricing`);
+  const response = await fetchApi('/api/presale/pricing');
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
@@ -98,7 +114,7 @@ export async function getPresalePricing(): Promise<PricingState> {
 }
 
 export async function getPresaleQuote(tokenAmount: number): Promise<PresaleQuote> {
-  const response = await fetch(`${apiBaseUrl}/api/presale/quote`, {
+  const response = await fetchApi('/api/presale/quote', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

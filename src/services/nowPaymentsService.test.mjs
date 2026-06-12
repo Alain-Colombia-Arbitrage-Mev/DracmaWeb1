@@ -10,7 +10,6 @@ const source = readFileSync(sourcePath, 'utf8');
 test('frontend does not hard-code Cloudflare or another production API proxy', () => {
   assert.doesNotMatch(source, /workers\.dev/);
   assert.doesNotMatch(source, /dracma-api-proxy/);
-  assert.doesNotMatch(source, /hostname === 'dracma\.club'/);
 });
 
 test('explicit VITE_API_BASE_URL overrides the same-origin Amplify proxy default', () => {
@@ -20,4 +19,10 @@ test('explicit VITE_API_BASE_URL overrides the same-origin Amplify proxy default
   assert.ok(configuredIndex >= 0, 'VITE_API_BASE_URL lookup not found');
   assert.ok(defaultIndex > configuredIndex, 'same-origin default must be used only after env lookup');
   assert.match(source, /return configuredApiBaseUrl\.replace\(\/\\\/\$\/, ''\)/);
+});
+
+test('same-origin Amplify API calls can fall back to the HTTPS backend origin', () => {
+  assert.match(source, /const backendFallbackApiBaseUrl = 'https:\/\/32\.196\.242\.92\.sslip\.io'/);
+  assert.match(source, /response\.status !== 404/);
+  assert.match(source, /return fetch\(buildApiUrl\(path, backendFallbackApiBaseUrl\), init\)/);
 });

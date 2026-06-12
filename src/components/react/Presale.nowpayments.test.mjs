@@ -28,6 +28,25 @@ test('wallet connection CTA points users to NOWPayments', () => {
   assert.match(source, /Conectar wallet y pagar con NOWPayments/);
 });
 
+test('disconnected purchase CTA starts a pending NOWPayments checkout', () => {
+  const disconnectedCta = buttonBlocks().find((block) =>
+    block.includes('btnConnectAndPayNowPayments'),
+  );
+
+  assert.ok(disconnectedCta, 'disconnected NOWPayments CTA not found');
+  assert.match(disconnectedCta, /onClick=\{handleStartNowPaymentsCheckout\}/);
+  assert.doesNotMatch(disconnectedCta, /onClick=\{handleConnectWallet\}/);
+});
+
+test('pending wallet connection continues into NOWPayments invoice creation', () => {
+  assert.match(source, /const \[pendingNowPaymentsCheckout, setPendingNowPaymentsCheckout\]/);
+  assert.match(source, /const pendingPaymentWindowRef = useRef<Window \| null>\(null\)/);
+  assert.match(source, /setPendingNowPaymentsCheckout\(true\)/);
+  assert.match(source, /pendingPaymentWindowRef\.current = openNowPaymentsWindow\(\)/);
+  assert.match(source, /if \(!pendingNowPaymentsCheckout \|\| !isConnected \|\| !address\) return;/);
+  assert.match(source, /handleNowPaymentsPurchase\(\)/);
+});
+
 test('purchase form no longer exposes the direct on-chain buy flow', () => {
   assert.doesNotMatch(source, /const handlePurchase = useCallback/);
   assert.doesNotMatch(source, /buyTokens\(/);
@@ -35,10 +54,11 @@ test('purchase form no longer exposes the direct on-chain buy flow', () => {
 
 test('NOWPayments checkout window is opened before the async invoice call', () => {
   const handler = source.match(/const handleNowPaymentsPurchase = useCallback\(async \(\) => \{([\s\S]*?)\n  \}, \[/)?.[1] ?? '';
-  const openIndex = handler.indexOf("window.open('about:blank'");
+  const openIndex = handler.indexOf('openNowPaymentsWindow()');
   const invoiceIndex = handler.indexOf('await createNowPaymentsInvoice');
 
   assert.ok(openIndex >= 0, 'checkout popup is not opened synchronously');
   assert.ok(invoiceIndex > openIndex, 'invoice call must happen after popup creation');
+  assert.match(source, /window\.open\('about:blank', '_blank'\)/);
   assert.match(handler, /paymentWindow\.location\.href = checkout\.invoiceUrl/);
 });

@@ -65,7 +65,7 @@ Useful endpoints:
 - `POST /api/payments/nowpayments`
 - `POST /api/webhooks/nowpayments`
 
-Amplify Hosting must proxy `/api/<*>` to the HTTPS backend or set `VITE_API_BASE_URL` to the HTTPS backend. See `docs/amplify-nowpayments.md`.
+Amplify Hosting should proxy `/api/<*>` to the HTTPS backend or set `VITE_API_BASE_URL` to the HTTPS backend. The frontend falls back to the HTTPS backend when same-origin `/api` returns `404`, so NOWPayments can still open while Amplify rewrites are being applied. See `docs/amplify-nowpayments.md`.
 
 Do not commit real NOWPayments, SSH, AWS, or distributor private keys. Use `.env.example` as the template and keep real values in server/hosting secrets.
 

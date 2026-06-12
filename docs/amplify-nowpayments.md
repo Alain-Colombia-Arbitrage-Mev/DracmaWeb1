@@ -17,6 +17,8 @@ In Amplify Console, open the app, then go to **Hosting > Rewrites and redirects*
 
 Keep `VITE_API_BASE_URL` empty for the branch. The frontend will call `/api/payments/nowpayments`, and Amplify will proxy it to the HTTPS backend.
 
+The frontend also has a defensive fallback to `https://32.196.242.92.sslip.io` when the same-origin `/api` route returns `404`. This keeps NOWPayments usable while the Amplify rewrite is missing or still deploying.
+
 Validate after deployment:
 
 ```bash
