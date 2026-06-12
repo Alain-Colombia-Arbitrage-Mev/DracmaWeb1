@@ -7,6 +7,7 @@
     "api": "node server/index.mjs",
     "dev:api": "node --watch server/index.mjs",
     "build": "astro build",
+    "test:presale-nowpayments": "node --test src/components/react/Presale.nowpayments.test.mjs",
     "test:huff": "node --test contracts/test/TokenDistributor.huff.test.mjs",
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",

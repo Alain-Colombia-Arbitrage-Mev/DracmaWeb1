@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useStore } from '@nanostores/react';
-import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
+import { useAccount, useChainId, useConnect, useDisconnect, useConnectors, useSwitchChain } from 'wagmi';
+import { bsc } from 'wagmi/chains';
 import { formatUnits } from 'viem';
 import { $currentLang, $translations, showAiModal } from '../../stores/appStore';
-import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BLOCKCHAIN_NETWORKS } from '../../data/constants';
-import { PresaleCurrency, PresaleBlockchain } from '../../types';
+import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA } from '../../data/constants';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
 import { useVesting, type ClaimStep } from '../../hooks/useVesting';
@@ -545,17 +545,17 @@ function PresaleInner() {
   const t = useCallback((key: string, fallback?: string) => translations[key] || fallback || key, [translations]);
 
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const { connect, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const connectors = useConnectors();
+  const { switchChainAsync } = useSwitchChain();
 
   // Presale contract hook
   const {
-    userBalance,
     txStep,
     txHash,
     errorMessage,
-    buyTokens,
     reset: resetTx,
   } = usePresale();
 
@@ -563,11 +563,9 @@ function PresaleInner() {
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : '';
 
-  const [selectedCurrency, setSelectedCurrency] = useState<PresaleCurrency>(PresaleCurrency.USDT);
   const [investmentAmount, setInvestmentAmount] = useState<string>('');
   const [totalTokensReceived, setTotalTokensReceived] = useState<number>(0);
   const [hoveredDonut, setHoveredDonut] = useState<string | null>(null);
-  const [lastPurchaseDetails, setLastPurchaseDetails] = useState<PurchaseDetails | null>(null);
   const [pricingState, setPricingState] = useState<PricingState | null>(null);
   const [pricingError, setPricingError] = useState<string | null>(null);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
@@ -644,8 +642,8 @@ function PresaleInner() {
 
   useEffect(() => { calculateTokens(); }, [calculateTokens]);
 
-  const handlePresetAmount = (amount: number | 'MAX') => {
-    setInvestmentAmount(amount === 'MAX' ? '10000' : String(amount));
+  const handlePresetAmount = (amount: number) => {
+    setInvestmentAmount(String(amount));
     setInvoiceError(null);
     setPaymentCheckout(null);
   };
@@ -682,48 +680,67 @@ function PresaleInner() {
     }
   }, [connect, connectors]);
 
-  // Handle purchase — calls approve + buyTokens on-chain
-  const handlePurchase = useCallback(() => {
-    const amount = parseFloat(investmentAmount) || 0;
-    if (amount <= 0) return;
-    // Capture purchase details for the success popup
-    setLastPurchaseDetails({
-      amount: investmentAmount,
-      currency: selectedCurrency,
-      totalTokens: totalTokensReceived,
-    });
-    buyTokens(selectedCurrency, investmentAmount);
-  }, [investmentAmount, selectedCurrency, buyTokens, totalTokensReceived]);
-
   const handleNowPaymentsPurchase = useCallback(async () => {
-    if (!address || totalTokensReceived <= 0) return;
+    const amountUsd = parseFloat(investmentAmount) || 0;
+
+    if (!address || totalTokensReceived <= 0) {
+      setInvoiceError('Conecta tu wallet BSC e ingresa un monto valido.');
+      return;
+    }
+
+    if (amountUsd < 100) {
+      setInvoiceError('La compra minima es de $100 USD.');
+      return;
+    }
 
     setIsCreatingInvoice(true);
     setInvoiceError(null);
     setPaymentCheckout(null);
 
+    const paymentWindow = typeof window !== 'undefined'
+      ? window.open('about:blank', '_blank')
+      : null;
+
+    if (paymentWindow) {
+      paymentWindow.opener = null;
+      paymentWindow.document.title = 'NOWPayments';
+      paymentWindow.document.body.innerHTML = `
+        <main style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 32px; color: #111827;">
+          <h1 style="font-size: 20px; margin: 0 0 8px;">Preparando checkout seguro...</h1>
+          <p style="margin: 0; color: #4b5563;">Confirma la red BSC si tu wallet lo solicita.</p>
+        </main>
+      `;
+    }
+
     try {
+      if (chainId !== bsc.id) {
+        await switchChainAsync({ chainId: bsc.id });
+      }
+
       const checkout = await createNowPaymentsInvoice({
         walletAddress: address,
         tokenAmount: totalTokensReceived,
       });
+
+      if (!checkout.invoiceUrl) {
+        throw new Error('NOWPayments no devolvio URL de checkout.');
+      }
+
       setPaymentCheckout(checkout);
-      if (checkout.invoiceUrl) {
+      if (paymentWindow) {
+        paymentWindow.location.href = checkout.invoiceUrl;
+      } else if (typeof window !== 'undefined') {
         window.open(checkout.invoiceUrl, '_blank', 'noopener,noreferrer');
       }
     } catch (error) {
+      if (paymentWindow && !paymentWindow.closed) {
+        paymentWindow.close();
+      }
       setInvoiceError(error instanceof Error ? error.message : 'No se pudo crear el pago.');
     } finally {
       setIsCreatingInvoice(false);
     }
-  }, [address, totalTokensReceived]);
-
-  const getCurrencyLogo = (currency: PresaleCurrency) => {
-    switch (currency) {
-      case PresaleCurrency.USDC: return 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=032';
-      case PresaleCurrency.USDT: return 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=032';
-    }
-  };
+  }, [address, chainId, investmentAmount, switchChainAsync, totalTokensReceived]);
 
   const overallProgress = (PRESALE_DATA.raisedUSD / PRESALE_DATA.targetUSD) * 100;
   const totalPresaleTokens = pricingState?.maxSaleTokens ?? PRESALE_DATA.totalPresaleTokens;
@@ -733,11 +750,6 @@ function PresaleInner() {
   const tokensAvailable = pricingState?.tokensAvailable ?? Math.max(totalPresaleTokens - tokensAllocated, 0);
   const tokensProgress = totalPresaleTokens > 0 ? (tokensAllocated / totalPresaleTokens) * 100 : 0;
 
-  // Format user balance for display
-  const formattedBalance = userBalance !== undefined
-    ? parseFloat(formatUnits(userBalance, 18)).toLocaleString(undefined, { maximumFractionDigits: 2 })
-    : null;
-
   return (
     <section id="presale" className="py-16 bg-brand-background relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-[0.03]" style={{backgroundImage: "repeating-linear-gradient(45deg, rgba(99,102,241,0.06), rgba(99,102,241,0.06) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(139,92,246,0.04), rgba(139,92,246,0.04) 1px, transparent 1px, transparent 15px)", animation: "backgroundGridScroll 80s linear infinite"}}></div>
@@ -745,7 +757,7 @@ function PresaleInner() {
       <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
 
       {/* Transaction Status Overlay */}
-      <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} purchaseDetails={lastPurchaseDetails} />
+      <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} purchaseDetails={null} />
 
       {/* FOMO Notification Toast */}
       <div role="status" aria-live="polite" className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
@@ -936,27 +948,24 @@ function PresaleInner() {
                 </div>
               </div>
 
-              {/* Currency */}
+              {/* Payment gateway */}
               <div>
-                <label className="presale-step-label">{t('presaleSelectPayment')}</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.values(PresaleCurrency).map(currency => (
-                      <button
-                        key={currency}
-                        onClick={() => setSelectedCurrency(currency)}
-                        className={`payment-method-btn ${selectedCurrency === currency ? 'active' : ''}`}
-                      >
-                        {selectedCurrency === currency && <i className="fas fa-check-circle text-brand-primary animated-check mr-1.5"></i>}
-                        <img src={getCurrencyLogo(currency)} className="h-6 mr-1.5" alt={`${currency} logo`}/>
-                        <span className="text-sm font-medium text-brand-text-primary">{currency}</span>
-                      </button>
-                  ))}
+                <label className="presale-step-label">{t('presaleSelectPayment', '1. Metodo de pago:')}</label>
+                <div className="rounded-lg px-4 py-3 flex items-center gap-3" style={{ background: 'var(--th-surface-raised)', border: '1px solid var(--th-border)' }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'var(--th-primary-muted)' }}>
+                    <i className="fas fa-coins text-brand-primary"></i>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-brand-text-primary">NOWPayments</p>
+                    <p className="text-xs text-brand-text-secondary/70">{t('payWithNowPayments', 'Pagar con multiples criptomonedas')}</p>
+                  </div>
+                  <i className="fas fa-check-circle text-brand-secondary ml-auto"></i>
                 </div>
               </div>
 
               {/* Amount */}
               <div>
-                <label className="presale-step-label">{t('presaleEnterAmount')} ({selectedCurrency} on BSC):</label>
+                <label className="presale-step-label">{t('presaleEnterAmount', '2. Ingresa Monto de Inversion')} (USD):</label>
                 <div className="relative flex items-center">
                   <i className="fas fa-coins text-brand-text-secondary/50 absolute left-3.5 top-1/2 transform -translate-y-1/2 pointer-events-none text-lg"></i>
                   <input
@@ -974,29 +983,12 @@ function PresaleInner() {
                     placeholder="0.00"
                     aria-label={t('presaleEnterAmount', 'Investment amount')}
                   />
-                  <span className="absolute right-4 text-brand-text-secondary/60 font-mono text-sm">{selectedCurrency}</span>
+                  <span className="absolute right-4 text-brand-text-secondary/60 font-mono text-sm">USD</span>
                 </div>
 
-                {/* User balance */}
-                {isConnected && formattedBalance !== null && (
-                  <div className="flex items-center justify-between mt-1.5 px-1">
-                    <span className="text-xs text-brand-text-secondary/60 font-mono">
-                      {t('presaleBalance', 'Balance')}: {formattedBalance} {selectedCurrency}
-                    </span>
-                    {userBalance && userBalance > BigInt(0) && (
-                      <button
-                        onClick={() => setInvestmentAmount(formatUnits(userBalance, 18))}
-                        className="text-xs text-brand-primary hover:text-brand-secondary font-mono transition-colors"
-                      >
-                        MAX
-                      </button>
-                    )}
-                  </div>
-                )}
-
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
-                  {[100, 500, 1000, 'MAX' as const].map(val => (
-                    <button key={val} onClick={() => handlePresetAmount(val)} className="btn-preset-amount text-xs py-2">{val === 'MAX' ? t('btnMax') : `$${val}`}</button>
+                  {[100, 500, 1000, 5000].map(val => (
+                    <button key={val} onClick={() => handlePresetAmount(val)} className="btn-preset-amount text-xs py-2">${val}</button>
                   ))}
                 </div>
               </div>
@@ -1072,32 +1064,24 @@ function PresaleInner() {
                     </div>
 
                     {/* Min purchase warning */}
-                    {investmentAmount && parseFloat(investmentAmount) > 0 && parseFloat(investmentAmount) < 1 && (
+                    {investmentAmount && parseFloat(investmentAmount) > 0 && parseFloat(investmentAmount) < 100 && (
                       <p className="text-xs text-brand-accent-coral font-mono text-center">
                         <i className="fas fa-exclamation-triangle mr-1"></i>
-                        {t('presaleMinPurchaseWarning', 'Compra mínima: 1 ' + selectedCurrency)}
+                        {t('presaleMinPurchaseWarning', 'Compra minima: $100 USD')}
                       </p>
                     )}
 
                     <button
-                      onClick={handlePurchase}
-                      disabled={!investmentAmount || parseFloat(investmentAmount) < 1 || txStep !== 'idle'}
-                      className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
-                    >
-                      <i className="fas fa-paper-plane mr-2.5"></i>
-                      <span>
-                        {t('btnConfirmPurchase', 'Confirmar Compra')} — {totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA
-                      </span>
-                    </button>
-
-                    <button
                       onClick={handleNowPaymentsPurchase}
                       disabled={!investmentAmount || parseFloat(investmentAmount) < 100 || txStep !== 'idle' || isCreatingInvoice}
-                      className="w-full py-3 rounded-xl text-base font-semibold flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border-accent)', color: 'var(--th-primary)' }}
+                      className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
                     >
-                      <i className={`fas ${isCreatingInvoice ? 'fa-spinner fa-spin' : 'fa-coins'} mr-2.5`}></i>
-                      <span>{isCreatingInvoice ? t('creatingNowPayments', 'Creando pago...') : t('payWithNowPayments', 'Pagar con multiples criptomonedas')}</span>
+                      <i className={`fas ${isCreatingInvoice ? 'fa-spinner fa-spin' : 'fa-paper-plane'} mr-2.5`}></i>
+                      <span>
+                        {isCreatingInvoice
+                          ? t('creatingNowPayments', 'Creando pago...')
+                          : `${t('btnConfirmPurchase', 'Confirmar Compra')} — ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} $DRACMA`}
+                      </span>
                     </button>
 
                     <div className="flex items-center justify-center gap-4 text-[10px] text-brand-text-secondary/50 font-mono">
