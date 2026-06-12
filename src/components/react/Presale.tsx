@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { useAccount, useChainId, useConnect, useDisconnect, useConnectors, useSwitchChain } from 'wagmi';
 import { bsc } from 'wagmi/chains';
 import { formatUnits } from 'viem';
-import { $currentLang, $translations, showAiModal } from '../../stores/appStore';
+import { $translations } from '../../stores/appStore';
 import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA } from '../../data/constants';
 import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
@@ -540,7 +540,6 @@ function VestingClaimSection({ t }: { t: (key: string, fallback?: string) => str
 }
 
 function PresaleInner() {
-  const currentLang = useStore($currentLang);
   const translations = useStore($translations);
   const t = useCallback((key: string, fallback?: string) => translations[key] || fallback || key, [translations]);
 
@@ -646,16 +645,6 @@ function PresaleInner() {
     setInvestmentAmount(String(amount));
     setInvoiceError(null);
     setPaymentCheckout(null);
-  };
-
-  const handleAnalyzeInvestment = () => {
-    const amountUSD = parseFloat(investmentAmount) || 0;
-    if (amountUSD < 100) {
-      showAiModal('aiModalTitleInvestment', undefined, `<p class="text-warning-orange">${t('presaleMinInvestment')}</p>`);
-      return;
-    }
-    const prompt = `Como un analista financiero experto en Web3 y IA, evalúa brevemente una inversión de ${amountUSD} USD en la presale de DRACMA en la red BSC a $${effectivePrice.toFixed(2)} USD por token, que resulta en aproximadamente ${totalTokensReceived.toLocaleString(undefined, {maximumFractionDigits:0})} tokens $DRACMA (50% entrega inmediata, 50% vesting lineal 6 meses). DRACMA es un holding empresarial descentralizado con proyectos de agricultura, granjas solares para minería, app de empleo, wallet y chat seguro. Ofrece staking del 10% APR. Perspectiva concisa (2-3 frases) y optimista. Idioma: ${currentLang}.`;
-    showAiModal('aiModalTitleInvestment', prompt);
   };
 
   // Mobile-friendly wallet connection
@@ -1013,11 +1002,6 @@ function PresaleInner() {
                   <span>{Math.floor(totalTokensReceived / 2).toLocaleString()} $DRACMA</span>
                 </div>
               </div>
-
-              {/* AI button */}
-              <button onClick={handleAnalyzeInvestment} className="btn-ai-feature w-full">
-                <i className="fas fa-magic mr-2"></i> <span>{t('btnAnalyzeInvestment')}</span>
-              </button>
 
               {invoiceError && (
                 <div className="rounded-lg p-3 text-sm text-brand-accent-coral" style={{ background: 'var(--th-danger-muted)', border: '1px solid var(--th-border)' }}>

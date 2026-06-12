@@ -83,42 +83,36 @@ export const ECOSYSTEM_CARDS_DATA: EcosystemCardData[] = [
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard1Title',
     descKey: 'ecoCard1Desc',
-    aiButtonKey: 'btnExplainAI',
   },
   {
     iconClass: 'fas fa-microchip',
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard2Title',
     descKey: 'ecoCard2Desc',
-    aiButtonKey: 'btnExplainAI',
   },
   {
     iconClass: 'fas fa-solar-panel',
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard3Title',
     descKey: 'ecoCard3Desc',
-    aiButtonKey: 'btnExplainAI',
   },
   {
     iconClass: 'fas fa-briefcase',
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard4Title',
     descKey: 'ecoCard4Desc',
-    aiButtonKey: 'btnExplainAI',
   },
   {
     iconClass: 'fas fa-wallet',
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard5Title',
     descKey: 'ecoCard5Desc',
-    aiButtonKey: 'btnExplainAI',
   },
   {
     iconClass: 'fas fa-comment-dots',
     colorClass: 'eco-icon-color',
     titleKey: 'ecoCard6Title',
     descKey: 'ecoCard6Desc',
-    aiButtonKey: 'btnExplainAI',
   },
 ];
 

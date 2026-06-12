@@ -1,7 +1,6 @@
 ---
 import { getTranslationsForLang } from '../../i18n/utils';
 import { ECOSYSTEM_CARDS_DATA } from '../../data/constants';
-import AiButton from '../react/AiButton.tsx';
 
 interface Props {
   lang: string;
@@ -34,14 +33,6 @@ const t = getTranslationsForLang(lang);
           <p class="text-brand-text-secondary text-sm mb-3">
             {t[card.descKey] || card.descKey}
           </p>
-          <AiButton
-            client:visible
-            titleKey="aiModalTitleEcosystem"
-            promptTemplate={`Explica de forma sencilla la importancia de '${t[card.titleKey] || card.titleKey}' (${t[card.descKey] || ''}) dentro del ecosistema DRACMA en 2-3 frases. Idioma: {lang}.`}
-            buttonTextKey={card.aiButtonKey}
-            iconClass="fas fa-robot"
-            className="btn-ai-feature-small"
-          />
         </div>
       ))}
     </div>

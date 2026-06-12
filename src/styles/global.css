@@ -371,28 +371,6 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
   background: var(--th-primary-muted);
 }
 
-.btn-ai-feature {
-  @apply mt-4 w-full text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 text-sm;
-  font-family: 'Inter', sans-serif;
-  background: var(--th-primary);
-}
-.btn-ai-feature:hover {
-  @apply brightness-110 -translate-y-px;
-  background: var(--th-primary-hover);
-  box-shadow: var(--th-shadow-glow-primary);
-}
-
-.btn-ai-feature-small {
-  @apply mt-3 w-auto text-white font-medium py-2 px-4 rounded-md transition-all duration-200 text-xs;
-  font-family: 'Inter', sans-serif;
-  background: var(--th-primary);
-  opacity: 0.9;
-}
-.btn-ai-feature-small:hover {
-  @apply brightness-110 -translate-y-px;
-  opacity: 1;
-}
-
 .btn-preset-amount {
   @apply rounded-lg transition-all duration-150 font-mono py-2 text-sm;
   background: var(--th-surface);
@@ -1024,8 +1002,6 @@ body.lang-ar #language-dropdown-mobile { right: 0; left: auto; }
 
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible,
-.btn-ai-feature:focus-visible,
-.btn-ai-feature-small:focus-visible,
 .btn-preset-amount:focus-visible {
   outline: 2px solid var(--th-primary);
   outline-offset: 2px;

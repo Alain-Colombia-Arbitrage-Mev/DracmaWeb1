@@ -44,7 +44,6 @@ export interface EcosystemCardData {
   colorClass: string;
   titleKey: string;
   descKey: string;
-  aiButtonKey: string;
 }
 
 export interface CountdownDigits {
