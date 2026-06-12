@@ -677,8 +677,8 @@ function PresaleInner() {
       return;
     }
 
-    if (amountUsd < 100) {
-      setInvoiceError('La compra minima es de $100 USD.');
+    if (amountUsd < 1) {
+      setInvoiceError('La compra minima es de $1 USD.');
       return;
     }
 
@@ -976,7 +976,7 @@ function PresaleInner() {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
-                  {[100, 500, 1000, 5000].map(val => (
+                  {[1, 10, 50, 100].map(val => (
                     <button key={val} onClick={() => handlePresetAmount(val)} className="btn-preset-amount text-xs py-2">${val}</button>
                   ))}
                 </div>
@@ -1048,16 +1048,16 @@ function PresaleInner() {
                     </div>
 
                     {/* Min purchase warning */}
-                    {investmentAmount && parseFloat(investmentAmount) > 0 && parseFloat(investmentAmount) < 100 && (
+                    {investmentAmount && parseFloat(investmentAmount) > 0 && parseFloat(investmentAmount) < 1 && (
                       <p className="text-xs text-brand-accent-coral font-mono text-center">
                         <i className="fas fa-exclamation-triangle mr-1"></i>
-                        {t('presaleMinPurchaseWarning', 'Compra minima: $100 USD')}
+                        {t('presaleMinPurchaseWarning', 'Compra minima: $1 USD')}
                       </p>
                     )}
 
                     <button
                       onClick={handleNowPaymentsPurchase}
-                      disabled={!investmentAmount || parseFloat(investmentAmount) < 100 || txStep !== 'idle' || isCreatingInvoice}
+                      disabled={!investmentAmount || parseFloat(investmentAmount) < 1 || txStep !== 'idle' || isCreatingInvoice}
                       className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
                     >
                       <i className={`fas ${isCreatingInvoice ? 'fa-spinner fa-spin' : 'fa-paper-plane'} mr-2.5`}></i>

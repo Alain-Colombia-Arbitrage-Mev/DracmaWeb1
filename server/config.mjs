@@ -32,7 +32,7 @@ export const config = {
   priceStepIncreaseRate: toNumber(process.env.PRICE_STEP_INCREASE_RATE, 0.10),
   quoteHoldMinutes: toInteger(process.env.QUOTE_HOLD_MINUTES, 60),
   maxSaleTokens: toNumber(process.env.MAX_SALE_TOKENS || process.env.SALE_TOKEN_SUPPLY, 400000000),
-  minPurchaseUsd: toNumber(process.env.MIN_PURCHASE_USD, 100),
+  minPurchaseUsd: toNumber(process.env.MIN_PURCHASE_USD, 1),
   bscRpcUrl: process.env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org/',
   tokenDistributorPrivateKey: process.env.TOKEN_DISTRIBUTOR_PRIVATE_KEY || '',
   tokenDistributionMode: process.env.TOKEN_DISTRIBUTION_MODE || 'disabled',

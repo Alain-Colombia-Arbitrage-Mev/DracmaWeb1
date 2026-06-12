@@ -19,7 +19,7 @@ test('primary purchase CTA creates a NOWPayments invoice', () => {
   assert.ok(primaryCta, 'primary purchase CTA not found');
   assert.match(primaryCta, /onClick=\{handleNowPaymentsPurchase\}/);
   assert.doesNotMatch(primaryCta, /onClick=\{handlePurchase\}/);
-  assert.match(primaryCta, /parseFloat\(investmentAmount\) < 100/);
+  assert.match(primaryCta, /parseFloat\(investmentAmount\) < 1(?!\d)/);
 });
 
 test('purchase form no longer exposes the direct on-chain buy flow', () => {

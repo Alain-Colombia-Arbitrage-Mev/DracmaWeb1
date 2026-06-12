@@ -7,6 +7,7 @@
     "api": "node server/index.mjs",
     "dev:api": "node --watch server/index.mjs",
     "build": "astro build",
+    "test:min-purchase": "node --test server/minPurchase.test.mjs",
     "test:no-ai-cta": "node --test src/components/no-ai-cta.test.mjs",
     "test:presale-nowpayments": "node --test src/components/react/Presale.nowpayments.test.mjs",
     "test:huff": "node --test contracts/test/TokenDistributor.huff.test.mjs",
