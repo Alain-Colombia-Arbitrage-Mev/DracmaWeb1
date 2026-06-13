@@ -12,6 +12,7 @@
     "test:nowpayments-service": "node --test src/services/nowPaymentsService.test.mjs",
     "test:no-ai-cta": "node --test src/components/no-ai-cta.test.mjs",
     "test:presale-nowpayments": "node --test src/components/react/Presale.nowpayments.test.mjs",
+    "test:recipient-wallet": "node --test server/presaleRecipientWallet.test.mjs",
     "test:huff": "node --test contracts/test/TokenDistributor.huff.test.mjs",
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",

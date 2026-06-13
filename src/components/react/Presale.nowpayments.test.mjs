@@ -13,38 +13,29 @@ function buttonBlocks() {
 
 test('primary purchase CTA creates a NOWPayments invoice', () => {
   const primaryCta = buttonBlocks().find((block) =>
-    block.includes('btn-primary') && block.includes('btnConfirmPurchase'),
+    block.includes('btn-primary') && block.includes('Pagar usando crypto'),
   );
 
   assert.ok(primaryCta, 'primary purchase CTA not found');
   assert.match(primaryCta, /onClick=\{handleNowPaymentsPurchase\}/);
   assert.doesNotMatch(primaryCta, /onClick=\{handlePurchase\}/);
-  assert.match(primaryCta, /parseFloat\(investmentAmount\) < 1(?!\d)/);
+  assert.match(primaryCta, /disabled=\{!canCreateCryptoPayment\}/);
 });
 
-test('wallet connection CTA points users to NOWPayments', () => {
+test('purchase CTA uses crypto payment copy instead of wallet connection copy', () => {
   assert.doesNotMatch(source, /btnConnectAndConfirm/);
-  assert.match(source, /btnConnectAndPayNowPayments/);
-  assert.match(source, /Conectar wallet y pagar con NOWPayments/);
+  assert.doesNotMatch(source, /Conectar wallet y pagar con NOWPayments/);
+  assert.match(source, /Pagar usando crypto/);
 });
 
-test('disconnected purchase CTA starts a pending NOWPayments checkout', () => {
-  const disconnectedCta = buttonBlocks().find((block) =>
-    block.includes('btnConnectAndPayNowPayments'),
-  );
-
-  assert.ok(disconnectedCta, 'disconnected NOWPayments CTA not found');
-  assert.match(disconnectedCta, /onClick=\{handleStartNowPaymentsCheckout\}/);
-  assert.doesNotMatch(disconnectedCta, /onClick=\{handleConnectWallet\}/);
-});
-
-test('pending wallet connection continues into NOWPayments invoice creation', () => {
-  assert.match(source, /const \[pendingNowPaymentsCheckout, setPendingNowPaymentsCheckout\]/);
-  assert.match(source, /const pendingPaymentWindowRef = useRef<Window \| null>\(null\)/);
-  assert.match(source, /setPendingNowPaymentsCheckout\(true\)/);
-  assert.match(source, /pendingPaymentWindowRef\.current = openNowPaymentsWindow\(\)/);
-  assert.match(source, /if \(!pendingNowPaymentsCheckout \|\| !isConnected \|\| !address\) return;/);
-  assert.match(source, /handleNowPaymentsPurchase\(\)/);
+test('crypto checkout collects recipient wallet and does not require wallet connection', () => {
+  assert.match(source, /recipientWalletAddress/);
+  assert.match(source, /isRecipientWalletValid/);
+  assert.match(source, /recipientWalletAddress:\s*normalizedRecipientWalletAddress/);
+  assert.match(source, /walletAddress:\s*normalizedCheckoutWalletAddress/);
+  assert.doesNotMatch(source, /pendingNowPaymentsCheckout/);
+  assert.doesNotMatch(source, /handleConnectWallet\(\)/);
+  assert.doesNotMatch(source, /switchChainAsync\(\{ chainId: bsc\.id \}\)/);
 });
 
 test('purchase form no longer exposes the direct on-chain buy flow', () => {
@@ -61,4 +52,14 @@ test('NOWPayments checkout window is opened before the async invoice call', () =
   assert.ok(invoiceIndex > openIndex, 'invoice call must happen after popup creation');
   assert.match(source, /window\.open\('about:blank', '_blank'\)/);
   assert.match(handler, /paymentWindow\.location\.href = checkout\.invoiceUrl/);
+});
+
+test('presale shows post-payment status and distribution proof', () => {
+  assert.match(source, /getNowPaymentsPayment/);
+  assert.match(source, /trackedOrderId/);
+  assert.match(source, /isDistributionPopupOpen/);
+  assert.match(source, /Hash de envio/);
+  assert.match(source, /Ver envio en BscScan/);
+  assert.match(source, /role="dialog"/);
+  assert.match(source, /aria-modal="true"/);
 });

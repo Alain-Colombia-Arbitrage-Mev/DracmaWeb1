@@ -26,3 +26,11 @@ test('same-origin Amplify API calls can fall back to the HTTPS backend origin', 
   assert.match(source, /response\.status !== 404/);
   assert.match(source, /return fetch\(buildApiUrl\(path, backendFallbackApiBaseUrl\), init\)/);
 });
+
+test('frontend NOWPayments service exposes order status polling with distribution tx hash', () => {
+  assert.match(source, /export interface NowPaymentsPaymentStatus/);
+  assert.match(source, /distribution\?:\s*\{/);
+  assert.match(source, /txHash\?:\s*string/);
+  assert.match(source, /export async function getNowPaymentsPayment/);
+  assert.match(source, /\/api\/payments\/\$\{encodeURIComponent\(orderId\)\}/);
+});

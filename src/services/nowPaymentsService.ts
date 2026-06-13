@@ -1,5 +1,6 @@
 export interface CreateNowPaymentsInvoiceInput {
-  walletAddress: string;
+  walletAddress?: string;
+  recipientWalletAddress: string;
   tokenAmount: number;
 }
 
@@ -50,7 +51,29 @@ export interface NowPaymentsInvoiceResponse {
   tokenPriceUsd: number;
   quote: PresaleQuote;
   walletAddress: string;
+  recipientWalletAddress: string;
   status: string;
+}
+
+export interface NowPaymentsPaymentStatus {
+  orderId: string;
+  status: string;
+  nowPaymentsStatus: string | null;
+  priceAmount: number;
+  priceCurrency: string;
+  tokenAmount: number;
+  tokenPriceUsd: number;
+  quote: PresaleQuote;
+  walletAddress: string;
+  recipientWalletAddress: string;
+  distribution?: {
+    status?: string;
+    txHash?: string;
+    error?: string;
+    reason?: string;
+    attemptedAt?: string;
+  };
+  nowPaymentsInvoiceUrl?: string | null;
 }
 
 const backendFallbackApiBaseUrl = 'https://32.196.242.92.sslip.io';
@@ -111,6 +134,18 @@ export async function getPresalePricing(): Promise<PricingState> {
   }
 
   return payload as PricingState;
+}
+
+export async function getNowPaymentsPayment(orderId: string): Promise<NowPaymentsPaymentStatus> {
+  const response = await fetchApi(`/api/payments/${encodeURIComponent(orderId)}`);
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.error || 'No se pudo consultar el estado del pago.';
+    throw new Error(message);
+  }
+
+  return payload as NowPaymentsPaymentStatus;
 }
 
 export async function getPresaleQuote(tokenAmount: number): Promise<PresaleQuote> {

@@ -238,7 +238,7 @@ app.post('/api/webhooks/nowpayments', express.raw({ type: 'application/json', li
 
   try {
     const distribution = await distributeTokens({
-      walletAddress: record.walletAddress,
+      walletAddress: record.recipientWalletAddress || record.walletAddress,
       tokenAmount: record.tokenAmount,
       orderId,
     });
@@ -324,9 +324,15 @@ app.post('/api/payments/nowpayments', async (req, res) => {
 
   try {
     const walletAddress = String(req.body?.walletAddress || '').trim();
+    const recipientWalletAddress = String(req.body?.recipientWalletAddress || req.body?.recipientWallet || '').trim();
     const tokenAmount = Number(req.body?.tokenAmount);
 
-    if (!isAddress(walletAddress)) {
+    if (!isAddress(recipientWalletAddress)) {
+      res.status(400).json({ error: 'Ingresa una wallet BSC valida para recibir los tokens.' });
+      return;
+    }
+
+    if (walletAddress && !isAddress(walletAddress)) {
       res.status(400).json({ error: 'La direccion de wallet BSC no es valida.' });
       return;
     }
@@ -336,7 +342,10 @@ app.post('/api/payments/nowpayments', async (req, res) => {
       return;
     }
 
-    const normalizedWalletAddress = getAddress(walletAddress);
+    const normalizedRecipientWalletAddress = getAddress(recipientWalletAddress);
+    const normalizedWalletAddress = walletAddress
+      ? getAddress(walletAddress)
+      : normalizedRecipientWalletAddress;
     const reservation = await withPaymentStoreTransaction((store) => {
       const ledger = calculateTokenLedgerFromPayments(store.payments, {
         quoteHoldMinutes: config.quoteHoldMinutes,
@@ -356,6 +365,7 @@ app.post('/api/payments/nowpayments', async (req, res) => {
       const baseRecord = {
         orderId: nextOrderId,
         walletAddress: normalizedWalletAddress,
+        recipientWalletAddress: normalizedRecipientWalletAddress,
         tokenAmount: quote.tokenAmount,
         tokenPriceUsd: quote.averagePriceUsd,
         baseTokenPriceUsd: config.tokenPriceUsd,
@@ -399,6 +409,7 @@ app.post('/api/payments/nowpayments', async (req, res) => {
       invoice = await createNowPaymentsInvoice({
         orderId,
         walletAddress: normalizedWalletAddress,
+        recipientWalletAddress: normalizedRecipientWalletAddress,
         tokenAmount: reservation.quote.tokenAmount,
         priceAmount: reservation.priceAmount,
       });
@@ -432,6 +443,7 @@ app.post('/api/payments/nowpayments', async (req, res) => {
       tokenPriceUsd: reservation.quote.averagePriceUsd,
       quote: reservation.quote,
       walletAddress: normalizedWalletAddress,
+      recipientWalletAddress: normalizedRecipientWalletAddress,
       status: ORDER_STATES.INVOICE_CREATED,
     });
   } catch (error) {
@@ -464,6 +476,7 @@ app.get('/api/payments/:orderId', async (req, res) => {
     tokenPriceUsd: record.tokenPriceUsd,
     quote: record.quote,
     walletAddress: record.walletAddress,
+    recipientWalletAddress: record.recipientWalletAddress || record.walletAddress,
     distribution: record.distribution,
     nowPaymentsInvoiceUrl: record.nowPaymentsInvoiceUrl,
   });
