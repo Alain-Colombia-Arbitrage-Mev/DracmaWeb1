@@ -21,7 +21,7 @@ export const STABLE_DECIMALS = 18;
 export const BSCSCAN_TX_URL = 'https://bscscan.com/tx/';
 export const BSCSCAN_ADDRESS_URL = 'https://bscscan.com/address/';
 
-export const TOKEN_PRICE = 0.10;
+export const TOKEN_PRICE = 0.12;
 
 export const PRESALE_DATA: PresaleData = {
     targetUSD: 80000000,

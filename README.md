@@ -57,7 +57,7 @@ Para que NOWPayments pueda llamar el webhook, abre en AWS/Security Group el inbo
 - `NOWPAYMENTS_API_KEY`: clave privada de API. Solo servidor.
 - `NOWPAYMENTS_IPN_SECRET`: secreto para verificar `x-nowpayments-sig`.
 - `NOWPAYMENTS_IPN_CALLBACK_URL`: URL publica del webhook `/api/webhooks/nowpayments`.
-- `BASE_TOKEN_PRICE_USD`: precio inicial por token. Valor actual: `0.10`.
+- `BASE_TOKEN_PRICE_USD`: precio inicial por token. Valor actual: `0.12`.
 - `PRICE_STEP_TOKENS`: tamano de cada tramo. Valor actual: `100000`.
 - `PRICE_STEP_INCREASE_RATE`: incremento por tramo. Valor actual: `0.10` = 10%.
 - `QUOTE_HOLD_MINUTES`: minutos durante los que una orden abierta reserva tokens para el calculo del siguiente precio.
@@ -76,7 +76,7 @@ Para que NOWPayments pueda llamar el webhook, abre en AWS/Security Group el inbo
 
 ## Precio dinamico
 
-El precio inicia en `$0.10` y sube 10% por cada `100,000` tokens vendidos o reservados por invoices activos. Si una compra cruza un limite de tramo, el backend calcula un precio ponderado. Ejemplo: si quedan `10,000` tokens a `$0.10` y el usuario compra `20,000`, los primeros `10,000` se cobran a `$0.10` y los siguientes `10,000` a `$0.11`.
+El precio inicia en `$0.12` y sube 10% por cada `100,000` tokens vendidos o reservados por invoices activos. Si una compra cruza un limite de tramo, el backend calcula un precio ponderado. Ejemplo: si quedan `10,000` tokens a `$0.12` y el usuario compra `20,000`, los primeros `10,000` se cobran a `$0.12` y los siguientes `10,000` a `$0.132`.
 
 ## Control de tokens vendidos
 

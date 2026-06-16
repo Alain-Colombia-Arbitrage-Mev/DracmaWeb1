@@ -27,7 +27,7 @@ export const config = {
   saleTokenAddress:
     process.env.SALE_TOKEN_ADDRESS || '0x8A9f07fdBc75144C9207373597136c6E280A872D',
   saleTokenDecimals: toInteger(process.env.SALE_TOKEN_DECIMALS, 18),
-  tokenPriceUsd: toNumber(process.env.BASE_TOKEN_PRICE_USD || process.env.TOKEN_PRICE_USD, 0.1),
+  tokenPriceUsd: toNumber(process.env.BASE_TOKEN_PRICE_USD || process.env.TOKEN_PRICE_USD, 0.12),
   priceStepTokens: toInteger(process.env.PRICE_STEP_TOKENS, 100000),
   priceStepIncreaseRate: toNumber(process.env.PRICE_STEP_INCREASE_RATE, 0.10),
   quoteHoldMinutes: toInteger(process.env.QUOTE_HOLD_MINUTES, 60),
