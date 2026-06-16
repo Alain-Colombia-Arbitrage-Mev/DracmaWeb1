@@ -57,7 +57,7 @@ Para que NOWPayments pueda llamar el webhook, abre en AWS/Security Group el inbo
 - `NOWPAYMENTS_API_KEY`: clave privada de API. Solo servidor.
 - `NOWPAYMENTS_IPN_SECRET`: secreto para verificar `x-nowpayments-sig`.
 - `NOWPAYMENTS_IPN_CALLBACK_URL`: URL publica del webhook `/api/webhooks/nowpayments`.
-- `BASE_TOKEN_PRICE_USD`: precio inicial por token. Valor actual: `0.30`.
+- `BASE_TOKEN_PRICE_USD`: precio inicial por token. Valor actual: `0.10`.
 - `PRICE_STEP_TOKENS`: tamano de cada tramo. Valor actual: `100000`.
 - `PRICE_STEP_INCREASE_RATE`: incremento por tramo. Valor actual: `0.10` = 10%.
 - `QUOTE_HOLD_MINUTES`: minutos durante los que una orden abierta reserva tokens para el calculo del siguiente precio.
@@ -67,16 +67,16 @@ Para que NOWPayments pueda llamar el webhook, abre en AWS/Security Group el inbo
 
 ## Flujo de pago
 
-1. El usuario conecta wallet y cambia a BNB Smart Chain.
-2. El frontend envia wallet y cantidad de tokens a `POST /api/payments/nowpayments`.
-3. El backend recalcula el total USD por tramos y crea un invoice en NOWPayments.
+1. El usuario conecta wallet, cambia a BNB Smart Chain e indica la wallet BSC/EVM donde quiere recibir los tokens.
+2. El frontend envia wallet conectada, wallet receptora y cantidad de tokens a `POST /api/payments/nowpayments`.
+3. El backend valida ambas wallets, recalcula el total USD por tramos y crea un invoice en NOWPayments.
 4. NOWPayments envia IPN a `POST /api/webhooks/nowpayments`.
 5. El webhook valida HMAC SHA-512, monto y orden.
 6. Solo con `payment_status=finished` se intenta liberar tokens.
 
 ## Precio dinamico
 
-El precio inicia en `$0.30` y sube 10% por cada `100,000` tokens vendidos o reservados por invoices activos. Si una compra cruza un limite de tramo, el backend calcula un precio ponderado. Ejemplo: si quedan `10,000` tokens a `$0.30` y el usuario compra `20,000`, los primeros `10,000` se cobran a `$0.30` y los siguientes `10,000` a `$0.33`.
+El precio inicia en `$0.10` y sube 10% por cada `100,000` tokens vendidos o reservados por invoices activos. Si una compra cruza un limite de tramo, el backend calcula un precio ponderado. Ejemplo: si quedan `10,000` tokens a `$0.10` y el usuario compra `20,000`, los primeros `10,000` se cobran a `$0.10` y los siguientes `10,000` a `$0.11`.
 
 ## Control de tokens vendidos
 
@@ -94,7 +94,7 @@ Endpoints utiles:
 
 Para produccion, configura uno de estos modos:
 
-- `erc20-transfer`: la wallet de `TOKEN_DISTRIBUTOR_PRIVATE_KEY` transfiere `SALE_TOKEN_ADDRESS` al comprador.
+- `erc20-transfer`: la wallet de `TOKEN_DISTRIBUTOR_PRIVATE_KEY` transfiere `SALE_TOKEN_ADDRESS` a la wallet receptora indicada en la orden.
 - `contract`: llama `TOKEN_DISTRIBUTOR_FUNCTION(recipient, amount, orderId)` en `TOKEN_DISTRIBUTOR_CONTRACT_ADDRESS`.
 
 En `disabled`, el webhook registra el pago como pendiente de distribucion sin enviar tokens.

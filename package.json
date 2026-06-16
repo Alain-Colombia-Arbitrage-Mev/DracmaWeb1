@@ -8,6 +8,8 @@
     "api": "node server/index.mjs",
     "dev:api": "node --watch server/index.mjs",
     "build": "vite build",
+    "test:contracts": "node --test contracts/test/*.test.mjs server/*.test.mjs services/*.test.mjs components/*.test.mjs",
+    "deploy:token-distributor:bsc": "node contracts/scripts/deployTokenDistributor.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,9 +21,18 @@
     "three": "^0.176.0",
     "viem": "^2.52.2"
   },
+  "overrides": {
+    "tmp": "0.2.7",
+    "ws": "8.21.0"
+  },
   "devDependencies": {
+    "@ethereumjs/common": "^10.1.2",
+    "@ethereumjs/tx": "^10.1.2",
+    "@ethereumjs/util": "^10.1.2",
+    "@ethereumjs/vm": "^10.1.2",
     "@types/node": "^22.14.0",
+    "solc": "^0.8.35",
     "typescript": "~5.7.2",
-    "vite": "^6.2.0"
+    "vite": "^8.0.16"
   }
 }

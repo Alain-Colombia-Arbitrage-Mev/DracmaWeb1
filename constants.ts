@@ -21,7 +21,7 @@ export const STABLE_DECIMALS = 18;
 export const BSCSCAN_TX_URL = 'https://bscscan.com/tx/';
 export const BSCSCAN_ADDRESS_URL = 'https://bscscan.com/address/';
 
-export const TOKEN_PRICE = 0.30;
+export const TOKEN_PRICE = 0.10;
 
 export const PRESALE_DATA: PresaleData = {
     targetUSD: 80000000,
@@ -56,10 +56,10 @@ export const LANGUAGES = [
 export const TRANSLATIONS: LanguageData = {
   es: {
     navVision: "Visión", navEcosystem: "Ecosistema", navCrowdfunding: "Crowdfunding P2P", navMembership: "Membresía", navPresale: "Presale", navRoadmap: "Roadmap", navAmbassadors: "Embajadores", navContact: "Contacto",
-    btnConnectWallet: "Conectar Wallet", srOpenMenu: "Abrir menú principal",
+    btnConnectWallet: "Pagar usando crypto", srOpenMenu: "Abrir menú principal",
     heroTitleBrand: "DRACMA", heroTitlePhoenix: "El Futuro del Valor, Hoy.",
     heroSubtitle: "Un holding Web3 de vanguardia que fusiona IA, Blockchain y Activos Reales tokenizados. Invierte de forma inteligente y transparente en la nueva economía.",
-    btnJoinPresale: "Participar en Presale", btnExplore: "Explorar Ecosistema",
+    btnJoinPresale: "Comprar ahora", btnExplore: "Explorar Ecosistema",
     visionTitle: "Nuestra Visión: Forjando el Mañana, Juntos",
     visionSubtitle: "En DRACMA, creemos en un futuro financiero más accesible, transparente y justo. No solo imaginamos este futuro, lo estamos construyendo activamente. Somos un equipo de innovadores, estrategas y tecnólogos con una misión clara: crear un Holding Empresarial Descentralizado que sirva como puente entre la solidez de los activos tradicionales y el potencial ilimitado de la Web3.\nUtilizamos la Inteligencia Artificial para optimizar y la Blockchain para asegurar, transformando activos del mundo real (RWA) —como oro, bienes raíces, energía renovable y agricultura sostenible— en oportunidades de inversión líquidas y verificables.\nNuestra meta es simple: empoderarte. Ofrecerte las herramientas y la plataforma para que participes en la nueva economía de valor, de forma informada y con confianza. DRACMA es más que un proyecto; es una comunidad que invierte en un mañana más próspero y equitativo para todos.",
     btnExplorePhilosophy: "Explorar Filosofía DRACMA con IA ✨", aiModalTitlePhilosophy: "Filosofía DRACMA Explicada por IA ✨",
@@ -135,7 +135,7 @@ export const TRANSLATIONS: LanguageData = {
     presaleEnterAmount: "2. Ingresa Monto de Inversión",
     btnMax: "MAX", presaleBaseTokens: "Tokens $DRC Base:", presaleCurrentBonus: "Bono Actual", presaleTotalReceive: "Total $DRC a Recibir:",
     btnAnalyzeInvestment: "Analizar Inversión con IA ✨", btnGeneratePitch: "Generar Pitch de Embajador con IA ✨",
-    btnConnectAndConfirm: "Conectar Wallet y Confirmar Inversión", presaleAgreement: "Al participar, aceptas nuestros <a>Términos</a> y <a>Acuerdo de Venta de Tokens</a>.",
+    btnConnectAndConfirm: "Pagar usando crypto", presaleAgreement: "Al participar, aceptas nuestros <a>Términos</a> y <a>Acuerdo de Venta de Tokens</a>.",
     tokenDistributionTitle: "Distribución Estratégica del Token $DRC",
     distPresale: "Presale", distPresaleDesc: "Financiamiento inicial y recompensas a early adopters.",
     distLiquidity: "Liquidez", distLiquidityDesc: "Asegurar mercados saludables en DEX y CEX.",

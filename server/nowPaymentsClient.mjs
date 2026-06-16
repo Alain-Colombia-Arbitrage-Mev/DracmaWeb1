@@ -8,14 +8,14 @@ function buildReturnUrl(type, orderId) {
   return url.toString();
 }
 
-export async function createNowPaymentsInvoice({ orderId, walletAddress, tokenAmount, priceAmount }) {
+export async function createNowPaymentsInvoice({ orderId, walletAddress, recipientWalletAddress, tokenAmount, priceAmount }) {
   assertNowPaymentsConfigured();
 
   const payload = {
     price_amount: priceAmount,
     price_currency: 'usd',
     order_id: orderId,
-    order_description: `DRACMA $DRC presale - ${tokenAmount} tokens for ${walletAddress}`,
+    order_description: `DRACMA $DRC presale - ${tokenAmount} tokens to ${recipientWalletAddress} (reference wallet ${walletAddress})`,
     ipn_callback_url: config.nowPaymentsIpnCallbackUrl,
     success_url: buildReturnUrl('success', orderId),
     cancel_url: buildReturnUrl('cancel', orderId),

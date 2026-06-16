@@ -28,6 +28,9 @@ dist-ssr
 
 # Local payment/order state
 server/.data/
+contracts/artifacts/
+CLAUDE.md
+**/CLAUDE.md
 
 # macOS AppleDouble metadata copied from archives/drives
 ._*

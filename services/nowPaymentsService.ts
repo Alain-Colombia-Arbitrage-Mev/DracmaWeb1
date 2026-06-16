@@ -1,5 +1,6 @@
 export interface CreateNowPaymentsInvoiceInput {
-  walletAddress: string;
+  walletAddress?: string;
+  recipientWalletAddress: string;
   tokenAmount: number;
 }
 
@@ -50,7 +51,32 @@ export interface NowPaymentsInvoiceResponse {
   tokenPriceUsd: number;
   quote: PresaleQuote;
   walletAddress: string;
+  recipientWalletAddress: string;
   status: string;
+}
+
+export interface NowPaymentsPaymentDistribution {
+  status?: string;
+  skipped?: boolean;
+  txHash?: string | null;
+  reason?: string;
+  error?: string;
+  attemptedAt?: string;
+}
+
+export interface NowPaymentsPaymentStatus {
+  orderId: string;
+  status: string;
+  nowPaymentsStatus: string | null;
+  priceAmount: number;
+  priceCurrency: string;
+  tokenAmount: number;
+  tokenPriceUsd: number;
+  quote: PresaleQuote;
+  walletAddress: string;
+  recipientWalletAddress: string;
+  distribution: NowPaymentsPaymentDistribution;
+  nowPaymentsInvoiceUrl: string | null;
 }
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
@@ -74,6 +100,18 @@ export async function createNowPaymentsInvoice(
   }
 
   return payload as NowPaymentsInvoiceResponse;
+}
+
+export async function getNowPaymentsPayment(orderId: string): Promise<NowPaymentsPaymentStatus> {
+  const response = await fetch(`${apiBaseUrl}/api/payments/${encodeURIComponent(orderId)}`);
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.error || 'No se pudo consultar el estado del pago.';
+    throw new Error(message);
+  }
+
+  return payload as NowPaymentsPaymentStatus;
 }
 
 export async function getPresalePricing(): Promise<PricingState> {

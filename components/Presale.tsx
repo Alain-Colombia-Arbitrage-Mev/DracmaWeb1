@@ -1,14 +1,17 @@
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { getAddress, isAddress } from 'viem';
 import { LanguageContext, AiModalContext } from '../App';
 import { WalletContext } from '../contexts/WalletContext';
 import { PresaleData, CountdownDigits, TransactionStatus } from '../types';
 import { TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA, BSCSCAN_TX_URL, BSCSCAN_ADDRESS_URL, SALE_TOKEN_ADDRESS } from '../constants';
 import {
   createNowPaymentsInvoice,
+  getNowPaymentsPayment,
   getPresalePricing,
   getPresaleQuote,
   NowPaymentsInvoiceResponse,
+  NowPaymentsPaymentStatus,
   PresaleQuote,
   PricingState,
 } from '../services/nowPaymentsService';
@@ -18,6 +21,42 @@ interface PresaleProps {
 }
 
 const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
+const TRACKABLE_PAYMENT_STATES = new Set([
+  'creating_invoice',
+  'invoice_created',
+  'waiting',
+  'confirming',
+  'confirmed',
+  'sending',
+  'partially_paid',
+]);
+
+const formatPaymentStatusLabel = (status?: string | null) => {
+  const labels: Record<string, string> = {
+    creating_invoice: 'Creando invoice',
+    invoice_created: 'Checkout creado',
+    waiting: 'Esperando pago',
+    confirming: 'Confirmando pago',
+    confirmed: 'Pago confirmado',
+    sending: 'Procesando pago',
+    partially_paid: 'Pago parcial',
+    paid_pending_distribution: 'Pago confirmado',
+    distributed: 'Tokens enviados',
+    distribution_failed: 'Distribucion fallida',
+    failed: 'Pago fallido',
+    expired: 'Pago expirado',
+    refunded: 'Pago reembolsado',
+    validation_error: 'Validacion fallida',
+  };
+
+  if (!status) return 'Consultando estado';
+  return labels[status] || status.replace(/_/g, ' ');
+};
+
+const shouldPollPaymentStatus = (payment: NowPaymentsPaymentStatus | null) => {
+  if (!payment) return true;
+  return TRACKABLE_PAYMENT_STATES.has(payment.status) || TRACKABLE_PAYMENT_STATES.has(payment.nowPaymentsStatus || '');
+};
 
 // --- Transaction Status Display ---
 const TransactionStatusUI: React.FC = () => {
@@ -118,7 +157,7 @@ const TransactionStatusUI: React.FC = () => {
 export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
   const { getTranslation, currentLang } = useContext(LanguageContext);
   const { showAiModal } = useContext(AiModalContext);
-  const { wallet, txState, connectWallet, switchNetwork } = useContext(WalletContext);
+  const { wallet, txState } = useContext(WalletContext);
 
   const [countdown, setCountdown] = useState<CountdownDigits>(initialCountdown);
   const [currentBonus, setCurrentBonus] = useState(0);
@@ -137,8 +176,19 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
   const [quote, setQuote] = useState<PresaleQuote | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const [quoteRefreshKey, setQuoteRefreshKey] = useState(0);
+  const [recipientWalletAddress, setRecipientWalletAddress] = useState('');
+  const [isRecipientWalletDirty, setIsRecipientWalletDirty] = useState(false);
+  const [trackedOrderId, setTrackedOrderId] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<NowPaymentsPaymentStatus | null>(null);
+  const [isPaymentStatusLoading, setIsPaymentStatusLoading] = useState(false);
+  const [paymentStatusError, setPaymentStatusError] = useState<string | null>(null);
+  const [isDistributionPopupOpen, setIsDistributionPopupOpen] = useState(false);
+  const [dismissedDistributionPopupKey, setDismissedDistributionPopupKey] = useState<string | null>(null);
 
   const tokenPrice = pricingState?.currentPriceUsd || TOKEN_PRICE;
+  const displayedPurchasePrice = quote?.averagePriceUsd ?? tokenPrice;
+  const displayedPurchasePriceDecimals = quote ? 4 : 2;
 
   const updateActiveBonus = useCallback(() => {
     const now = new Date();
@@ -229,12 +279,28 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
   }, [calculateTokens]);
 
   useEffect(() => {
+    if (isRecipientWalletDirty) return;
+    setRecipientWalletAddress(wallet.address || '');
+  }, [isRecipientWalletDirty, wallet.address]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id') || params.get('orderId');
+    if (orderId) {
+      setTrackedOrderId(orderId);
+    }
+  }, []);
+
+  useEffect(() => {
     let isCancelled = false;
 
     const loadPricing = async () => {
       try {
         const pricing = await getPresalePricing();
-        if (!isCancelled) setPricingState(pricing);
+        if (!isCancelled) {
+          setPricingState(pricing);
+          setQuoteRefreshKey((current) => current + 1);
+        }
       } catch {
         // Keep the static fallback price if the API is unavailable.
       }
@@ -281,7 +347,51 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
       isCancelled = true;
       clearTimeout(timer);
     };
-  }, [investmentAmount]);
+  }, [investmentAmount, quoteRefreshKey]);
+
+  useEffect(() => {
+    if (!trackedOrderId) return;
+
+    let isCancelled = false;
+    let pollTimer: number | undefined;
+
+    const loadPaymentStatus = async () => {
+      setIsPaymentStatusLoading(true);
+      setPaymentStatusError(null);
+
+      try {
+        const nextStatus = await getNowPaymentsPayment(trackedOrderId);
+        if (isCancelled) return;
+
+        setPaymentStatus(nextStatus);
+        if (shouldPollPaymentStatus(nextStatus)) {
+          pollTimer = window.setTimeout(loadPaymentStatus, 15000);
+        }
+      } catch (error) {
+        if (isCancelled) return;
+        setPaymentStatusError(error instanceof Error ? error.message : 'No se pudo consultar el estado del pago.');
+      } finally {
+        if (!isCancelled) setIsPaymentStatusLoading(false);
+      }
+    };
+
+    loadPaymentStatus();
+
+    return () => {
+      isCancelled = true;
+      if (pollTimer) window.clearTimeout(pollTimer);
+    };
+  }, [trackedOrderId]);
+
+  useEffect(() => {
+    const txHash = paymentStatus?.distribution?.txHash;
+    if (!txHash || !paymentStatus?.orderId) return;
+
+    const popupKey = `${paymentStatus.orderId}:${txHash}`;
+    if (dismissedDistributionPopupKey === popupKey) return;
+
+    setIsDistributionPopupOpen(true);
+  }, [dismissedDistributionPopupKey, paymentStatus?.distribution?.txHash, paymentStatus?.orderId]);
 
   const handleInvestmentAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInvestmentAmount(e.target.value);
@@ -297,9 +407,33 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
     setPaymentError(null);
   };
 
+  const handleRecipientWalletChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRecipientWalletAddress(e.target.value);
+    setIsRecipientWalletDirty(true);
+    setPaymentCheckout(null);
+    setPaymentError(null);
+  };
+
+  const handleUseConnectedWallet = () => {
+    if (!wallet.address) return;
+    setRecipientWalletAddress(wallet.address);
+    setIsRecipientWalletDirty(false);
+    setPaymentCheckout(null);
+    setPaymentError(null);
+  };
+
   const handlePurchase = async () => {
     const tokenAmount = parseFloat(investmentAmount);
-    if (!wallet.address || !tokenAmount || tokenAmount <= 0) return;
+    if (!tokenAmount || tokenAmount <= 0) return;
+
+    if (!isRecipientWalletValid) {
+      setPaymentError('Ingresa una wallet BSC valida para recibir los tokens.');
+      return;
+    }
+
+    const normalizedCheckoutWalletAddress = wallet.address && isAddress(wallet.address)
+      ? getAddress(wallet.address)
+      : normalizedRecipientWalletAddress;
 
     setIsCreatingPayment(true);
     setPaymentCheckout(null);
@@ -307,10 +441,28 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
 
     try {
       const checkout = await createNowPaymentsInvoice({
-        walletAddress: wallet.address,
+        walletAddress: normalizedCheckoutWalletAddress,
+        recipientWalletAddress: normalizedRecipientWalletAddress,
         tokenAmount: baseTokens,
       });
       setPaymentCheckout(checkout);
+      setTrackedOrderId(checkout.orderId);
+      setPaymentStatus({
+        orderId: checkout.orderId,
+        status: checkout.status,
+        nowPaymentsStatus: null,
+        priceAmount: checkout.priceAmount,
+        priceCurrency: checkout.priceCurrency,
+        tokenAmount: checkout.tokenAmount,
+        tokenPriceUsd: checkout.tokenPriceUsd,
+        quote: checkout.quote,
+        walletAddress: checkout.walletAddress,
+        recipientWalletAddress: checkout.recipientWalletAddress,
+        distribution: {
+          status: 'pending_payment',
+        },
+        nowPaymentsInvoiceUrl: checkout.invoiceUrl,
+      });
 
       if (checkout.invoiceUrl) {
         window.open(checkout.invoiceUrl, '_blank', 'noopener,noreferrer');
@@ -320,6 +472,33 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
     } finally {
       setIsCreatingPayment(false);
     }
+  };
+
+  const handleRefreshPaymentStatus = async () => {
+    if (!trackedOrderId) return;
+
+    setIsPaymentStatusLoading(true);
+    setPaymentStatusError(null);
+
+    try {
+      const nextStatus = await getNowPaymentsPayment(trackedOrderId);
+      setPaymentStatus(nextStatus);
+    } catch (error) {
+      setPaymentStatusError(error instanceof Error ? error.message : 'No se pudo consultar el estado del pago.');
+    } finally {
+      setIsPaymentStatusLoading(false);
+    }
+  };
+
+  const handleCloseDistributionPopup = () => {
+    if (paymentStatus?.distribution?.txHash && paymentStatus.orderId) {
+      setDismissedDistributionPopupKey(`${paymentStatus.orderId}:${paymentStatus.distribution.txHash}`);
+    }
+    setIsDistributionPopupOpen(false);
+  };
+
+  const handleOpenDistributionPopup = () => {
+    setIsDistributionPopupOpen(true);
   };
 
   const handleAnalyzeInvestment = () => {
@@ -345,7 +524,22 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
   const amountDueUSD = quote?.totalUsd ?? tokenAmount * tokenPrice;
   const averagePriceUsd = quote?.averagePriceUsd ?? tokenPrice;
   const minPurchaseUsd = quote?.minPurchaseUsd ?? 100;
-  const canCreatePayment = wallet.isConnected && wallet.isCorrectNetwork && totalTokensReceived > 0 && amountDueUSD >= minPurchaseUsd && !isQuoteLoading && !quoteError;
+  const trimmedRecipientWalletAddress = recipientWalletAddress.trim();
+  const isRecipientWalletValid = isAddress(trimmedRecipientWalletAddress);
+  const normalizedRecipientWalletAddress = isRecipientWalletValid ? getAddress(trimmedRecipientWalletAddress) : '';
+  const shouldShowRecipientWalletError = isRecipientWalletDirty || tokenAmount > 0 || isCreatingPayment;
+  const recipientWalletError = shouldShowRecipientWalletError && !trimmedRecipientWalletAddress
+    ? 'Ingresa una wallet BSC valida para recibir los tokens.'
+    : shouldShowRecipientWalletError && trimmedRecipientWalletAddress && !isRecipientWalletValid
+      ? 'Ingresa una wallet BSC valida para recibir los tokens.'
+      : null;
+  const canCreatePayment = totalTokensReceived > 0 && amountDueUSD >= minPurchaseUsd && !isQuoteLoading && !quoteError && isRecipientWalletValid;
+  const distributionStatus = paymentStatus?.distribution?.status || null;
+  const distributionTxHash = paymentStatus?.distribution?.txHash || null;
+  const isPaymentDistributed = paymentStatus?.status === 'distributed' || distributionStatus === 'sent';
+  const isDistributionFailed = paymentStatus?.status === 'distribution_failed' || distributionStatus === 'failed';
+  const isDistributionPendingConfiguration = distributionStatus === 'pending_configuration';
+  const paymentStatusLabel = formatPaymentStatusLabel(paymentStatus?.status || paymentStatus?.nowPaymentsStatus);
 
   return (
     <section id="presale" className="py-20 bg-brand-background relative overflow-hidden">
@@ -380,8 +574,10 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
             <div className="space-y-5">
               <div>
                 <div className="flex justify-between mb-1.5 text-sm items-baseline">
-                  <span className="text-brand-text-secondary/80 font-mono">{getTranslation('presaleTokenPrice')}</span>
-                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">${tokenPrice.toFixed(2)} <span className="text-xs text-brand-text-secondary/70">USD</span></span>
+                  <span className="text-brand-text-secondary/80 font-mono">{quote ? 'Precio cotizado' : getTranslation('presaleTokenPrice')}</span>
+                  <span className="font-bold text-2xl brand-accent-gold-text font-display tracking-tighter">
+                    ${displayedPurchasePrice.toFixed(displayedPurchasePriceDecimals)} <span className="text-xs text-brand-text-secondary/70">USD</span>
+                  </span>
                 </div>
                 <p className="text-xs text-brand-text-secondary/60 font-mono">
                   Sube 10% por cada {((pricingState?.stepTokens || 100000)).toLocaleString()} tokens vendidos.
@@ -476,12 +672,14 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
                   <p className="mt-1 font-semibold text-brand-text-primary">{getTranslation('networkBSC')}</p>
                 </div>
                 <div className="rounded-lg border border-brand-secondary/15 bg-brand-secondary/5 p-3">
-                  <p className="text-xs font-mono text-brand-text-secondary/70">Precio actual</p>
-                  <p className="mt-1 font-semibold text-brand-text-primary">${tokenPrice.toFixed(2)} USD / $DRC</p>
+                  <p className="text-xs font-mono text-brand-text-secondary/70">{quote ? 'Precio cotizado' : 'Precio actual'}</p>
+                  <p className="mt-1 font-semibold text-brand-text-primary">
+                    ${displayedPurchasePrice.toFixed(displayedPurchasePriceDecimals)} USD / $DRC
+                  </p>
                 </div>
                 <div className="rounded-lg border border-brand-accent-gold/30 bg-brand-accent-gold/10 p-3">
                   <p className="text-xs font-mono text-brand-text-secondary/70">Procesador</p>
-                  <p className="mt-1 font-semibold text-brand-text-primary">NOWPayments</p>
+                  <p className="mt-1 font-semibold text-brand-text-primary">Pagar usando crypto</p>
                 </div>
               </div>
 
@@ -516,6 +714,45 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
                      </button>
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <label className="presale-step-label">
+                  Wallet donde recibiras los tokens $DRC:
+                </label>
+                <div className="relative flex items-center">
+                  <i className="fas fa-wallet text-brand-text-secondary/50 absolute left-3.5 top-1/2 transform -translate-y-1/2 pointer-events-none text-lg"></i>
+                  <input
+                    type="text"
+                    value={recipientWalletAddress}
+                    onChange={handleRecipientWalletChange}
+                    className="presale-input presale-input-with-icon flex-grow !text-brand-text-primary !placeholder-brand-text-secondary/70 font-mono text-sm"
+                    placeholder="0x..."
+                    autoComplete="off"
+                    spellCheck={false}
+                    disabled={isInTransaction || isCreatingPayment}
+                  />
+                </div>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs text-brand-text-secondary/60 font-mono">
+                    Disponible en movil y desktop para pagar usando crypto. No necesitas conectar wallet.
+                  </p>
+                  {wallet.address && (
+                    <button
+                      type="button"
+                      onClick={handleUseConnectedWallet}
+                      className="text-xs brand-primary-text hover:underline font-mono text-left sm:text-right"
+                      disabled={isInTransaction || isCreatingPayment}
+                    >
+                      Usar wallet conectada
+                    </button>
+                  )}
+                </div>
+                {recipientWalletError && (
+                  <p className="text-xs text-warning-orange mt-2 font-mono">
+                    {recipientWalletError}
+                  </p>
+                )}
               </div>
 
               {/* Token Calculation */}
@@ -580,9 +817,9 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
                       <i className="fas fa-check text-green-600"></i>
                     </div>
                     <div>
-                      <p className="font-bold text-green-800">Pago creado en NOWPayments</p>
+                      <p className="font-bold text-green-800">Pago creado para pagar usando crypto</p>
                       <p className="text-sm text-green-700">
-                        Orden {paymentCheckout.orderId} por ${paymentCheckout.priceAmount.toLocaleString(undefined, {maximumFractionDigits:2})}. El webhook liberara {paymentCheckout.tokenAmount.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC cuando NOWPayments confirme el estado finished.
+                        Orden {paymentCheckout.orderId} por ${paymentCheckout.priceAmount.toLocaleString(undefined, {maximumFractionDigits:2})}. El webhook liberara {paymentCheckout.tokenAmount.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC a {paymentCheckout.recipientWalletAddress} cuando el procesador confirme el estado finished.
                       </p>
                     </div>
                   </div>
@@ -600,42 +837,124 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
                 </div>
               )}
 
+              {(trackedOrderId || paymentStatus || paymentStatusError) && (
+                <div className={`rounded-xl border p-5 space-y-4 animate-fade-in-zoom ${
+                  isPaymentDistributed
+                    ? 'border-green-200 bg-green-50'
+                    : isDistributionFailed
+                      ? 'border-red-200 bg-red-50'
+                      : 'border-brand-primary/20 bg-brand-primary/5'
+                }`}>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className={`text-sm font-mono ${
+                        isPaymentDistributed
+                          ? 'text-green-700'
+                          : isDistributionFailed
+                            ? 'text-red-700'
+                            : 'text-brand-primary'
+                      }`}>
+                        Seguimiento post-pago
+                      </p>
+                      <h4 className="mt-1 text-lg font-bold text-brand-text-primary">
+                        {paymentStatusLabel}
+                      </h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRefreshPaymentStatus}
+                      className="inline-flex items-center justify-center rounded-lg border border-brand-primary/20 px-3 py-2 text-xs font-mono text-brand-primary hover:bg-white/70 transition-colors disabled:opacity-60"
+                      disabled={isPaymentStatusLoading || !trackedOrderId}
+                    >
+                      <i className={`fas ${isPaymentStatusLoading ? 'fa-spinner fa-spin' : 'fa-rotate'} mr-2`}></i>
+                      Actualizar
+                    </button>
+                  </div>
+
+                  {paymentStatusError && (
+                    <p className="rounded-lg border border-red-200 bg-white/70 p-3 text-sm text-red-700">
+                      {paymentStatusError}
+                    </p>
+                  )}
+
+                  {paymentStatus && (
+                    <div className="space-y-3 text-sm">
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-lg bg-white/70 border border-gray-200/70 p-3">
+                          <p className="text-xs font-mono text-brand-text-secondary/60">Orden</p>
+                          <p className="mt-1 font-semibold text-brand-text-primary break-all">{paymentStatus.orderId}</p>
+                        </div>
+                        <div className="rounded-lg bg-white/70 border border-gray-200/70 p-3">
+                          <p className="text-xs font-mono text-brand-text-secondary/60">Tokens</p>
+                          <p className="mt-1 font-semibold text-brand-text-primary">
+                            {paymentStatus.tokenAmount.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg bg-white/70 border border-gray-200/70 p-3">
+                        <p className="text-xs font-mono text-brand-text-secondary/60">Wallet receptora</p>
+                        <p className="mt-1 font-mono text-brand-text-primary break-all">{paymentStatus.recipientWalletAddress}</p>
+                      </div>
+
+                      {distributionTxHash ? (
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <button
+                            type="button"
+                            onClick={handleOpenDistributionPopup}
+                            className="w-full btn-secondary py-2.5 flex items-center justify-center"
+                          >
+                            <i className="fas fa-receipt mr-2"></i>
+                            Ver comprobante
+                          </button>
+                          <a
+                            href={`${BSCSCAN_TX_URL}${distributionTxHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full btn-primary py-2.5 flex items-center justify-center"
+                          >
+                            <i className="fas fa-arrow-up-right-from-square mr-2"></i>
+                            Ver transferencia en BscScan
+                          </a>
+                        </div>
+                      ) : isDistributionFailed ? (
+                        <p className="rounded-lg border border-red-200 bg-white/80 p-3 text-red-700">
+                          La distribucion de tokens fallo. {paymentStatus.distribution?.error || 'Revisa la configuracion de gas y la wallet distribuidora.'}
+                        </p>
+                      ) : isDistributionPendingConfiguration ? (
+                        <p className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-yellow-700">
+                          Pago confirmado. La distribucion automatica esta pendiente de configuracion en el backend.
+                        </p>
+                      ) : (
+                        <p className="rounded-lg border border-brand-primary/15 bg-white/70 p-3 text-brand-text-secondary">
+                          Actualizando automaticamente. Cuando el pago quede confirmado y los tokens se envien, aparecerá aqui el hash de BscScan.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Transaction Status or Buy Button */}
               <div className="pt-2">
                 {txState.status !== TransactionStatus.IDLE ? (
                   <TransactionStatusUI />
-                ) : !wallet.isConnected ? (
-                  <button
-                    onClick={connectWallet}
-                    className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary"
-                  >
-                    <i className="fas fa-wallet mr-2.5"></i>
-                    <span>{getTranslation('btnConnectWallet')}</span>
-                  </button>
-                ) : !wallet.isCorrectNetwork ? (
-                  <button
-                    onClick={switchNetwork}
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3.5 text-lg rounded-xl font-semibold flex items-center justify-center transition-colors"
-                  >
-                    <i className="fas fa-exchange-alt mr-2.5"></i>
-                    <span>{getTranslation('switchToBSC')}</span>
-                  </button>
                 ) : (
                   <button
                     onClick={handlePurchase}
                     disabled={isCreatingPayment || !canCreatePayment}
                     className="w-full btn-primary py-3.5 text-lg flex items-center justify-center animate-button-pulse-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
                   >
-                    <i className={`fas ${isCreatingPayment ? 'fa-spinner fa-spin' : 'fa-shield-halved'} mr-2.5`}></i>
-                    <span>{isCreatingPayment ? 'Creando pago...' : 'Crear pago seguro'}</span>
+                    <i className={`fas ${isCreatingPayment ? 'fa-spinner fa-spin' : 'fa-credit-card'} mr-2.5`}></i>
+                    <span>{isCreatingPayment ? 'Creando pago...' : 'Pagar usando crypto'}</span>
                   </button>
                 )}
-                {wallet.isConnected && wallet.isCorrectNetwork && amountDueUSD > 0 && amountDueUSD < minPurchaseUsd && (
+                {amountDueUSD > 0 && amountDueUSD < minPurchaseUsd && (
                   <p className="text-xs text-warning-orange mt-2 text-center font-mono">{getTranslation('presaleMinInvestment')}</p>
                 )}
-                {wallet.address && wallet.isCorrectNetwork && (
+                {(normalizedRecipientWalletAddress || recipientWalletAddress) && (
                   <p className="text-xs text-brand-text-secondary/60 mt-2 text-center font-mono break-all">
-                    Los tokens se enviaran a: {wallet.address}
+                    Los tokens se enviaran a: {normalizedRecipientWalletAddress || recipientWalletAddress}
                   </p>
                 )}
                 <div
@@ -680,6 +999,97 @@ export const Presale: React.FC<PresaleProps> = ({ presaleData }) => {
           </div>
         </div>
       </div>
+
+      {isDistributionPopupOpen && paymentStatus && distributionTxHash && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-surface-dark/70 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="distribution-popup-title"
+        >
+          <div className="w-full max-w-lg overflow-hidden rounded-xl border border-brand-primary/20 bg-white shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-wide text-brand-primary">Comprobante de envio</p>
+                <h3 id="distribution-popup-title" className="mt-1 text-xl font-bold text-brand-text-primary">
+                  Tokens enviados
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={handleCloseDistributionPopup}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-brand-text-secondary transition-colors hover:border-brand-primary hover:text-brand-primary"
+                aria-label="Cerrar comprobante de envio"
+              >
+                <i className="fas fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="space-y-4 px-5 py-5">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                  <div className="flex items-center gap-2 text-green-700">
+                    <i className="fas fa-circle-check"></i>
+                    <span className="text-sm font-semibold">Pago confirmado</span>
+                  </div>
+                </div>
+                <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                  <div className="flex items-center gap-2 text-green-700">
+                    <i className="fas fa-circle-check"></i>
+                    <span className="text-sm font-semibold">Tokens enviados</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <p className="text-xs font-mono text-brand-text-secondary/70">Orden</p>
+                  <p className="mt-1 break-all text-sm font-semibold text-brand-text-primary">{paymentStatus.orderId}</p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <p className="text-xs font-mono text-brand-text-secondary/70">Tokens</p>
+                  <p className="mt-1 text-sm font-semibold text-brand-text-primary">
+                    {paymentStatus.tokenAmount.toLocaleString(undefined, {maximumFractionDigits:0})} $DRC
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <p className="text-xs font-mono text-brand-text-secondary/70">Wallet receptora</p>
+                <p className="mt-1 break-all font-mono text-sm text-brand-text-primary">
+                  {paymentStatus.recipientWalletAddress}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-brand-primary/20 bg-brand-primary/5 p-3">
+                <p className="text-xs font-mono text-brand-text-secondary/70">Hash de envio</p>
+                <p className="mt-2 break-all font-mono text-sm text-brand-text-primary">
+                  {distributionTxHash}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-2 border-t border-gray-200 bg-gray-50 px-5 py-4 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={handleCloseDistributionPopup}
+                className="btn-secondary py-2.5"
+              >
+                Cerrar
+              </button>
+              <a
+                href={`${BSCSCAN_TX_URL}${distributionTxHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary flex items-center justify-center py-2.5"
+              >
+                <i className="fas fa-arrow-up-right-from-square mr-2"></i>
+                Ver envio en BscScan
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
