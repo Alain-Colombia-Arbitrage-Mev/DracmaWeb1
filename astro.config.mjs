@@ -13,6 +13,7 @@ export default defineConfig({
     sitemap({ filter: page => isIndexablePath(new URL(page).pathname) }),
   ],
   vite: {
+    optimizeDeps: { include: ['react-dom/client'] },
     plugins: [tailwindcss()],
     define: {
       'process.env.API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || ''),
