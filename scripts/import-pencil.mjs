@@ -66,7 +66,7 @@ for(const page of pages){
    cls=cls.replace(/font-\[([^\]]+)\]/g,'[font-family:$1]');
    const fixed=cls.match(/(?:^| )w-\[([\d.]+)px\]/);if(fixed&&+fixed[1]>=1000){cls=cls.replace(fixed[0],` canvas-container max-w-[${fixed[1]}px]`);set(n,'data-container','');}
    if(fixed&&+fixed[1]>=220&&+fixed[1]<1000)set(n,'data-adaptive-width',fixed[1]);
-   const pad=cls.match(/p-\[([^\]]+)\]/)?.[1]?.split('_').map(v=>parseFloat(v));if(pad&&((pad.length===2&&pad[1]>40)||(pad.length===4&&(pad[1]>40||pad[3]>40))))set(n,'data-wide-padding','');
+   const pad=cls.match(/(?:^| )p-\[([^\]]+)\]/)?.[1]?.split('_').map(v=>parseFloat(v));if(pad&&((pad.length===2&&pad[1]>40)||(pad.length===4&&(pad[1]>40||pad[3]>40))))set(n,'data-wide-padding','');
    if(/Portada · Proyectos reales/.test(name))cls+=' canvas-home-hero';
    const size=cls.match(/text-\[([\d.]+)px\]/);
    if(size&&+size[1]>=36&&text(n).length>12){if(!firstHeading){n.tagName='h1';firstHeading=true;}else n.tagName='h2';n.nodeName=n.tagName;set(n,'data-display-heading','');}
@@ -100,6 +100,27 @@ for(const page of pages){
    for(const child of [...n.childNodes||[]])await transform(child);
   }
   await transform(root);
+  // Keep an icon beside a title and its description as one readable group.
+  walk(root,n=>{if(A(n)['data-mobile-layout']!=='row')return;
+   const c=(n.childNodes||[]).filter(c=>c.tagName),cls=c.map(c=>A(c).class||'');
+   if(c.length===3&&cls.every(s=>/absolute/.test(s))&&Number(cls[0].match(/w-\[([\d.]+)px\]/)?.[1]||999)<=64){
+    const x=cls.map(s=>s.match(/left-\[([\d.]+)px\]/)?.[1]);
+    if(x[1]&&x[1]===x[2])set(n,'data-mobile-layout','icon');
+   }
+  });
+  // Vertically arranged text is a stack even when every exported child is a leaf.
+  walk(root,n=>{if(A(n)['data-mobile-layout']!=='row')return;
+   const children=(n.childNodes||[]).filter(c=>c.tagName&&/absolute/.test(A(c).class||''));
+   if(children.length<2||!children.every(c=>!(c.childNodes||[]).some(x=>x.tagName)))return;
+   const coords=axis=>children.map(c=>Number((A(c).class||'').match(new RegExp(axis+'-\\[([\\d.]+)px\\]'))?.[1]||0));
+   const xs=coords('left'),ys=coords('top');
+   if(Math.max(...ys)-Math.min(...ys)>24&&Math.max(...xs)-Math.min(...xs)<80)set(n,'data-mobile-layout','stack');
+  });
+  // Percentages must survive narrower cards instead of becoming full-width bars.
+  walk(root,n=>{if(/· Capital recaudado$/.test(A(n)['data-pencil-name']||'')){
+   const percent=text(n.parentNode?.parentNode).match(/(\d+(?:[.,]\d+)?)\s*%/);
+   if(percent)set(n,'style',`--progress:${Number(percent[1].replace(',','.'))}%`);
+  }});
   if(page.slug==='proyectos'){const hero=find(root,'BvVfz');if(hero)set(hero,'href','#catalogo');const catalog=find(root,'nllSM');if(catalog)set(catalog,'id','catalogo');}
 
   walk(root,n=>{if(n.tagName==='a'&&/^(?:Ver|Consultar) proyecto/.test(text(n))){let ancestor=n.parentNode;while(ancestor&&ancestor!==root){const content=text(ancestor);const matches=projectData.filter(p=>content.toLocaleLowerCase('es').includes(p.name.toLocaleLowerCase('es')));if(matches.length===1){set(n,'href','/proyectos/'+matches[0].slug+'/');break;}ancestor=ancestor.parentNode;}}});
