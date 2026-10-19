@@ -10,6 +10,8 @@ interface Props {
 const { lang } = Astro.props;
 const t = getTranslationsForLang(lang);
 const v = getVisualCopy(lang);
+const conceptLabel = lang === 'es' ? 'Concepto ilustrativo' : 'Illustrative concept';
+const verificationLabel = lang === 'es' ? 'Sin datos de recaudación verificados. Dirección del contrato de proyecto no publicada. No se aceptan aportes desde esta ficha.' : 'No verified fundraising data or project contract address has been published. Contributions are not enabled from this reference card.';
 const photos: Record<string, { src: string; alt: string }> = {
   agroverde01: { src: 'agriculture', alt: v.farmAlt },
   solaris03: { src: 'solar', alt: v.photoAlt },
@@ -60,15 +62,12 @@ const photos: Record<string, { src: string; alt: string }> = {
       </h3>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {CROWDFUNDING_PROJECTS_DATA.map((project, index) => {
-          const progress = (project.currentFundingDRC / project.fundingGoalDRC) * 100;
           return (
             <div style={`animation-delay: ${0.15 * (index + 1)}s`}>
-              <div class="card-ui project-photo-card overflow-hidden flex flex-col h-full">
+              <div class="card-ui project-photo-card overflow-hidden flex flex-col h-full" data-project-reference-card>
                 <figure class="project-photo"><img src={`/images/${(photos[project.id]?.src || 'team')}.webp`} srcset={`/images/${(photos[project.id]?.src || 'team')}-640.webp 640w, /images/${(photos[project.id]?.src || 'team')}.webp 1280w`} sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 400px" alt={photos[project.id]?.alt || v.teamAlt} width="640" height="400" loading="lazy" decoding="async" /><figcaption>{v.photo}</figcaption></figure>
                 <div class="p-5 flex flex-col flex-grow">
-                  <span class={`text-xs font-semibold px-2.5 py-1 rounded-full mb-2.5 self-start shadow-sm ${project.statusColorClass} ${project.statusColorClass === 'bg-brand-primary' ? 'text-brand-on-primary' : 'text-[#0C2730]'}`}>
-                    {t[project.statusKey] || project.statusKey}
-                  </span>
+                  <span class="text-xs font-semibold px-2.5 py-1 rounded-full mb-2.5 self-start text-brand-text-secondary" style="border:1px solid var(--th-border-strong)">{conceptLabel}</span>
                   <h4 class="text-xl font-bold font-display brand-accent-gold-text mb-1.5">
                     {t[project.nameKey] || project.nameKey}
                   </h4>
@@ -76,36 +75,7 @@ const photos: Record<string, { src: string; alt: string }> = {
                     {t[project.assetTypeKey] || project.assetTypeKey}
                   </p>
 
-                  <div class="text-xs text-brand-text-secondary/70 font-mono mb-1">
-                    {t['crowdfundingFundingProgressLabel'] || 'Progress'} <span class="font-semibold brand-primary-text">{progress.toFixed(1)}%</span>
-                  </div>
-                  <div class="w-full rounded-full h-2.5 mb-4 overflow-hidden" style="background: var(--th-surface-raised); border: 1px solid var(--th-border);">
-                    <div
-                      class="bg-gradient-to-r from-brand-primary to-brand-secondary h-full rounded-full animate-token-progress-anim"
-                      style={`--progress-width: ${Math.min(progress, 100)}%`}
-                    ></div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-x-4 text-xs font-mono mb-3.5">
-                    <div>
-                      <p class="text-brand-text-secondary/70">{t['crowdfundingMinInvestmentLabel'] || 'Min. Investment'}</p>
-                      <p class="font-semibold text-brand-text-primary text-sm">
-                        {project.minInvestmentDRC.toLocaleString()} <span class="text-brand-accent-gold-text">$DRACMA</span>
-                      </p>
-                    </div>
-                    {project.estimatedROIKey && (
-                      <div>
-                        <p class="text-brand-text-secondary/70">{t['crowdfundingEstROILabel'] || 'Est. ROI'}</p>
-                        <p class="font-semibold brand-secondary-text text-sm">
-                          {t[project.estimatedROIKey] || project.estimatedROIKey}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <p class="text-xs text-brand-text-secondary/70 font-mono mb-5">
-                    {t['presaleGoalLabel'] || 'Goal:'} {project.fundingGoalDRC.toLocaleString()} $DRACMA <span class="text-brand-text-secondary/50">(~${project.fundingGoalUSD.toLocaleString()} USD)</span>
-                  </p>
-
+                  <p class="mt-4 text-sm leading-7 text-brand-text-secondary" data-project-verification>{verificationLabel}</p>
                 </div>
               </div>
             </div>

@@ -1,7 +1,8 @@
 ---
 import PencilLayout from '../layouts/PencilLayout.astro';
+import ProjectDisclosure from '../components/pencil/ProjectDisclosure.astro';
 import CanvasPage from '../components/pencil/CanvasPage.astro';
 import pages from '../data/pencil-pages.json';
 const page=pages[0];
 ---
-<PencilLayout title={page.title} description={page.description}><CanvasPage page={page}/></PencilLayout>
+<PencilLayout title={page.title} description={page.description}><ProjectDisclosure/><CanvasPage page={page}/></PencilLayout>

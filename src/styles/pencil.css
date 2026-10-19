@@ -161,3 +161,20 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
   .pencil-page .pencil-faq-question { font-size:16px; line-height:26px; }
   .pencil-page .pencil-faq-answer { padding-right:0; }
 }
+
+.project-disclosure { background:#0C2730; color:#F8F7F2; border-bottom:1px solid #47757F; padding:18px 20px; }
+.project-disclosure > div { max-width:1140px; margin:auto; }
+.project-disclosure strong { display:block; font-size:12px; line-height:1.7; letter-spacing:.06em; }
+.project-disclosure p { margin-top:8px; font-size:14px; line-height:1.7; color:#DCE6E4; }
+.project-disclosure a { display:inline-flex; align-items:center; min-height:44px; font-size:13px; line-height:1.6; color:#E6FF28; }
+.project-verification { display:flex; flex-direction:column; gap:7px; width:100%; padding:14px 0; border-top:1px solid #71868B; color:#0C2730; }
+.project-verification span { font-size:11px; line-height:1.5; text-transform:uppercase; letter-spacing:.06em; }
+.project-verification strong { font-size:16px; line-height:1.5; }
+.project-verification p { font-size:12px; line-height:1.7; color:#50666D; }
+.pencil-page .project-verification-panel { height:auto!important; }
+.pencil-page [data-project-concept-description] { height:auto!important; }
+.project-verification-panel .project-verification { color:#F8F7F2; }
+.project-verification-panel .project-verification p { color:#DCE6E4; }
+.project-status-heading { font-family:'Roboto Condensed',sans-serif; font-size:26px; line-height:1.2; font-weight:800; color:#F8F7F2; }
+.project-status-copy { font-size:15px; line-height:1.8; color:#DCE6E4; }
+.pencil-page .project-pending-value { white-space:normal; overflow-wrap:anywhere; font-size:14px; line-height:1.7; }
