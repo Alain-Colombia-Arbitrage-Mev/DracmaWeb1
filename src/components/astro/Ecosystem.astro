@@ -1,5 +1,6 @@
 ---
 import { getTranslationsForLang } from '../../i18n/utils';
+import { getVisualCopy } from '../../data/visual';
 import { ECOSYSTEM_CARDS_DATA } from '../../data/constants';
 
 interface Props {
@@ -8,23 +9,28 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getTranslationsForLang(lang);
+const v = getVisualCopy(lang);
+const photos = ['agriculture', 'team', 'solar'];
+const photoAlts = [v.farmAlt, v.teamAlt, v.photoAlt];
 ---
 
 <section id="ecosystem" class="py-16 bg-brand-background">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
+    <div class="ecosystem-heading mb-12">
+      <p class="editorial-eyebrow">{v.label}</p>
       <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-primary-text">
         {t['ecosystemTitle'] || 'El Ecosistema DRACMA'}
       </h2>
-      <div class="w-28 h-1 mx-auto mb-8 rounded-full" style="background: var(--th-primary); opacity: 0.5;"></div>
+
       <p class="text-lg md:text-xl text-brand-text-secondary max-w-4xl mx-auto leading-relaxed">
         {t['ecosystemSubtitle'] || ''}
       </p>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
       {ECOSYSTEM_CARDS_DATA.map((card, index) => (
-        <div class="card-ui group" style={`animation-delay: ${0.1 * (index + 1)}s`}>
-          <div class="flex items-center mb-4">
+        <div class:list={["card-ui ecosystem-card group", { "ecosystem-photo-card": index < 3 }]} style={`animation-delay: ${0.1 * (index + 1)}s`}>
+          {index < 3 && <figure class="ecosystem-photo"><img src={`/images/${photos[index]}.webp`} srcset={`/images/${photos[index]}-640.webp 640w, /images/${photos[index]}.webp 1280w`} sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 400px" alt={photoAlts[index]} width="640" height="400" loading="lazy" decoding="async" /><figcaption>{v.photo}</figcaption></figure>}
+          <div class="ecosystem-card-copy"><div class="flex items-center mb-4">
             <i class={`${card.iconClass} fa-2x ${card.colorClass} mr-4 group-hover:scale-110 transition-transform`}></i>
             <h3 class={`text-xl font-bold ${card.colorClass} font-display`}>
               {t[card.titleKey] || card.titleKey}
@@ -32,7 +38,7 @@ const t = getTranslationsForLang(lang);
           </div>
           <p class="text-brand-text-secondary text-sm mb-3">
             {t[card.descKey] || card.descKey}
-          </p>
+          </p></div>
         </div>
       ))}
     </div>

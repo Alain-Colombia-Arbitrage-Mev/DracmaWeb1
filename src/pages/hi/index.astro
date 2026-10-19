@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/react/Navbar.tsx';
-import ThreeBackground from '../../components/react/ThreeBackground.tsx';
 import Hero from '../../components/astro/Hero.astro';
 import SectionDivider from '../../components/astro/SectionDivider.astro';
 import Ecosystem from '../../components/astro/Ecosystem.astro';
@@ -17,7 +16,6 @@ const lang = 'hi';
 ---
 
 <BaseLayout lang={lang}>
-  <ThreeBackground client:only="react" />
   <Navbar client:load />
   <AiModal client:load />
   <WhitepaperModal client:load />

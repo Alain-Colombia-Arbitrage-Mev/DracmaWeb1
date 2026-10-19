@@ -1,5 +1,6 @@
 ---
 import { getTranslationsForLang } from '../../i18n/utils';
+import { getVisualCopy } from '../../data/visual';
 import { CROWDFUNDING_FEATURES_DATA, CROWDFUNDING_PROJECTS_DATA } from '../../data/constants';
 
 interface Props {
@@ -8,12 +9,17 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getTranslationsForLang(lang);
+const v = getVisualCopy(lang);
+const photos: Record<string, { src: string; alt: string }> = {
+  agroverde01: { src: 'agriculture', alt: v.farmAlt },
+  solaris03: { src: 'solar', alt: v.photoAlt },
+};
 ---
 
 <section id="crowdfunding" class="py-16 bg-brand-background">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Section Header -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-12"><p class="editorial-eyebrow justify-center">{v.projects}</p>
       <h2 class="text-3xl md:text-5xl font-bold mb-4 title-section-display brand-secondary-text">
         {t['crowdfundingTitle'] || 'Crowdfunding P2P'}
       </h2>
@@ -57,17 +63,8 @@ const t = getTranslationsForLang(lang);
           const progress = (project.currentFundingDRC / project.fundingGoalDRC) * 100;
           return (
             <div style={`animation-delay: ${0.15 * (index + 1)}s`}>
-              <div class="card-ui glassmorphism-light overflow-hidden flex flex-col h-full transform transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-brand-secondary">
-                <div class="w-full h-48 flex items-center justify-center project-card-header">
-                <div class="text-center">
-                  <i class={`text-5xl mb-3 block ${
-                    project.id === 'agroverde01' ? 'fas fa-seedling' :
-                    project.id === 'solaris03' ? 'fas fa-solar-panel' :
-                    'fas fa-briefcase'
-                  }`} style="color: var(--th-primary);"></i>
-                  <p class="text-sm font-semibold tracking-wider uppercase" style="color: var(--th-text-secondary);">{t[project.assetTypeKey] || project.assetTypeKey}</p>
-                </div>
-              </div>
+              <div class="card-ui project-photo-card overflow-hidden flex flex-col h-full">
+                <figure class="project-photo"><img src={`/images/${(photos[project.id]?.src || 'team')}.webp`} srcset={`/images/${(photos[project.id]?.src || 'team')}-640.webp 640w, /images/${(photos[project.id]?.src || 'team')}.webp 1280w`} sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 400px" alt={photos[project.id]?.alt || v.teamAlt} width="640" height="400" loading="lazy" decoding="async" /><figcaption>{v.photo}</figcaption></figure>
                 <div class="p-5 flex flex-col flex-grow">
                   <span class={`text-xs font-semibold px-2.5 py-1 rounded-full text-white mb-2.5 self-start shadow-sm ${project.statusColorClass}`}>
                     {t[project.statusKey] || project.statusKey}
@@ -82,7 +79,7 @@ const t = getTranslationsForLang(lang);
                   <div class="text-xs text-brand-text-secondary/70 font-mono mb-1">
                     {t['crowdfundingFundingProgressLabel'] || 'Progress'} <span class="font-semibold brand-primary-text">{progress.toFixed(1)}%</span>
                   </div>
-                  <div class="w-full rounded-full h-2.5 mb-4 overflow-hidden" style="background: var(--th-surface-raised); border: 1px solid var(--th-border);"
+                  <div class="w-full rounded-full h-2.5 mb-4 overflow-hidden" style="background: var(--th-surface-raised); border: 1px solid var(--th-border);">
                     <div
                       class="bg-gradient-to-r from-brand-primary to-brand-secondary h-full rounded-full animate-token-progress-anim"
                       style={`--progress-width: ${Math.min(progress, 100)}%`}

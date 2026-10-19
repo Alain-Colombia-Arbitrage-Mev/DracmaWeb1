@@ -15,7 +15,7 @@ export const wagmiConfig = createConfig({
         name: 'DRACMA Presale',
         description: 'Compra tokens $DRACMA en la preventa de DRACMA',
         url: typeof window !== 'undefined' ? window.location.origin : 'https://dracma.org',
-        icons: ['https://dracma.org/favicon.ico'],
+        icons: [typeof window !== 'undefined' ? `${window.location.origin}/apple-touch-icon.png` : 'https://dracmaweb1.pages.dev/apple-touch-icon.png'],
       },
     }),
   ],

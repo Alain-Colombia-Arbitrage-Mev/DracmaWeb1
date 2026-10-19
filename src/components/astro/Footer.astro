@@ -1,4 +1,5 @@
 ---
+import { getVisualCopy } from '../../data/visual';
 import { getTranslationsForLang } from '../../i18n/utils';
 import { FOOTER_SECTIONS_DATA, FOOTER_SOCIAL_LINKS } from '../../data/constants';
 
@@ -8,6 +9,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getTranslationsForLang(lang);
+const v = getVisualCopy(lang);
 ---
 
 <footer class="py-12" style="background: var(--th-bg-alt); border-top: 1px solid var(--th-border);">
@@ -15,16 +17,8 @@ const t = getTranslationsForLang(lang);
     <div class="grid md:grid-cols-4 gap-8">
       <!-- Brand Column -->
       <div>
-        <a href="#hero" class="flex items-center text-2xl font-bold brand-accent-gold-text title-main-display mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-8 h-8 mr-2">
-            <defs>
-              <linearGradient id="footLogoGradNew2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#F0E68C"/>
-                <stop offset="100%" stop-color="#D4AF37"/>
-              </linearGradient>
-            </defs>
-            <path d="M50 15 C 35 20, 20 35, 20 50 C 20 65, 35 80, 50 85 C 65 80, 80 65, 80 50 C 80 35, 65 20, 50 15 Z M 50 25 C 58.28 25, 65 31.72, 65 40 C 65 48.28, 58.28 55, 50 55 C 41.72 55, 35 48.28, 35 40 C 35 31.72, 41.72 25, 50 25 Z" fill="url(#footLogoGradNew2)" />
-          </svg>
+        <a href="#hero" class="brand-wordmark flex items-center mb-4">
+          <img src="/brand/dracma-eagle.webp" alt="" width="42" height="49" class="brand-logo" loading="lazy" />
           DRACMA
         </a>
         <p class="text-brand-text-secondary/70 text-sm mb-6">
@@ -67,6 +61,7 @@ const t = getTranslationsForLang(lang);
       ))}
     </div>
 
+    <div class="photo-credits"><span>{v.credits} · Unsplash</span><a href="https://unsplash.com/photos/Ilpf2eUPpUE" target="_blank" rel="noopener noreferrer">Andreas Gücklhorn</a><a href="https://unsplash.com/photos/hdD1ZP1PzqI" target="_blank" rel="noopener noreferrer">Ivan Bandura</a><a href="https://unsplash.com/photos/Qx7A7SChpnI" target="_blank" rel="noopener noreferrer">Cherrydeck</a></div>
     <!-- Bottom Bar -->
     <div class="mt-10 pt-8 flex flex-col md:flex-row justify-between items-center" style="border-top: 1px solid var(--th-border);">
       <p class="text-brand-text-secondary/60 text-xs font-mono mb-4 md:mb-0">

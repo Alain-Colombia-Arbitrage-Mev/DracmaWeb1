@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback, useRef, memo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useChainId, useConnect, useDisconnect, useConnectors, useSwitchChain } from 'wagmi';
 import { bsc } from 'wagmi/chains';
 import { formatUnits } from 'viem';
 import { $translations } from '../../stores/appStore';
 import { PRESALE_DATA, TOKEN_PRICE, TOKEN_DISTRIBUTION_DATA } from '../../data/constants';
-import type { CountdownDigits } from '../../types';
 import { usePresale, type TxStep } from '../../hooks/usePresale';
 import { useVesting, type ClaimStep } from '../../hooks/useVesting';
 import { PRESALE_CONTRACT_ADDRESS, DRACMA_TOKEN_ADDRESS, VESTING_VAULT_ADDRESS } from '../../config/contracts';
@@ -16,18 +15,6 @@ import {
   type PricingState,
 } from '../../services/nowPaymentsService';
 import Web3Provider from './Web3Provider';
-
-const initialCountdown: CountdownDigits = { days: '00', hours: '00', minutes: '00', seconds: '00' };
-
-// Simulated live purchases for FOMO ticker
-const FOMO_NAMES = ['Carlos M.', 'Ana R.', 'David K.', 'Maria L.', 'James T.', 'Sofia P.', 'Ahmed B.', 'Yuki S.', 'Elena V.', 'Pedro G.', 'Linda W.', 'Omar H.', 'Priya S.', 'Marco F.', 'Nina Z.', 'Wei L.', 'Isabella C.', 'Raj P.', 'Fatima A.', 'Lucas B.'];
-const FOMO_AMOUNTS = [250, 500, 1000, 2500, 5000, 750, 1500, 3000, 800, 2000, 350, 4000, 600, 1200, 7500];
-const FOMO_COUNTRIES = ['🇨🇴', '🇪🇸', '🇺🇸', '🇲🇽', '🇦🇷', '🇧🇷', '🇩🇪', '🇯🇵', '🇦🇪', '🇮🇳', '🇬🇧', '🇫🇷', '🇨🇱', '🇵🇪', '🇨🇦'];
-const FOMO_TIMES = ['hace 2 min', 'hace 5 min', 'hace 12 min', 'hace 18 min', 'hace 23 min', 'hace 30 min', 'hace 1h', 'hace 45 min'];
-
-function getRandomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
 
 const getBscScanTxUrl = (hash: string) => `https://bscscan.com/tx/${hash}`;
 
@@ -49,44 +36,7 @@ function openNowPaymentsWindow() {
   return paymentWindow;
 }
 
-// Memoized countdown so FOMO state changes don't re-render it
-const CountdownDisplay = memo(function CountdownDisplay({ endDate, t }: { endDate: Date; t: (key: string, fallback?: string) => string }) {
-  const [countdown, setCountdown] = useState<CountdownDigits>(initialCountdown);
 
-  useEffect(() => {
-    const calc = () => {
-      const now = Date.now();
-      const distance = endDate.getTime() - now;
-      if (distance < 0) {
-        setCountdown({ days: '00', hours: '00', minutes: '00', seconds: '00' });
-        return false;
-      }
-      const d = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-      const h = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-      const m = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-      const s = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-      setCountdown({ days: d, hours: h, minutes: m, seconds: s });
-      return true;
-    };
-
-    calc();
-    const intervalId = setInterval(() => {
-      if (!calc()) clearInterval(intervalId);
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [endDate]);
-
-  return (
-    <div className="grid grid-cols-4 gap-2 md:gap-4 text-center">
-      <div><div id="presale-days" className="presale-countdown-digit">{countdown.days}</div><span className="text-xs font-mono text-brand-text-secondary/70">{t('countdownDays')}</span></div>
-      <div><div id="presale-hours" className="presale-countdown-digit">{countdown.hours}</div><span className="text-xs font-mono text-brand-text-secondary/70">{t('countdownHours')}</span></div>
-      <div><div id="presale-minutes" className="presale-countdown-digit">{countdown.minutes}</div><span className="text-xs font-mono text-brand-text-secondary/70">{t('countdownMinutes')}</span></div>
-      <div><div id="presale-seconds" className="presale-countdown-digit">{countdown.seconds}</div><span className="text-xs font-mono text-brand-text-secondary/70">{t('countdownSeconds')}</span></div>
-    </div>
-  );
-});
-
-// Transaction status overlay with purchase details
 interface PurchaseDetails {
   amount: string;
   currency: string;
@@ -121,7 +71,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
             address: DRACMA_TOKEN_ADDRESS,
             symbol: 'DRACMA',
             decimals: 18,
-            image: 'https://dracma.org/favicon.ico',
+            image: `${window.location.origin}/apple-touch-icon.png`,
           },
         },
       });
@@ -591,36 +541,6 @@ function PresaleInner() {
   const [pendingNowPaymentsCheckout, setPendingNowPaymentsCheckout] = useState(false);
   const pendingPaymentWindowRef = useRef<Window | null>(null);
 
-  // FOMO state
-  const [fomoNotification, setFomoNotification] = useState<{name: string; amount: number; country: string; time: string} | null>(null);
-  const [fomoVisible, setFomoVisible] = useState(false);
-  const [liveInvestors, setLiveInvestors] = useState(10000);
-  const [recentPurchases, setRecentPurchases] = useState(23);
-
-  // FOMO: live purchase ticker
-  useEffect(() => {
-    const showNotification = () => {
-      const notif = {
-        name: getRandomItem(FOMO_NAMES),
-        amount: getRandomItem(FOMO_AMOUNTS),
-        country: getRandomItem(FOMO_COUNTRIES),
-        time: getRandomItem(FOMO_TIMES),
-      };
-      setFomoNotification(notif);
-      setFomoVisible(true);
-      setTimeout(() => setFomoVisible(false), 4000);
-    };
-
-    const initialTimer = setTimeout(showNotification, 5000);
-    const interval = setInterval(() => {
-      showNotification();
-      setLiveInvestors(prev => prev + Math.floor(Math.random() * 3));
-      setRecentPurchases(prev => prev + 1);
-    }, 8000 + Math.random() * 7000);
-
-    return () => { clearTimeout(initialTimer); clearInterval(interval); };
-  }, []);
-
   const backendPrice = pricingState?.currentPriceUsd;
   const effectivePrice = backendPrice ?? TOKEN_PRICE;
 
@@ -773,9 +693,8 @@ function PresaleInner() {
     handleNowPaymentsPurchase();
   }, [address, handleNowPaymentsPurchase, isConnected, pendingNowPaymentsCheckout]);
 
-  const overallProgress = (PRESALE_DATA.raisedUSD / PRESALE_DATA.targetUSD) * 100;
   const totalPresaleTokens = pricingState?.maxSaleTokens ?? PRESALE_DATA.totalPresaleTokens;
-  const tokensSold = pricingState?.tokensSold ?? (effectivePrice > 0 ? PRESALE_DATA.raisedUSD / effectivePrice : 0);
+  const tokensSold = pricingState?.tokensSold ?? 0;
   const tokensReserved = pricingState?.tokensReserved ?? 0;
   const tokensAllocated = pricingState?.tokensAllocated ?? tokensSold + tokensReserved;
   const tokensAvailable = pricingState?.tokensAvailable ?? Math.max(totalPresaleTokens - tokensAllocated, 0);
@@ -790,64 +709,14 @@ function PresaleInner() {
       {/* Transaction Status Overlay */}
       <TxStatusOverlay txStep={txStep} txHash={txHash} errorMessage={errorMessage} onReset={resetTx} t={t} purchaseDetails={null} />
 
-      {/* FOMO Notification Toast */}
-      <div role="status" aria-live="polite" className={`fixed bottom-6 left-6 z-50 transition-all duration-500 ${fomoVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
-        <div className="rounded-xl shadow-2xl p-4 max-w-xs flex items-center gap-3 backdrop-blur-md" style={{background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)'}}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{background: 'var(--th-secondary-muted)'}}>
-            <i className="fas fa-check-circle text-brand-secondary text-lg"></i>
-          </div>
-          {fomoNotification && (
-            <div>
-              <p className="text-sm font-semibold text-brand-text-primary">
-                {fomoNotification.country} {fomoNotification.name}
-              </p>
-              <p className="text-xs text-brand-text-secondary">
-                {t('fomoJustInvested', 'invirtió')} <span className="font-bold text-brand-secondary">${fomoNotification.amount.toLocaleString()} USD</span>
-              </p>
-              <p className="text-[10px] text-brand-text-secondary/60">{fomoNotification.time}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Social Proof Bar */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-8">
-          <div className="flex items-center gap-2 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm" style={{background: 'var(--th-surface)', border: '1px solid var(--th-border)'}}>
-            <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-brand-primary flex items-center justify-center text-white text-[10px] font-bold">C</div>
-              <div className="w-6 h-6 rounded-full bg-brand-secondary flex items-center justify-center text-white text-[10px] font-bold">A</div>
-              <div className="w-6 h-6 rounded-full bg-brand-accent-gold flex items-center justify-center text-white text-[10px] font-bold">M</div>
-            </div>
-            <span className="text-sm font-semibold text-brand-text-primary">{liveInvestors.toLocaleString()}+</span>
-            <span className="text-xs text-brand-text-secondary">{t('fomoInvestorsActive', 'inversores activos')}</span>
-          </div>
-          <div className="flex items-center gap-2 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm" style={{background: 'var(--th-surface)', border: '1px solid var(--th-secondary-muted)'}}>
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-secondary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-secondary"></span>
-            </span>
-            <span className="text-sm font-semibold text-brand-secondary">{recentPurchases}</span>
-            <span className="text-xs text-brand-text-secondary">{t('fomoRecentPurchases', 'compras en la última hora')}</span>
-          </div>
-        </div>
-
         <div className="text-center mb-12 animate-fade-in-zoom">
           <h2 className="text-4xl md:text-6xl font-bold mb-4 title-main-display brand-primary-text">
-            {t('presaleTitle')} <span className="text-brand-secondary text-lg align-top">{t('presaleLive')}</span>
+            {t('presaleTitle')}
           </h2>
           <div className="w-36 h-1 mx-auto mb-6 rounded-full" style={{background: 'var(--th-primary)', opacity: 0.5}}></div>
           <p className="text-lg md:text-xl text-brand-text-secondary max-w-3xl mx-auto leading-relaxed">{t('presaleSubtitle')}</p>
 
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5" style={{background: 'var(--th-accent-muted)', border: '1px solid rgba(245,158,11,0.2)'}}>
-            <i className="fas fa-fire text-amber-400"></i>
-            <span className="text-sm font-medium text-amber-300">{t('fomoUrgency', '⚡ Solo queda el 55% de los tokens — No te quedes afuera')}</span>
-          </div>
-        </div>
-
-        <div className="max-w-2xl mx-auto mb-10 animate-fade-in-zoom" style={{animationDelay: '0.2s'}}>
-          <h3 className="text-xl font-semibold text-center mb-4 title-section-display brand-accent-gold-text tracking-wider">{t('presaleEndsIn')}</h3>
-          <CountdownDisplay endDate={PRESALE_DATA.endDate} t={t} />
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start">
@@ -864,17 +733,7 @@ function PresaleInner() {
                   {backendPrice ? t('presaleBackendPriceNote', 'Precio backend con incremento 10% por cada 100,000 tokens vendidos.') : t('presaleBackendFallbackPriceNote', 'Precio base local mientras carga el backend.')}
                 </p>
               </div>
-              <div className="pt-1">
-                <div className="flex justify-between mb-1.5 text-sm">
-                  <span className="text-brand-text-secondary/80 font-mono">{t('presaleTotalProgress')}</span>
-                  <span className="font-bold brand-primary-text font-mono">{overallProgress.toFixed(1)}%</span>
-                </div>
-                <div className="token-progress-bar"><div className="token-progress-fill" style={{'--progress-width': `${Math.min(overallProgress, 100)}%`} as React.CSSProperties}></div></div>
-                <div className="flex justify-between text-xs text-brand-text-secondary/60 mt-1 font-mono">
-                  <span>${PRESALE_DATA.raisedUSD.toLocaleString()}</span>
-                  <span>${PRESALE_DATA.targetUSD.toLocaleString()}</span>
-                </div>
-              </div>
+              {pricingState && (
               <div className="pt-1">
                 <div className="flex justify-between mb-1.5 text-sm">
                   <span className="text-brand-text-secondary/80 font-mono">{t('presaleTokensSold')}</span>
@@ -886,6 +745,7 @@ function PresaleInner() {
                   <span>{totalPresaleTokens.toLocaleString()} $DRACMA</span>
                 </div>
               </div>
+              )}
               {pricingState && (
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="rounded-lg p-3" style={{ background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' }}>
@@ -934,27 +794,6 @@ function PresaleInner() {
                   <div className="flex items-center justify-center">
                     <i className="fas fa-lock text-brand-accent-gold mr-2 text-lg"></i>
                     <span className="text-sm font-semibold text-brand-text-primary">{t('presaleVestingInfo', '50% entrega inmediata + 50% vesting 6 meses')}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent activity */}
-              <div className="rounded-lg p-3 mt-4" style={{background: 'var(--th-secondary-muted)', border: '1px solid var(--th-border)'}}>
-                <p className="text-xs font-semibold text-brand-text-primary flex items-center gap-1.5 mb-2">
-                  <i className="fas fa-chart-line text-brand-secondary"></i> {t('fomoActivityTitle', 'Actividad reciente')}
-                </p>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-brand-text-secondary">🇨🇴 Carlos M.</span>
-                    <span className="font-semibold text-brand-secondary">$2,500 USD</span>
-                  </div>
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-brand-text-secondary">🇪🇸 Ana R.</span>
-                    <span className="font-semibold text-brand-secondary">$1,000 USD</span>
-                  </div>
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-brand-text-secondary">🇺🇸 David K.</span>
-                    <span className="font-semibold text-brand-secondary">$5,000 USD</span>
                   </div>
                 </div>
               </div>
@@ -1124,9 +963,6 @@ function PresaleInner() {
                     }
                   </button>
                 )}
-                <p className="text-xs text-center mt-2 text-brand-accent-coral font-semibold">
-                  <i className="fas fa-users mr-1"></i> {t('fomoCTAMessage', `${liveInvestors}+ personas ya invirtieron. ¿Y tú?`)}
-                </p>
                 <div className="text-xs text-brand-text-secondary/60 mt-2.5 text-center font-mono" dangerouslySetInnerHTML={{ __html: t('presaleAgreement').replace(/<a>/g, '<a href="#" class="brand-primary-text hover:underline">').replace(/<\/a>/g, '</a>') }} />
               </div>
             </div>

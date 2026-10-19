@@ -67,7 +67,7 @@ const jsonLd = {
       "@id": `${SITE}/#organization`,
       "name": "DRACMA",
       "url": SITE,
-      "logo": { "@type": "ImageObject", "url": `${SITE}/favicon.svg` },
+      "logo": { "@type": "ImageObject", "url": `${SITE}/brand/dracma-eagle.png` },
       "sameAs": [
         "https://x.com/dracma_community",
         "https://t.me/dracma_updates"
@@ -94,7 +94,7 @@ const jsonLd = {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#4f46e5" />
+  <meta name="theme-color" content="#091216" />
 
   <!-- Primary SEO -->
   <title>{resolvedTitle}</title>
@@ -102,8 +102,7 @@ const jsonLd = {
   <link rel="canonical" href={canonicalURL} />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
@@ -152,7 +151,7 @@ const jsonLd = {
   <script is:inline>
     (function() {
       var saved = localStorage.getItem('dracma-theme');
-      if (saved !== 'dark') document.documentElement.classList.add('theme-light');
+      if (saved === 'light') document.documentElement.classList.add('theme-light');
       window.__DRACMA_LANG__ = document.documentElement.lang || 'es';
     })();
   </script>

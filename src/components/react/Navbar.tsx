@@ -7,11 +7,7 @@ import type { PresaleBlockchain } from '../../types';
 import Web3Provider from './Web3Provider';
 
 const NavLogo = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-9 h-9 mr-2 transform transition-transform duration-700 hover:rotate-[360deg] hover:scale-110">
-    <defs><linearGradient id="navLogoGradientNew" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#F0E68C"/><stop offset="100%" stopColor="#D4AF37"/></linearGradient></defs>
-    <path d="M50 15 C 35 20, 20 35, 20 50 C 20 65, 35 80, 50 85 C 65 80, 80 65, 80 50 C 80 35, 65 20, 50 15 Z M 50 25 C 58.28 25, 65 31.72, 65 40 C 65 48.28, 58.28 55, 50 55 C 41.72 55, 35 48.28, 35 40 C 35 31.72, 41.72 25, 50 25 Z" fill="url(#navLogoGradientNew)" />
-    <circle cx="50" cy="40" r="8" fill="#2C3E50" opacity="0.7"/>
-  </svg>
+  <img src="/brand/dracma-eagle.webp" alt="" width="42" height="49" className="brand-logo" />
 );
 
 function NavbarInner() {
@@ -62,16 +58,16 @@ function NavbarInner() {
   }, [connect, connectors]);
 
   return (
-    <nav className="fixed w-full z-50 backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderBottom: '1px solid var(--th-nav-border)'}}>
+    <nav className="site-navigation fixed w-full z-50 backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderBottom: '1px solid var(--th-nav-border)'}}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
-            <a href="#hero" onClick={(e) => handleNavClick(e, "#hero")} className="flex-shrink-0 flex items-center text-3xl font-bold brand-accent-gold-gradient-text title-main-display">
+            <a href="#hero" onClick={(e) => handleNavClick(e, "#hero")} className="brand-wordmark flex-shrink-0 flex items-center">
               <NavLogo />
               DRACMA
             </a>
           </div>
-          <div className="hidden md:flex items-center">
+          <div className="hidden xl:flex items-center">
             <div className="ml-10 flex items-baseline space-x-5">
               {NAV_LINKS.map(link => (
                 <a key={link.key} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className={link.isActive ? 'nav-link-active' : 'nav-link'}>
@@ -104,7 +100,7 @@ function NavbarInner() {
               </div>
             </div>
           </div>
-          <div className="hidden md:block ml-4">
+          <div className="hidden xl:block ml-4">
             {isConnected ? (
               <div className="flex items-center gap-2">
                 <span className="text-sm font-mono text-brand-secondary">{truncatedAddress}</span>
@@ -116,7 +112,7 @@ function NavbarInner() {
               </button>
             )}
           </div>
-          <div className="-mr-2 flex md:hidden items-center">
+          <div className="-mr-2 flex xl:hidden items-center">
             <button onClick={toggleTheme} className="theme-toggle mr-1" aria-label="Toggle theme">
               <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'} text-sm`}></i>
             </button>
@@ -132,7 +128,7 @@ function NavbarInner() {
                 <i className="fas fa-globe" aria-hidden="true"></i>
                 <span className="ml-1 text-xs">{currentLang.toUpperCase()}</span>
               </button>
-              <div className={`language-dropdown !right-auto left-0 min-w-[120px] ${isMobileLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
+              <div className={`language-dropdown right-0 left-auto min-w-[120px] ${isMobileLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
                   <a key={lang.code} href="#" role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
@@ -140,14 +136,14 @@ function NavbarInner() {
                 ))}
               </div>
             </div>
-            <button type="button" onClick={() => setIsMobileMenuOpen(prev => !prev)} className="inline-flex items-center justify-center p-2 rounded-md transition-colors" style={{color: 'var(--th-text-secondary)'}} aria-expanded={isMobileMenuOpen} aria-label={isMobileMenuOpen ? t('srCloseMenu', 'Close menu') : t('srOpenMenu', 'Open menu')}>
+            <button type="button" onClick={() => setIsMobileMenuOpen(prev => !prev)} className="inline-flex items-center justify-center p-2 rounded-md transition-colors" style={{color: 'var(--th-text-secondary)'}} aria-controls="mobile-navigation" aria-expanded={isMobileMenuOpen} aria-label={isMobileMenuOpen ? t('srCloseMenu', 'Close menu') : t('srOpenMenu', 'Open menu')}>
               {isMobileMenuOpen ? <i className="fas fa-times text-2xl" aria-hidden="true"></i> : <i className="fas fa-bars text-2xl" aria-hidden="true"></i>}
             </button>
           </div>
         </div>
       </div>
       {isMobileMenuOpen && (
-        <div className="md:hidden backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderTop: '1px solid var(--th-nav-border)'}}>
+        <div id="mobile-navigation" className="mobile-navigation xl:hidden backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderTop: '1px solid var(--th-nav-border)'}}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {NAV_LINKS.map(link => (
               <a key={link.key} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className={`block text-base py-3 ${link.isActive ? 'nav-link-active' : 'nav-link'}`}>

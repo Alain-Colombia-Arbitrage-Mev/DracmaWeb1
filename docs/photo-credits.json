@@ -1,0 +1,26 @@
+[
+  {
+    "file": "solar.webp",
+    "author": "Andreas Gücklhorn",
+    "source": "https://unsplash.com/photos/aerial-photography-of-grass-field-with-blue-solar-panels-Ilpf2eUPpUE",
+    "download": "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=max&w=1600&q=85",
+    "license": "https://unsplash.com/license",
+    "usage": "Editorial stock photography, illustrative; not a photograph of a verified DRACMA property or team."
+  },
+  {
+    "file": "agriculture.webp",
+    "author": "Ivan Bandura",
+    "source": "https://unsplash.com/photos/aerial-photography-of-green-farm-field-hdD1ZP1PzqI",
+    "download": "https://images.unsplash.com/photo-1557445796-184d83fc49b9?auto=format&fit=max&w=1600&q=85",
+    "license": "https://unsplash.com/license",
+    "usage": "Editorial stock photography, illustrative; not a photograph of a verified DRACMA property or team."
+  },
+  {
+    "file": "team.webp",
+    "author": "Cherrydeck",
+    "source": "https://unsplash.com/photos/people-collaborating-on-office-laptop-Qx7A7SChpnI",
+    "download": "https://images.unsplash.com/photo-1603195827187-459ab02554a0?auto=format&fit=max&w=1600&q=85",
+    "license": "https://unsplash.com/license",
+    "usage": "Editorial stock photography, illustrative; not a photograph of a verified DRACMA property or team."
+  }
+]
