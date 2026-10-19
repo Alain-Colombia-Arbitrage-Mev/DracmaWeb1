@@ -12,9 +12,9 @@ export const wagmiConfig = createConfig({
       projectId,
       showQrModal: true,
       metadata: {
-        name: 'DRACMA Presale',
-        description: 'Compra tokens $DRACMA en la preventa de DRACMA',
-        url: typeof window !== 'undefined' ? window.location.origin : 'https://dracma.org',
+        name: 'DRACMA',
+        description: 'Conecta tu wallet para recibir DRACMA en BNB Smart Chain',
+        url: typeof window !== 'undefined' ? window.location.origin : 'https://dracmaweb1.pages.dev',
         icons: [typeof window !== 'undefined' ? `${window.location.origin}/apple-touch-icon.png` : 'https://dracmaweb1.pages.dev/apple-touch-icon.png'],
       },
     }),

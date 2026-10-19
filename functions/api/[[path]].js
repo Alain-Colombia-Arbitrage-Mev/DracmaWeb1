@@ -9,8 +9,14 @@ export async function onRequest({ request, env }) {
     '/api/presale/quote': 'POST',
     '/api/payments/nowpayments': 'POST',
     '/api/webhooks/nowpayments': 'POST',
+    '/api/v1/market/price': 'GET',
+    '/api/v1/quotes': 'POST',
+    '/api/v1/checkout/invoices': 'POST',
+    '/api/v1/webhooks/nowpayments': 'POST',
   };
-  const method = methods[url.pathname];
+  const isGoAPI=url.pathname.startsWith('/api/v1/');
+  const orderPath=/^\/api\/v1\/orders\/o_[a-f0-9]{32}$/.test(url.pathname);
+  const method = methods[url.pathname] || (orderPath ? 'GET' : undefined);
   const json = (error, status, headers = {}) => Response.json({ error }, {
     status, headers: { 'Cache-Control': 'no-store', ...headers },
   });
@@ -19,7 +25,10 @@ export async function onRequest({ request, env }) {
 
   let upstream;
   try {
-    const origin = new URL(env.API_ORIGIN || 'https://32.196.242.92.sslip.io');
+    // Versioned purchases use Go. Keep legacy callbacks on their existing origin during migration.
+    const configuredOrigin=isGoAPI?env.GO_API_ORIGIN:(env.API_ORIGIN||'https://32.196.242.92.sslip.io');
+    if(!configuredOrigin)return json('El servicio de compra todavía no está configurado.',503);
+    const origin = new URL(configuredOrigin);
     if (origin.protocol !== 'https:' || origin.username || origin.password || origin.origin === url.origin) {
       return json('Invalid API configuration.', 503);
     }
@@ -29,7 +38,7 @@ export async function onRequest({ request, env }) {
   }
 
   const headers = new Headers();
-  for (const name of ['content-type', 'accept', 'x-nowpayments-sig']) {
+  for (const name of ['content-type', 'accept', 'x-nowpayments-sig',...(isGoAPI?['idempotency-key','authorization']:[])]) {
     const value = request.headers.get(name);
     if (value) headers.set(name, value);
   }

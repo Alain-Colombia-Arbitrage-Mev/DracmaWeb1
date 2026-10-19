@@ -45,3 +45,22 @@ test('upstream outage becomes explicit JSON failure', async () => {
     assert.match((await response.json()).error, /unavailable/);
   } finally { globalThis.fetch = originalFetch; }
 });
+test('Go checkout requires its own configured origin and rejects invalid order paths', async () => {
+  assert.equal((await onRequest(context('/api/v1/market/price'))).status,503);
+  assert.equal((await onRequest(context('/api/v1/orders/o_other'))).status,404);
+  assert.equal((await onRequest(context('/api/v1/admin'))).status,404);
+});
+test('Go proxy preserves receipt authorization and idempotency without using the legacy origin', async () => {
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async(url,options)=>{
+    assert.equal(String(url),'https://go.example/api/v1/checkout/invoices');
+    assert.equal(options.headers.get('idempotency-key'),'same-purchase-key');
+    assert.equal(options.headers.get('authorization'),'Bearer receipt');
+    assert.equal(options.headers.get('cookie'),null);
+    return Response.json({id:'example'},{status:201});
+  };
+  try{
+    const request=new Request('https://dracmaweb1.pages.dev/api/v1/checkout/invoices',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':'same-purchase-key',Authorization:'Bearer receipt',Cookie:'private=1'},body:'{}'});
+    assert.equal((await onRequest({request,env:{API_ORIGIN:'https://legacy.example',GO_API_ORIGIN:'https://go.example'}})).status,201);
+  }finally{globalThis.fetch=originalFetch;}
+});

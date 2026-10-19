@@ -34,11 +34,12 @@ if(mounts.length){
 }
 
 if(document.querySelector('[data-checkout]')){
- const [{createRoot},{createElement},{default:Checkout}]=await Promise.all([import('react-dom/client'),import('react'),import('../components/react/CryptoCheckout')]);
  const checkoutMounts=$all('[data-checkout]');
- const rootElement=document.createElement('div');rootElement.className='w-full';
+ const rootElement=document.querySelector<HTMLElement>('[data-checkout-root]');
+ if(rootElement){
  const place=()=>{const visible=checkoutMounts.find(x=>x.getBoundingClientRect().width>0);if(visible&&rootElement.parentElement!==visible)visible.append(rootElement);};
- place();createRoot(rootElement).render(createElement(Checkout));window.matchMedia('(max-width:640px)').addEventListener('change',place);
+ place();window.matchMedia('(max-width:640px)').addEventListener('change',place);
+ }
  // The hero action targets the checkout visible at this breakpoint.
  $all('a[href^="#checkout-"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const visible=$all('[data-checkout]').find(x=>x.getBoundingClientRect().width>0);visible?.scrollIntoView({behavior:'smooth',block:'start'});}));
 }

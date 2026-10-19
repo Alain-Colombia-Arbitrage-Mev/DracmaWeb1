@@ -43,9 +43,25 @@ All commands are run from the root of the project, from a terminal:
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
-## DRACMA Presale API
+## Compra DRACMA: API Go y SQLite
 
-The backend in `server/` creates NOWPayments invoices, receives IPN webhooks, tracks reserved/sold tokens, and blocks over-sales with `MAX_SALE_TOKENS`.
+`/comprar/` y el CTA principal utilizan la API Go versionada. Calcula la cotización en el servidor con el precio del par Dexscreener BSC y persiste órdenes, reservas y entregas en SQLite. El código del backend se prepara en `/Volumes/KINGSTON/dracmabackend`; su remoto previsto es `https://github.com/devfidubit-a11y/dracmabackend.git` (pendiente de acceso).
+
+En Cloudflare Pages, configurar `GO_API_ORIGIN` con el origen HTTPS del servidor Go. `PUBLIC_CHECKOUT_API_BASE_URL` queda vacío para usar la Function de la misma procedencia. Si falta ese origen, el checkout muestra indisponibilidad explícita y no genera facturas. No hay un precio fijo de respaldo.
+
+Para desarrollo con Go en `127.0.0.1:8787`:
+
+```sh
+PUBLIC_CHECKOUT_API_BASE_URL=http://127.0.0.1:8787 npm run dev -- --port 4323
+```
+
+Abrir `http://localhost:4323/comprar/` y configurar `PUBLIC_APP_URL`/`CORS_ORIGIN` del Go API como `http://localhost:4323`. La API permanece con `CHECKOUT_ENABLED=false` hasta configurar NOWPayments, IPN público y la wallet de ventas. El recibo privado de consulta permanece en la pestaña; un retorno desde NOWPayments nunca marca una compra como entregada.
+
+La Function mantiene `API_ORIGIN` para callbacks del backend Node y `GO_API_ORIGIN` para `/api/v1/*`. Antes de habilitar compras nuevas en Go, conciliar las órdenes antiguas, pausar su creación en Node y dedicar una wallet de ventas a la nueva instancia. Los datos JSON del backend Node no se migran automáticamente.
+
+## API Node de preventa anterior
+
+El backend anterior está en `server/`: Node/Express, persistencia JSON y precio escalonado de preventa. Se conserva para sus flujos y órdenes existentes. La disponibilidad del origen histórico indicado abajo no está verificada; no es el servicio Go del checkout principal.
 
 Key production values:
 
