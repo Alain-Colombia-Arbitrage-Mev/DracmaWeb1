@@ -43,6 +43,10 @@ All commands are run from the root of the project, from a terminal:
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
+## Métricas públicas de Quant
+
+`src/data/quant-track-record.json` conserva la captura fechada de la cuenta TNG Gold EA HFM de ConfirmedTrades, con atribución a su publicador. Para actualizarla, consultar la ficha pública, comprobar sus estadísticas actuales y cambiar valores y `observedAt`; después ejecutar `node scripts/quant-track-record.mjs`. El importador de Pencil aplica el mismo normalizador. La página muestra la fecha y aclara que no hay sincronización automática; enlaza la curva original en lugar de dibujar una serie de resultados inventada. El drawdown histórico de la cuenta y el umbral de riesgo del servicio se identifican por separado.
+
 ## Compra DRACMA: API Go y SQLite
 
 `/comprar/` y el CTA principal utilizan la API Go versionada. Calcula la cotización en el servidor con el precio del par Dexscreener BSC y persiste órdenes, reservas y entregas en SQLite. El código del backend se prepara en `/Volumes/KINGSTON/dracmabackend`; su remoto previsto es `https://github.com/devfidubit-a11y/dracmabackend.git` (pendiente de acceso).

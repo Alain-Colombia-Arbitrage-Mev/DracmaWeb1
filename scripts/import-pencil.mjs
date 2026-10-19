@@ -7,10 +7,12 @@ import { normalizePencilFaq } from './pencil-faq.mjs';
 import { clarifyProjectPublication } from './project-publication.mjs';
 import { normalizeProjectCards } from './project-cards.mjs';
 import { improveDebitCards } from './debit-cards.mjs';
+import { normalizeQuantTrackRecord } from './quant-track-record.mjs';
 const source = process.argv[2] || '/tmp/dracma-pencil-reference';
 const pages = JSON.parse(fs.readFileSync('src/data/pencil-pages.json'));
 const assetMap = new Map();
 const projectData=JSON.parse(fs.readFileSync('src/data/illustrative-projects.json'));
+const quantData=JSON.parse(fs.readFileSync('src/data/quant-track-record.json'));
 const catalogPhotos={};
 const A = n => Object.fromEntries((n.attrs || []).map(a => [a.name, a.value]));
 const set = (n, key, value) => { n.attrs ||= []; const a = n.attrs.find(a => a.name === key); if (a) a.value=String(value); else n.attrs.push({name:key,value:String(value)}); };
@@ -149,6 +151,7 @@ for(const page of pages){
   clarifyProjectPublication(root,page.slug);
   normalizeProjectCards(root,page.slug,projectData);
   improveDebitCards(root,page.slug);
+  normalizeQuantTrackRecord(root,page.slug,quantData);
   const wrapper={nodeName:'div',tagName:'div',attrs:[],childNodes:[root],namespaceURI:'http://www.w3.org/1999/xhtml'};
   fs.writeFileSync(`src/designs/${id}.html`,serialize(wrapper).replace(/>\s+</g,'><').replace(/\n\s+/g,' '));
  }
