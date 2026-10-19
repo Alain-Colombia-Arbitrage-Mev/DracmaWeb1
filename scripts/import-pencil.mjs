@@ -5,6 +5,7 @@ import { parse, serialize } from 'parse5';
 import sharp from 'sharp';
 import { normalizePencilFaq } from './pencil-faq.mjs';
 import { clarifyProjectPublication } from './project-publication.mjs';
+import { normalizeProjectCards } from './project-cards.mjs';
 const source = process.argv[2] || '/tmp/dracma-pencil-reference';
 const pages = JSON.parse(fs.readFileSync('src/data/pencil-pages.json'));
 const assetMap = new Map();
@@ -145,6 +146,7 @@ for(const page of pages){
 
   normalizePencilFaq(root);
   clarifyProjectPublication(root,page.slug);
+  normalizeProjectCards(root,page.slug,projectData);
   const wrapper={nodeName:'div',tagName:'div',attrs:[],childNodes:[root],namespaceURI:'http://www.w3.org/1999/xhtml'};
   fs.writeFileSync(`src/designs/${id}.html`,serialize(wrapper).replace(/>\s+</g,'><').replace(/\n\s+/g,' '));
  }

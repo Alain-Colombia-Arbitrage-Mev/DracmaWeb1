@@ -4,7 +4,7 @@ $all('.nav-disclosure,.mobile-nav').forEach(el=>el.addEventListener('toggle',()=
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$all('details[open]').forEach(x=>(x as HTMLDetailsElement).open=false);});
 document.addEventListener('click',e=>$all('.nav-disclosure[open],.mobile-nav[open]').forEach(x=>{if(!x.contains(e.target as Node))(x as HTMLDetailsElement).open=false;}));
 
-const cards=$all('[data-project-card]');
+const cards=$all('.catalog-grid [data-project-card]');
 if(cards.length){
  const search=document.querySelector<HTMLInputElement>('[data-project-search]');const sector=document.querySelector<HTMLSelectElement>('[data-project-sector]');
  const update=()=>{let count=0;for(const c of cards){const show=(!sector?.value||c.dataset.projectSectorValue===sector.value)&&(!search?.value||c.textContent?.toLocaleLowerCase('es').includes(search.value.toLocaleLowerCase('es')));c.hidden=!show;if(show)count++;}let empty=document.querySelector<HTMLElement>('.catalog-empty');if(!empty){empty=document.createElement('p');empty.className='catalog-empty';empty.setAttribute('role','status');document.querySelector('.catalog-grid')?.append(empty);}empty.hidden=count>0;empty.textContent='No hay proyectos que coincidan. Prueba otro sector o búsqueda.';};

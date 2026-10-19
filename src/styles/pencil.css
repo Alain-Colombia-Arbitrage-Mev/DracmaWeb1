@@ -51,18 +51,6 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
   .pencil-page [data-remittance-destination] > :last-child { margin-top:8px; }
   .pencil-page [data-mobile-layout=row] > svg { flex-shrink:0; }
 }
-/* Keep card photos, badges and progress independent from text reflow. */
-.pencil-page [data-project-card] > :first-child {
-  height:200px; min-height:200px; flex:none; flex-wrap:wrap; align-content:flex-start;
-}
-.pencil-page [data-project-card] > :first-child > .absolute {
-  position:absolute!important; top:auto!important; bottom:14px; left:14px!important;
-}
-.pencil-page [data-project-card] > :nth-child(2) > :first-child { height:auto; min-height:104px; }
-.pencil-page [data-project-card] [data-responsive-row=grid] {
-  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; width:100%; height:auto;
-}
-.pencil-page [data-project-card] [data-responsive-row=grid] > * { width:auto; }
 .pencil-page [data-pencil-name$="· Avance de ronda"] { height:6px!important; }
 .pencil-page [data-pencil-name$="· Capital recaudado"] { height:6px!important; width:var(--progress); }
 .pencil-page [data-pencil-name="Catálogo · Buscar proyecto"] { min-height:48px; }
@@ -80,13 +68,11 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
 .pencil-page [id] { scroll-margin-top:20px; }
 @media (max-width:640px) {
   .pencil-page [data-display-heading] { font-size:clamp(30px,8.5vw,40px); }
-  .pencil-page [data-project-card] > :nth-child(2) > :first-child { min-height:0; }
   .pencil-page [data-pencil-name="Catálogo · Estados de ronda"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; }
   .pencil-page [data-project-status] { width:100%; padding:8px 4px; }
   .pencil-page [data-project-sector] { width:100%; font-size:16px; }
   .pencil-page [data-pencil-name="Catálogo · Barra de filtros"] { align-items:stretch; }
   .pencil-page [data-remittance-destination] { gap:8px; }
-  .pencil-page [data-project-card] [data-responsive-row=grid] > :last-child { grid-column:1/-1; }
 }
 @media (max-width:380px) {
   .flow-progress { flex-wrap:wrap; row-gap:10px; }
@@ -178,3 +164,29 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
 .project-status-heading { font-family:'Roboto Condensed',sans-serif; font-size:26px; line-height:1.2; font-weight:800; color:#F8F7F2; }
 .project-status-copy { font-size:15px; line-height:1.8; color:#DCE6E4; }
 .pencil-page .project-pending-value { white-space:normal; overflow-wrap:anywhere; font-size:14px; line-height:1.7; }
+
+/* Cards share a fluid layout instead of the exported canvas' fixed heights. */
+.pencil-page .project-cards-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; width:100%; max-width:520px; margin-inline:auto; align-items:stretch; }
+.pencil-page .project-card { display:flex; flex-direction:column; width:100%; min-width:0; height:100%; overflow:hidden; background:#FFF; color:#0C2730; border:1px solid #CAD7D8; border-radius:14px; box-shadow:0 3px 14px #0C273006; }
+.pencil-page .project-card[hidden] { display:none; }
+.project-card-media { position:relative; width:100%; flex:none; overflow:hidden; background:#DCE6E4; }
+.project-card-media img { display:block; width:100%; aspect-ratio:16/10; height:auto; object-fit:cover; }
+.project-card-media figcaption { position:absolute; bottom:12px; left:14px; padding:5px 8px; background:#0C2730; color:#F8F7F2; font-size:11px; line-height:1.5; border-radius:4px; }
+.project-card-body { display:flex; flex:1; flex-direction:column; gap:14px; padding:22px; }
+.project-card-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; justify-content:space-between; color:#50666D; font-size:12px; line-height:1.6; }
+.project-card-kind { padding:3px 8px; border:1px solid #C3D4D1; border-radius:5px; background:#F1F5F2; color:#0C4651; font-size:12px; font-weight:600; }
+.project-card-title { margin:0; font-family:'Roboto Condensed',sans-serif; font-size:26px; font-weight:800; line-height:1.16; text-wrap:pretty; }
+.project-card-summary { color:#50666D; font-size:14px; line-height:1.7; }
+.project-card .project-card-verification { gap:4px; margin-top:auto; padding:14px; background:#F1F5F2; border:1px solid #D9E2E3; border-radius:8px; }
+.project-card-verification > span { font-size:11px; line-height:1.5; }
+.project-card-verification > strong { font-size:14px; line-height:1.6; }
+.project-card-verification > p { font-size:12px; line-height:1.65; }
+.pencil-page .project-card-action { display:flex; justify-content:space-between; align-items:center; gap:14px; width:100%; min-height:48px; padding:12px 16px; border:1px solid #0C4651; border-radius:7px; background:#0C4651; color:#FFF; font-size:14px; line-height:1.5; font-weight:600; }
+.pencil-page .project-card-action:hover { background:#0C2730; text-decoration:none; }
+.project-card-action > span { font-size:20px; line-height:1; }
+.project-card-action:focus-visible { outline:3px solid #7EAA00; outline-offset:3px; }
+.project-card:focus-within { border-color:#0C4651; }
+@media (min-width:740px) { .pencil-page .project-cards-grid { max-width:1140px; grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (min-width:1080px) { .pencil-page .project-cards-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:380px) { .project-card-body { padding:18px; } .project-card-title { font-size:24px; } }
+@media (hover:hover) and (pointer:fine) { .project-card { transition:border-color .18s,box-shadow .18s; } .project-card:hover { border-color:#71868B; box-shadow:0 8px 24px #0C27300D; } }
