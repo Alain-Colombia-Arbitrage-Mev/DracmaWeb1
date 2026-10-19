@@ -15,7 +15,8 @@
     "test:huff": "node --test contracts/test/TokenDistributor.huff.test.mjs",
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy:pages": "npm run build && node scripts/prepare-pages.mjs && npx --yes wrangler@4.151.1 pages deploy dist --project-name dracmaweb1"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
