@@ -5,12 +5,17 @@ import {parse} from 'parse5';
 const walk=(node,visit)=>{visit(node);for(const child of node.childNodes||[])walk(child,visit);};
 const files=directory=>fs.readdirSync(directory,{withFileTypes:true}).filter(x=>!x.name.startsWith('._')).flatMap(x=>x.isDirectory()?files(path.join(directory,x.name)):[path.join(directory,x.name)]);
 const htmlFiles=files('dist').filter(x=>x.endsWith('index.html'));
-const errors=[];const rendered=new Set();let references=0;
+const errors=[];const rendered=new Set();let references=0;let faqItems=0;
 for(const file of htmlFiles){
  const doc=parse(fs.readFileSync(file,'utf8'));
  walk(doc,node=>{
   const attrs=Object.fromEntries((node.attrs||[]).map(x=>[x.name,x.value]));
   if(attrs['data-source-node'])rendered.add(attrs['data-source-node']);
+  if(attrs['data-pencil-name']==='details'){
+   faqItems++;
+   const children=node.childNodes.filter(x=>x.tagName);
+   if(node.tagName!=='details'||children[0]?.tagName!=='summary'||children.length<2)errors.push(`${file}: FAQ must contain a native disclosure and answer`);
+  }
   for(const name of ['src','href']){
    const value=attrs[name];if(!value||!value.startsWith('/')||value.startsWith('//'))continue;
    const url=new URL(value,'https://dracmaweb1.pages.dev');if(url.pathname.startsWith('/api/'))continue;
@@ -27,4 +32,5 @@ const projects=JSON.parse(fs.readFileSync('src/data/pencil-projects.json'));
 assert.equal(projects.length,12);
 for(const project of projects){assert.ok(project.photo,`Missing project photograph: ${project.slug}`);assert.ok(fs.existsSync('dist'+project.photo),`Missing photo asset: ${project.photo}`);assert.ok(fs.existsSync(`dist/proyectos/${project.slug}/index.html`),`Missing detail: ${project.slug}`);}
 assert.deepEqual(errors,[]);
-console.log(`Verified ${htmlFiles.length} routes, ${rendered.size} Pencil screens, ${references} local references and ${projects.length} project details.`);
+assert.equal(faqItems,11,'Missing FAQ items');
+console.log(`Verified ${htmlFiles.length} routes, ${rendered.size} Pencil screens, ${references} local references, ${projects.length} project details and ${faqItems} native FAQ items.`);

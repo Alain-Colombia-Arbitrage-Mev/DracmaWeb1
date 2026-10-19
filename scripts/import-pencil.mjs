@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { parse, serialize } from 'parse5';
 import sharp from 'sharp';
+import { normalizePencilFaq } from './pencil-faq.mjs';
 const source = process.argv[2] || '/tmp/dracma-pencil-reference';
 const pages = JSON.parse(fs.readFileSync('src/data/pencil-pages.json'));
 const assetMap = new Map();
@@ -141,6 +142,7 @@ for(const page of pages){
   }
   walk(root,n=>{const t=text(n);if(n.tagName==='h2'&&t.includes('TODO CORRE EN AVALANCHE'))set(n,'id','avalanche');if(n.tagName==='h2'&&t.includes('CÓDIGO ABIERTO'))set(n,'id','estado-contratos');});
 
+  normalizePencilFaq(root);
   const wrapper={nodeName:'div',tagName:'div',attrs:[],childNodes:[root],namespaceURI:'http://www.w3.org/1999/xhtml'};
   fs.writeFileSync(`src/designs/${id}.html`,serialize(wrapper).replace(/>\s+</g,'><').replace(/\n\s+/g,' '));
  }
