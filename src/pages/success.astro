@@ -116,12 +116,12 @@ const t = getTranslationsForLang(lang);
 
         <!-- Action buttons -->
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <a href={`/${lang === 'es' ? '' : lang + '/'}`}
+          <a href="/comprar/"
             class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 text-sm">
             <i class="fas fa-rocket"></i>
             {t['successBuyMore'] || 'Comprar más $DRACMA'}
           </a>
-          <a href={`/${lang === 'es' ? '' : lang + '/'}#presale`}
+          <a href="/preventa/#presale"
             class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand-card border border-brand-border/30 hover:border-brand-border/60 text-brand-text-primary font-semibold rounded-xl transition-all duration-300 text-sm">
             <i class="fas fa-coins"></i>
             {t['successClaimVesting'] || 'Reclamar Vesting'}

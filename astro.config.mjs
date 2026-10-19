@@ -3,25 +3,14 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import { SITE_URL, isIndexablePath } from './src/config/site.mjs';
 
 export default defineConfig({
-  site: 'https://dracma.org',
+  site: SITE_URL,
+  trailingSlash: 'always',
   integrations: [
     react(),
-    sitemap({
-      i18n: {
-        defaultLocale: 'es',
-        locales: {
-          es: 'es',
-          en: 'en',
-          fr: 'fr',
-          hi: 'hi',
-          ar: 'ar',
-          ru: 'ru',
-          zh: 'zh',
-        },
-      },
-    }),
+    sitemap({ filter: page => isIndexablePath(new URL(page).pathname) }),
   ],
   vite: {
     plugins: [tailwindcss()],

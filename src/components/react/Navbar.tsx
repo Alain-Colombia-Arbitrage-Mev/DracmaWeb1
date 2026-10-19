@@ -33,15 +33,18 @@ function NavbarInner() {
 
   const handleLanguageChange = (e: React.MouseEvent<HTMLAnchorElement>, langCode: string) => {
     e.preventDefault();
-    const basePath = langCode === 'es' ? '/' : `/${langCode}/`;
+    const basePath = langCode === 'es' ? '/preventa/' : `/${langCode}/`;
     window.location.href = basePath;
   };
+
+  const landingPath = currentLang === 'es' ? '/preventa/' : `/${currentLang}/`;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.substring(1);
     const targetElement = document.getElementById(targetId);
     if (targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
+    else window.location.href = landingPath + href;
     if (isMobileMenuOpen) setIsMobileMenuOpen(false);
   };
 
@@ -62,7 +65,7 @@ function NavbarInner() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
-            <a href="#hero" onClick={(e) => handleNavClick(e, "#hero")} className="brand-wordmark flex-shrink-0 flex items-center">
+            <a href={`${landingPath}#hero`} onClick={(e) => handleNavClick(e, "#hero")} className="brand-wordmark flex-shrink-0 flex items-center">
               <NavLogo />
               DRACMA
             </a>
@@ -70,7 +73,7 @@ function NavbarInner() {
           <div className="hidden xl:flex items-center">
             <div className="ml-10 flex items-baseline space-x-5">
               {NAV_LINKS.map(link => (
-                <a key={link.key} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className={link.isActive ? 'nav-link-active' : 'nav-link'}>
+                <a key={link.key} href={landingPath + link.href} onClick={(e) => handleNavClick(e, link.href)} className={link.isActive ? 'nav-link-active' : 'nav-link'}>
                   {t(link.key)}
                 </a>
               ))}
@@ -146,7 +149,7 @@ function NavbarInner() {
         <div id="mobile-navigation" className="mobile-navigation xl:hidden backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderTop: '1px solid var(--th-nav-border)'}}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {NAV_LINKS.map(link => (
-              <a key={link.key} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className={`block text-base py-3 ${link.isActive ? 'nav-link-active' : 'nav-link'}`}>
+              <a key={link.key} href={landingPath + link.href} onClick={(e) => handleNavClick(e, link.href)} className={`block text-base py-3 ${link.isActive ? 'nav-link-active' : 'nav-link'}`}>
                 {t(link.key)}
               </a>
             ))}

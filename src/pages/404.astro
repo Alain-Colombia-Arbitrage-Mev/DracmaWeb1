@@ -1,0 +1,11 @@
+---
+import PencilLayout from '../layouts/PencilLayout.astro';
+---
+<PencilLayout title="Página no encontrada" description="La página que buscas no existe o cambió de dirección. Vuelve al inicio de DRACMA o explora el catálogo de proyectos." noindex canonical={false}>
+  <section class="mx-auto max-w-[1180px] px-5 py-24">
+    <p class="text-sm tracking-widest text-[#E6FF28]">ERROR 404</p>
+    <h1 class="mt-5 font-display text-4xl font-black md:text-6xl">NO ENCONTRAMOS ESTA PÁGINA.</h1>
+    <p class="mt-6 max-w-xl leading-8 text-[#BBCBCD]">El enlace puede haber cambiado o la dirección no es correcta. Puedes continuar desde el inicio o buscar un proyecto.</p>
+    <div class="mt-8 flex flex-wrap gap-4"><a href="/" class="pencil-button">Volver al inicio</a><a href="/proyectos/" class="pencil-button pencil-button-outline">Explorar proyectos</a></div>
+  </section>
+</PencilLayout>

@@ -1,0 +1,46 @@
+---
+import { SITE_URL, isIndexablePath } from '../../config/site.mjs';
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+  image?: string;
+  noindex?: boolean;
+  canonical?: boolean;
+  alternates?: { locale: string; href: string }[];
+}
+const { title, description, lang='es', image='/brand/dracma-eagle.png', noindex=false, canonical=true, alternates=[] } = Astro.props;
+if (!title?.trim() || !description?.trim()) throw new Error(`Missing SEO metadata: ${Astro.url.pathname}`);
+const site = Astro.site?.origin || SITE_URL;
+const pageURL = new URL(Astro.url.pathname, site).href;
+const imageURL = new URL(image, site).href;
+const indexable = !noindex && isIndexablePath(Astro.url.pathname);
+const organization = `${site}/#organization`;
+const website = `${site}/#website`;
+const jsonLd = {
+  '@context':'https://schema.org',
+  '@graph':[
+    {'@type':'Organization','@id':organization,name:'DRACMA',url:site+'/',logo:new URL('/brand/dracma-eagle.png',site).href,sameAs:['https://github.com/Alain-Colombia-Arbitrage-Mev/DracmaWeb1']},
+    {'@type':'WebSite','@id':website,name:'DRACMA',url:site+'/',publisher:{'@id':organization}},
+    ...(canonical ? [{'@type':'WebPage','@id':pageURL,url:pageURL,name:title,description,inLanguage:lang,isPartOf:{'@id':website}}] : []),
+  ],
+};
+---
+<title>{title}</title>
+<meta name="description" content={description}/>
+<meta name="robots" content={indexable?'index, follow':'noindex, follow'}/>
+{canonical&&<link rel="canonical" href={pageURL}/>}
+{indexable&&alternates.map(({locale,href})=><link rel="alternate" hreflang={locale} href={href}/>)}
+<meta property="og:title" content={title}/>
+<meta property="og:description" content={description}/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content={pageURL}/>
+<meta property="og:locale" content={{es:'es_ES',en:'en_US',fr:'fr_FR',hi:'hi_IN',ar:'ar_SA',ru:'ru_RU',zh:'zh_CN'}[lang]||'es_ES'}/>
+<meta property="og:site_name" content="DRACMA"/>
+<meta property="og:image" content={imageURL}/>
+<meta property="og:image:alt" content={image==='/brand/dracma-eagle.png'?'Águila dorada de DRACMA':title}/>
+<meta name="twitter:card" content={image==='/brand/dracma-eagle.png'?'summary':'summary_large_image'}/>
+<meta name="twitter:title" content={title}/>
+<meta name="twitter:description" content={description}/>
+<meta name="twitter:image" content={imageURL}/>
+<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g,'\\u003c')}/>

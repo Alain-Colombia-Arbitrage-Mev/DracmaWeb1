@@ -5,4 +5,4 @@ import pages from '../data/pencil-pages.json';
 export function getStaticPaths(){return pages.filter(p=>p.slug && p.slug!=='proyectos/atacama-ii').map(page=>({params:{pencil:page.slug},props:{page}}));}
 const {page}=Astro.props;
 ---
-<PencilLayout title={page.title} compact={page.slug==='empezar'}><CanvasPage page={page}/></PencilLayout>
+<PencilLayout title={page.title} description={page.description} compact={page.slug==='empezar'}><CanvasPage page={page}/></PencilLayout>

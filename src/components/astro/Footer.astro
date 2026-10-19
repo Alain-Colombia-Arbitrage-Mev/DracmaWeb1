@@ -10,6 +10,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = getTranslationsForLang(lang);
 const v = getVisualCopy(lang);
+const landingPath = lang === 'es' ? '/preventa/' : `/${lang}/`;
 ---
 
 <footer class="py-12" style="background: var(--th-bg-alt); border-top: 1px solid var(--th-border);">
@@ -17,14 +18,14 @@ const v = getVisualCopy(lang);
     <div class="grid md:grid-cols-4 gap-8">
       <!-- Brand Column -->
       <div>
-        <a href="#hero" class="brand-wordmark flex items-center mb-4">
+        <a href={`${landingPath}#hero`} class="brand-wordmark flex items-center mb-4">
           <img src="/brand/dracma-eagle.webp" alt="" width="42" height="49" class="brand-logo" loading="lazy" />
           DRACMA
         </a>
         <p class="text-brand-text-secondary/70 text-sm mb-6">
           {t['footerDesc'] || ''}
         </p>
-        <a href="#presale" class="btn-primary inline-block py-2.5 px-5 text-sm text-center">
+        <a href={`${landingPath}#presale`} class="btn-primary inline-block py-2.5 px-5 text-sm text-center">
           {t['btnConnectWallet'] || 'Connect Wallet'}
         </a>
       </div>
@@ -48,7 +49,7 @@ const v = getVisualCopy(lang);
                     </button>
                   ) : (
                     <a
-                      href={link.href}
+                      href={link.href.startsWith('#') && link.href !== '#' ? `${landingPath}${link.href}` : link.href}
                       class="text-brand-text-secondary/80 transition hover:text-brand-primary"
                     >
                       {t[link.key] || link.key}
@@ -70,7 +71,7 @@ const v = getVisualCopy(lang);
       <div class="flex space-x-5">
         {FOOTER_SOCIAL_LINKS.map((link) => (
           <a
-            href={link.href}
+            href={link.href.startsWith('#') && link.href !== '#' ? `${landingPath}${link.href}` : link.href}
             aria-label={link.label}
             target="_blank"
             rel="noopener noreferrer"

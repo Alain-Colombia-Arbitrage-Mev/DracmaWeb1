@@ -4,4 +4,4 @@ import CanvasPage from '../components/pencil/CanvasPage.astro';
 import pages from '../data/pencil-pages.json';
 const page=pages[0];
 ---
-<PencilLayout title={page.title}><CanvasPage page={page}/></PencilLayout>
+<PencilLayout title={page.title} description={page.description}><CanvasPage page={page}/></PencilLayout>

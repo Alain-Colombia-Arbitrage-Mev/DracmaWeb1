@@ -1,5 +1,7 @@
 ---
 import { getTranslationsForLang } from '../i18n/utils';
+import SeoHead from '../components/astro/SeoHead.astro';
+import { SITE_URL, LEGACY_LANGUAGES, legacyLandingPath } from '../config/site.mjs';
 
 interface Props {
   lang?: string;
@@ -25,68 +27,14 @@ const resolvedDescription = description
   ?? (isSuccessPage ? t['seoSuccessDescription'] : t['seoDescription'])
   ?? 'Un holding Web3 de vanguardia que fusiona IA, Blockchain y proyectos de impacto real.';
 
-// Canonical URL construction
-const SITE = 'https://dracma.org';
-const canonicalPath = Astro.url.pathname;
-const canonicalURL = new URL(canonicalPath, SITE).toString();
+// These legacy translations share the legacy Spanish landing, not the new homepage.
+const site = Astro.site?.origin || SITE_URL;
+const hreflangLinks = LEGACY_LANGUAGES.map(locale => ({
+  locale,
+  href: new URL(isSuccessPage ? (locale === 'es' ? '/success/' : `/${locale}/success/`) : legacyLandingPath(locale),site).href,
+}));
+hreflangLinks.push({locale:'x-default',href:new URL(isSuccessPage?'/success/':'/preventa/',site).href});
 
-// hreflang alternate URLs
-const LOCALES = ['es', 'en', 'fr', 'hi', 'ar', 'ru', 'zh'] as const;
-
-function stripLangPrefix(pathname: string): string {
-  for (const l of LOCALES) {
-    if (l === 'es') continue;
-    if (pathname === `/${l}` || pathname === `/${l}/`) return '/';
-    if (pathname.startsWith(`/${l}/`)) return pathname.slice(l.length + 1);
-  }
-  return pathname;
-}
-
-const slug = stripLangPrefix(canonicalPath);
-const hreflangLinks = LOCALES.map((locale) => {
-  const href = locale === 'es'
-    ? `${SITE}${slug}`
-    : `${SITE}/${locale}${slug === '/' ? '/' : slug}`;
-  return { locale, href };
-});
-const xDefaultHref = `${SITE}${slug}`;
-
-// OG locale mapping
-const OG_LOCALE_MAP: Record<string, string> = {
-  es: 'es_ES', en: 'en_US', fr: 'fr_FR', hi: 'hi_IN', ar: 'ar_SA', ru: 'ru_RU', zh: 'zh_CN',
-};
-const ogLocale = OG_LOCALE_MAP[lang] ?? 'es_ES';
-const ogImage = `${SITE}/og-image.png`;
-
-// JSON-LD structured data
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": `${SITE}/#organization`,
-      "name": "DRACMA",
-      "url": SITE,
-      "logo": { "@type": "ImageObject", "url": `${SITE}/brand/dracma-eagle.png` },
-      "sameAs": [
-        "https://x.com/dracma_community",
-        "https://t.me/dracma_updates"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "info@dracma.org",
-        "contactType": "customer support"
-      }
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${SITE}/#website`,
-      "url": SITE,
-      "name": "DRACMA",
-      "publisher": { "@id": `${SITE}/#organization` }
-    }
-  ]
-};
 ---
 
 <!DOCTYPE html>
@@ -96,43 +44,10 @@ const jsonLd = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#091216" />
 
-  <!-- Primary SEO -->
-  <title>{resolvedTitle}</title>
-  <meta name="description" content={resolvedDescription} />
-  <link rel="canonical" href={canonicalURL} />
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-
-  <!-- hreflang alternates -->
-  {hreflangLinks.map(({ locale, href }) => (
-    <link rel="alternate" hreflang={locale} href={href} />
-  ))}
-  <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content={resolvedTitle} />
-  <meta property="og:description" content={resolvedDescription} />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content={canonicalURL} />
-  <meta property="og:locale" content={ogLocale} />
-  <meta property="og:site_name" content="DRACMA" />
-  <meta property="og:image" content={ogImage} />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="DRACMA - Web3 Token" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@dracma_community" />
-  <meta name="twitter:title" content={resolvedTitle} />
-  <meta name="twitter:description" content={resolvedDescription} />
-  <meta name="twitter:image" content={ogImage} />
-
-  <!-- JSON-LD Structured Data -->
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <SeoHead title={resolvedTitle} description={resolvedDescription} lang={lang} alternates={hreflangLinks}/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.webmanifest"/>
 
   <!-- Google Fonts — critical (Inter) loaded eagerly, rest deferred -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />

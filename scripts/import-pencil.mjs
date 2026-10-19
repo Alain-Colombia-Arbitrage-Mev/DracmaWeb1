@@ -97,7 +97,7 @@ for(const page of pages){
    const href=content.length<=90?linkFor(content):undefined;
    const isLeaf=children.length===0||children.every(c=>c.tagName==='svg');
    const isAction=/rounded-/.test(cls)&&/h-\[(?:44|46|48|50|52|54)px\]/.test(cls)&&content.length<100;
-   if(href&&(isLeaf||isAction)&&!n._inLink&&n.tagName!=='select'&&!n.tagName.startsWith('h')){n.tagName='a';n.nodeName='a';set(n,'href',href);for(const c of n.childNodes||[])walk(c,x=>{x._inLink=true});}
+   if(href&&(isLeaf||isAction)&&!n._inLink&&n.tagName!=='select'&&!n.tagName.startsWith('h')){n.tagName='a';n.nodeName='a';set(n,'href',href==='#checkout'?(id===page.id?'#checkout-desktop':'#checkout-mobile'):href);for(const c of n.childNodes||[])walk(c,x=>{x._inLink=true});}
    for(const child of [...n.childNodes||[]])await transform(child);
   }
   await transform(root);

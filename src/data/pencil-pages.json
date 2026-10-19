@@ -1,1 +1,100 @@
-[{"id":"jneec","slug":"","title":"Proyectos reales. Cada dólar, visible."},{"id":"Ge46y","slug":"proyectos","title":"Proyectos"},{"id":"C2sAT","slug":"proyectos/atacama-ii","title":"Parque Solar Atacama II"},{"id":"O49VL","slug":"quant","title":"dracma Quant"},{"id":"biKsO","slug":"comisiones","title":"Comisiones por operación"},{"id":"W56NL","slug":"comercializacion","title":"Comercialización de proyectos"},{"id":"CIEfV","slug":"credito","title":"Crédito y lending"},{"id":"YxFjr","slug":"remesas","title":"Remesas"},{"id":"xu072","slug":"tesoreria","title":"Tesorería"},{"id":"k6hDJ","slug":"lanza-tu-proyecto","title":"Lanza tu proyecto"},{"id":"vBwlS","slug":"ingresos-recurrentes","title":"Ingresos recurrentes"},{"id":"yyQGJ","slug":"tecnologia","title":"Tecnología"},{"id":"WGPIP","slug":"multisig","title":"Multisig Safe"},{"id":"kLd2f","slug":"como-ganamos","title":"Cómo ganamos"},{"id":"x716Gt","slug":"empezar","title":"Empezar","mobile":"TefFu"},{"id":"dMxFo","slug":"comprar","title":"Comprar DRACMA","mobile":"L40Z3f"}]
+[
+  {
+    "id": "jneec",
+    "slug": "",
+    "title": "Proyectos reales. Cada dólar, visible.",
+    "description": "Explora DRACMA: tokenización de proyectos, servicios fintech y contabilidad abierta. Consulta condiciones, comisiones y riesgos antes de participar."
+  },
+  {
+    "id": "Ge46y",
+    "slug": "proyectos",
+    "title": "Proyectos",
+    "description": "Explora el catálogo ilustrativo de proyectos DRACMA. Compara sectores, plazos, uso del capital, condiciones y riesgos con filtros por estado de ronda."
+  },
+  {
+    "id": "C2sAT",
+    "slug": "proyectos/atacama-ii",
+    "title": "Parque Solar Atacama II",
+    "description": "Conoce Parque Solar Atacama II: una ficha ilustrativa de energía solar en Chile. Consulta el uso del capital, el plazo, las condiciones y sus riesgos."
+  },
+  {
+    "id": "O49VL",
+    "slug": "quant",
+    "title": "dracma Quant",
+    "description": "Conoce DRACMA Quant, su modelo de activación y comisiones sobre utilidades. Revisa el terminal de demostración y las condiciones del servicio."
+  },
+  {
+    "id": "biKsO",
+    "slug": "comisiones",
+    "title": "Comisiones por operación",
+    "description": "Consulta las comisiones de DRACMA por venta, liberación de fondos y utilidades. Revisa la base de cálculo, los beneficiarios y el momento de liquidación."
+  },
+  {
+    "id": "W56NL",
+    "slug": "comercializacion",
+    "title": "Comercialización de proyectos",
+    "description": "Conoce cómo se atribuyen las ventas y se liquidan las comisiones por comercialización de proyectos en DRACMA, con reglas y registros por operación."
+  },
+  {
+    "id": "CIEfV",
+    "slug": "credito",
+    "title": "Crédito y lending",
+    "description": "Explora los simuladores ilustrativos de crédito y lending de DRACMA. Compara importes, plazos, cuotas, intereses y comisiones antes de evaluar el servicio."
+  },
+  {
+    "id": "YxFjr",
+    "slug": "remesas",
+    "title": "Remesas",
+    "description": "Conoce el modelo de remesas de DRACMA y simula importes por destino. Consulta comisiones, mínimos y tipos de cambio de ejemplo; no realiza transferencias."
+  },
+  {
+    "id": "xu072",
+    "slug": "tesoreria",
+    "title": "Tesorería",
+    "description": "Conoce cómo DRACMA organiza cobros, saldos y distribuciones por proyecto. Revisa los registros de tesorería, los movimientos y las condiciones operativas."
+  },
+  {
+    "id": "k6hDJ",
+    "slug": "lanza-tu-proyecto",
+    "title": "Lanza tu proyecto",
+    "description": "Descubre el proceso para presentar un proyecto a DRACMA: evaluación, documentos, uso del capital, condiciones económicas y seguimiento de los fondos."
+  },
+  {
+    "id": "vBwlS",
+    "slug": "ingresos-recurrentes",
+    "title": "Ingresos recurrentes",
+    "description": "Conoce cómo se registran los ingresos recurrentes de los proyectos en DRACMA y cómo se distinguen cobros, utilidad elegible y condiciones de reparto."
+  },
+  {
+    "id": "yyQGJ",
+    "slug": "tecnologia",
+    "title": "Tecnología",
+    "description": "Explora la arquitectura tecnológica de DRACMA: registro de movimientos, contratos y trazabilidad. Consulta el estado de la documentación y sus límites."
+  },
+  {
+    "id": "WGPIP",
+    "slug": "multisig",
+    "title": "Multisig Safe",
+    "description": "Conoce el modelo de firmas múltiples de DRACMA: permisos, aprobación de operaciones y separación de funciones para la administración de wallets."
+  },
+  {
+    "id": "kLd2f",
+    "slug": "como-ganamos",
+    "title": "Cómo ganamos",
+    "description": "Revisa cómo obtiene ingresos DRACMA: comisiones por eventos y cargo administrativo. Consulta las bases de cálculo y las condiciones de cada servicio."
+  },
+  {
+    "id": "x716Gt",
+    "slug": "empezar",
+    "title": "Empezar",
+    "mobile": "TefFu",
+    "description": "Elige qué te interesa de DRACMA y prepara tus preferencias de contacto. El borrador se guarda en tu navegador y todavía no se envía al equipo."
+  },
+  {
+    "id": "dMxFo",
+    "slug": "comprar",
+    "title": "Comprar DRACMA",
+    "mobile": "L40Z3f",
+    "description": "Consulta el proceso de compra de DRACMA con crypto vía NOWPayments. Revisa la wallet de recepción, la red BNB Smart Chain y las condiciones del checkout."
+  }
+]
