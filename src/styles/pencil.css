@@ -190,3 +190,40 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
 @media (min-width:1080px) { .pencil-page .project-cards-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:380px) { .project-card-body { padding:18px; } .project-card-title { font-size:24px; } }
 @media (hover:hover) and (pointer:fine) { .project-card { transition:border-color .18s,box-shadow .18s; } .project-card:hover { border-color:#71868B; box-shadow:0 8px 24px #0C27300D; } }
+
+/* Bank-card artwork keeps its own proportions and never inherits canvas reflow. */
+.pencil-page .debit-presentation { padding:clamp(20px,3.2vw,40px); border-radius:16px; gap:40px; }
+.pencil-page .debit-showcase { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); align-items:start; width:459px; max-width:100%; flex:none; padding:26px 14px 0; isolation:isolate; }
+.debit-card { position:relative; container-type:inline-size; width:100%; aspect-ratio:1.6; overflow:hidden; border:1px solid #6E959C; border-radius:14px; color:#F8F7F2; background:#0C2730; box-shadow:0 20px 35px #0004; }
+.debit-card::before { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(120deg,#FFFFFF0D,transparent 42%,#FFFFFF06); }
+.debit-card::after { content:''; position:absolute; width:76%; aspect-ratio:1; right:-24%; bottom:-75%; border:1px solid #FFFFFF19; border-radius:50%; box-shadow:0 0 0 24px #FFFFFF05,0 0 0 48px #FFFFFF03; pointer-events:none; }
+.debit-card--physical { grid-area:1/1/2/11; transform:rotate(-6deg); z-index:0; }
+.debit-card--virtual { grid-area:1/3/2/13; margin-top:118px; transform:rotate(5deg); z-index:1; background:#E6FF28; border-color:#A7BB2A; color:#0C2730; }
+.debit-card--virtual::after { border-color:#0C27301A; box-shadow:0 0 0 24px #0C273007,0 0 0 48px #0C273004; }
+.debit-card-inner { position:absolute; inset:0; display:grid; grid-template-rows:auto minmax(0,1fr) auto auto; row-gap:clamp(4px,2cqi,9px); padding:6.3cqi; z-index:1; }
+.debit-card-header,.debit-brand,.debit-card-device,.debit-card-footer { display:flex; align-items:center; }
+.debit-card-header { justify-content:space-between; gap:10px; }
+.debit-brand { gap:clamp(7px,2cqi,10px); }
+.debit-brand > strong { font-size:clamp(15px,5.4cqi,21px); line-height:1; letter-spacing:-.045em; font-weight:700; }
+.debit-logo { display:flex; justify-content:center; align-items:center; width:clamp(26px,9cqi,36px); height:clamp(26px,9cqi,36px); padding:4px; border-radius:7px; background:#050C10; }
+.debit-logo img { width:100%; height:100%; object-fit:contain; }
+.debit-type { font-size:clamp(9px,2.8cqi,11px); line-height:1.5; letter-spacing:.14em; font-weight:600; }
+.debit-card-device { gap:12px; min-height:0; }
+.debit-chip { width:11.5cqi; min-width:28px; max-width:44px; height:auto; flex:none; }
+.debit-contactless { width:6cqi; min-width:17px; max-width:23px; height:auto; flex:none; color:#C9D9D9; }
+.debit-digital { display:flex; align-items:center; gap:8px; font-size:clamp(9px,2.6cqi,10px); line-height:1.4; letter-spacing:.08em; }
+.debit-digital svg { width:clamp(16px,5cqi,20px); height:auto; }
+.debit-number { font-family:'IBM Plex Mono',monospace; font-size:clamp(12px,4.5cqi,17px); line-height:1.4; letter-spacing:.03em; white-space:nowrap; }
+.debit-card-footer { justify-content:space-between; align-items:end; gap:12px; }
+.debit-card-footer > div { display:flex; flex-direction:column; gap:3px; }
+.debit-card-footer span { font-size:9px; line-height:1.3; letter-spacing:.06em; opacity:.8; white-space:nowrap; }
+.debit-card-footer strong { font-size:clamp(10px,3.5cqi,12px); line-height:1.3; letter-spacing:.06em; font-weight:500; white-space:nowrap; }
+.debit-expiry { text-align:right; }
+.debit-showcase-caption { grid-area:2/1/3/-1; margin-top:28px; color:#BBCBCD; font-size:10px; line-height:1.7; letter-spacing:.06em; text-align:center; }
+@media (max-width:1239px) { .debit-showcase { align-self:center; } }
+@media (max-width:640px) {
+  .pencil-page .debit-presentation { gap:30px; }
+  .pencil-page .debit-showcase { width:360px; grid-template-columns:minmax(0,1fr); gap:18px; padding:0; }
+  .debit-card--physical,.debit-card--virtual { grid-area:auto; margin:0; transform:none; }
+  .debit-showcase-caption { grid-area:auto; margin-top:0; }
+}
