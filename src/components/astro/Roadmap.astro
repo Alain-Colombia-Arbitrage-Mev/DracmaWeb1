@@ -28,7 +28,7 @@ const t = getTranslationsForLang(lang);
       {ROADMAP_DATA.map((item, index) => (
         <div class={`roadmap-item ${index % 2 === 0 ? 'animate-slide-in-left' : 'animate-slide-in-right'}`}>
           <div class={`roadmap-icon ${item.itemIconBgClass} ${item.itemIconShadowClass}`}>
-            <i class={`${item.iconClass} text-brand-background text-xl`}></i>
+            <i class={`${item.iconClass} text-brand-on-primary text-xl`}></i>
           </div>
           <div class="roadmap-content">
             <h3 class={`text-xl font-bold mb-2 font-display ${item.itemTitleColorClass}`}>

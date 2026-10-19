@@ -27,6 +27,7 @@
   /* Brand — Indigo primary (trust, technology, premium), Gold accent (value, premium) */
   --th-primary: #E6FF28;
   --th-primary-hover: #D5EF15;
+  --th-on-primary: #0C2730;
   --th-primary-muted: rgba(217, 182, 111, 0.12);
   --th-secondary: #9FCAB9;
   --th-secondary-hover: #B6DFCF;
@@ -96,6 +97,7 @@
   /* Brand — deeper for contrast on white */
   --th-primary: #0C4651;
   --th-primary-hover: #125A67;
+  --th-on-primary: #FFFFFF;
   --th-primary-muted: rgba(128, 96, 32, 0.08);
   --th-secondary: #2B6553;
   --th-secondary-hover: #285C4D;
@@ -149,6 +151,7 @@
   --color-brand-text-primary: var(--th-text);
   --color-brand-text-secondary: var(--th-text-secondary);
   --color-brand-primary: var(--th-primary);
+  --color-brand-on-primary: var(--th-on-primary);
   --color-brand-secondary: var(--th-secondary);
   --color-brand-accent-gold: var(--th-accent);
   --color-brand-accent-coral: var(--th-danger);
@@ -345,7 +348,7 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
   @apply font-semibold py-3 px-8 rounded-lg transition-all duration-200 tracking-wide;
   font-family: 'Inter', sans-serif;
   background: var(--th-primary);
-  color: white;
+  color: var(--th-on-primary);
   box-shadow: var(--th-shadow-sm), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .btn-primary:hover {
@@ -535,6 +538,7 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 /* Roadmap phase icon background and title */
 .roadmap-icon-bg {
   background: var(--th-primary);
+  color: var(--th-on-primary);
 }
 .roadmap-phase-title {
   color: var(--th-text);
@@ -543,6 +547,7 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 /* Contact icon backgrounds */
 .contact-icon-bg {
   background: var(--th-primary);
+  color: var(--th-on-primary);
 }
 
 /* Footer heading */
@@ -572,7 +577,7 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 .social-icon-circle:hover {
   background: var(--th-primary);
   border-color: var(--th-primary);
-  color: white;
+  color: var(--th-on-primary);
 }
 
 /* ─────────────────────────────────────────────
@@ -807,7 +812,7 @@ body.lang-zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
 
 .language-dropdown a.active-lang {
   background: var(--th-primary);
-  color: white;
+  color: var(--th-on-primary);
   font-weight: 600;
 }
 
@@ -1092,9 +1097,8 @@ body.lang-ar #language-dropdown-mobile { right: 0; left: auto; }
 .site-navigation { backdrop-filter:blur(16px); }
 .site-navigation .nav-link, .site-navigation .nav-link-active { padding-inline:10px; font-size:13px; }
 .site-navigation .btn-primary { padding:12px 20px; font-size:12px; }
-.btn-primary { color:#17231F; background:var(--th-primary); box-shadow:none; letter-spacing:0; border-radius:6px; }
+.btn-primary { color:var(--th-on-primary); background:var(--th-primary); box-shadow:none; letter-spacing:0; border-radius:6px; }
 .btn-primary:hover { background:var(--th-primary-hover); box-shadow:none; }
-.theme-light .btn-primary { color:#FFF; }
 .btn-secondary { border-radius:6px; box-shadow:none; }
 button, a { -webkit-tap-highlight-color:transparent; }
 button:not(:disabled), a { cursor:pointer; }

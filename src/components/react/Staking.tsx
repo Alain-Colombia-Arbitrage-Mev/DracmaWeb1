@@ -344,7 +344,7 @@ function StakingInner() {
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 py-3 px-4 text-sm font-semibold transition-all ${
                     activeTab === tab
-                      ? 'bg-brand-primary text-white'
+                      ? 'bg-brand-primary text-brand-on-primary'
                       : 'text-brand-text-secondary hover:text-brand-text-primary'
                   }`}
                 >

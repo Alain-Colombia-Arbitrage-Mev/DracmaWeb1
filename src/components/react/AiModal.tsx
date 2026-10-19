@@ -48,7 +48,7 @@ export default function AiModal() {
           <button
             id="copy-ai-response-btn"
             onClick={handleCopyToClipboard}
-            className="btn-secondary !border-brand-primary !text-brand-primary hover:!bg-brand-primary hover:!text-white py-2 px-4 text-xs mt-4"
+            className="btn-secondary !border-brand-primary !text-brand-primary hover:!bg-brand-primary hover:!text-brand-on-primary py-2 px-4 text-xs mt-4"
           >
             <i className="fas fa-copy mr-1.5"></i> <span>{t('btnCopyText')}</span>
           </button>

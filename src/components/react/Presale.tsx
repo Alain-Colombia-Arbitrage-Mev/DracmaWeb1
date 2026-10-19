@@ -124,7 +124,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
                   {/* Step 1: Approve */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     stepNumber > 1 ? 'bg-success-green text-white' :
-                    stepNumber === 1 ? 'bg-brand-primary text-white animate-pulse' :
+                    stepNumber === 1 ? 'bg-brand-primary text-brand-on-primary animate-pulse' :
                     'text-brand-text-secondary/50'
                   }`} style={stepNumber < 1 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
                     {stepNumber > 1 ? <i className="fas fa-check text-[10px]"></i> : '1'}
@@ -134,7 +134,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
                   {/* Step 2: Confirm */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     stepNumber > 2 ? 'bg-success-green text-white' :
-                    stepNumber === 2 ? 'bg-brand-primary text-white animate-pulse' :
+                    stepNumber === 2 ? 'bg-brand-primary text-brand-on-primary animate-pulse' :
                     'text-brand-text-secondary/50'
                   }`} style={stepNumber < 2 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
                     {stepNumber > 2 ? <i className="fas fa-check text-[10px]"></i> : '2'}
@@ -143,7 +143,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
 
                   {/* Step 3: Buy */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    stepNumber === 3 ? 'bg-brand-primary text-white animate-pulse' :
+                    stepNumber === 3 ? 'bg-brand-primary text-brand-on-primary animate-pulse' :
                     'text-brand-text-secondary/50'
                   }`} style={stepNumber < 3 ? { background: 'var(--th-bg-alt)', border: '1px solid var(--th-border)' } : {}}>
                     3

@@ -66,7 +66,7 @@ const photos: Record<string, { src: string; alt: string }> = {
               <div class="card-ui project-photo-card overflow-hidden flex flex-col h-full">
                 <figure class="project-photo"><img src={`/images/${(photos[project.id]?.src || 'team')}.webp`} srcset={`/images/${(photos[project.id]?.src || 'team')}-640.webp 640w, /images/${(photos[project.id]?.src || 'team')}.webp 1280w`} sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 400px" alt={photos[project.id]?.alt || v.teamAlt} width="640" height="400" loading="lazy" decoding="async" /><figcaption>{v.photo}</figcaption></figure>
                 <div class="p-5 flex flex-col flex-grow">
-                  <span class={`text-xs font-semibold px-2.5 py-1 rounded-full text-white mb-2.5 self-start shadow-sm ${project.statusColorClass}`}>
+                  <span class={`text-xs font-semibold px-2.5 py-1 rounded-full mb-2.5 self-start shadow-sm ${project.statusColorClass} ${project.statusColorClass === 'bg-brand-primary' ? 'text-brand-on-primary' : 'text-[#0C2730]'}`}>
                     {t[project.statusKey] || project.statusKey}
                   </span>
                   <h4 class="text-xl font-bold font-display brand-accent-gold-text mb-1.5">

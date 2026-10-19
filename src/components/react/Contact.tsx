@@ -88,7 +88,7 @@ export default function Contact() {
                 {CONTACT_POINTS_DATA.map(point => (
                   <div key={point.titleKey} className="flex items-start">
                     <div className={`${point.iconBgGradient} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mr-4 ${point.iconShadow}`}>
-                      <i className={`${point.iconClass} text-white text-lg`}></i>
+                      <i className={`${point.iconClass} text-brand-on-primary text-lg`}></i>
                     </div>
                     <div>
                       <h4 className="font-semibold text-brand-text-primary">{t(point.titleKey)}</h4>
