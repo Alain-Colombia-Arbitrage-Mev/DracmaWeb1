@@ -25,8 +25,8 @@
   --th-text-inverse: #091216;
 
   /* Brand — Indigo primary (trust, technology, premium), Gold accent (value, premium) */
-  --th-primary: #D9B66F;
-  --th-primary-hover: #E7C88A;
+  --th-primary: #E6FF28;
+  --th-primary-hover: #D5EF15;
   --th-primary-muted: rgba(217, 182, 111, 0.12);
   --th-secondary: #9FCAB9;
   --th-secondary-hover: #B6DFCF;
@@ -94,8 +94,8 @@
   --th-text-inverse: #F7F5F0;
 
   /* Brand — deeper for contrast on white */
-  --th-primary: #806020;
-  --th-primary-hover: #725217;
+  --th-primary: #0C4651;
+  --th-primary-hover: #125A67;
   --th-primary-muted: rgba(128, 96, 32, 0.08);
   --th-secondary: #2B6553;
   --th-secondary-hover: #285C4D;

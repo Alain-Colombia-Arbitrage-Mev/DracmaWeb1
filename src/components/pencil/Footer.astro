@@ -1,0 +1,9 @@
+---
+const groups=[{title:'Plataforma',links:[['Proyectos','/proyectos/'],['Tecnología','/tecnologia/'],['Cómo ganamos','/como-ganamos/'],['Empezar','/empezar/']]},{title:'Operaciones',links:[['Comisiones por operación','/comisiones/'],['Comercialización de proyectos','/comercializacion/'],['dracma Quant','/quant/'],['Agente dracma','/empezar/']]},{title:'Código',links:[['GitHub ↗','https://github.com/Alain-Colombia-Arbitrage-Mev/DracmaWeb1'],['Multisig Safe','/multisig/'],['Avalanche','/tecnologia/#avalanche']]},{title:'Legal',links:[['Términos','/legal/#terminos'],['Privacidad','/legal/#privacidad'],['Aviso de riesgos','/legal/#riesgos']]}];
+---
+<footer class="border-t border-[#263A40] bg-black py-12">
+ <div class="mx-auto max-w-[1180px] px-5"><div class="grid grid-cols-2 gap-8 md:grid-cols-[1.3fr_1fr_1.3fr_1fr_1fr]">
+ <a href="/" class="flex items-start gap-2 text-[22px] font-semibold text-[#F8F7F2]"><img src="/brand/dracma-eagle.webp" width="30" height="36" alt="" class="h-9 w-[30px] object-contain"/>dracma</a>
+ {groups.map(group=><div><p class="mb-4 text-[13px] font-semibold text-[#E6FF28]">{group.title}</p><ul class="space-y-2">{group.links.map(([label,href])=><li><a href={href} class="text-sm leading-6 text-[#BBCBCD] hover:text-[#E6FF28]">{label}</a></li>)}</ul></div>)}
+ </div><p class="mt-10 border-t border-[#263A40] pt-6 text-[13px] leading-[1.8] text-[#BBCBCD]">dracma es una plataforma tecnológica de tokenización de proyectos y servicios fintech. Las comisiones corresponden a ventas confirmadas, fondos liberados y utilidades del proyecto, según las condiciones de cada operación. Participar implica riesgo, baja liquidez y posible pérdida del capital. Los datos de ejemplo son ilustrativos y la información no constituye asesoramiento financiero, legal ni fiscal. © 2026 dracma.</p></div>
+</footer>

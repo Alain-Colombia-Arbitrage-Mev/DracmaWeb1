@@ -16,7 +16,8 @@
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy:pages": "npm run build && node scripts/prepare-pages.mjs && npx --yes wrangler@4.151.1 pages deploy dist --project-name dracmaweb1"
+    "deploy:pages": "npm run build && npm run verify:pages && node scripts/prepare-pages.mjs && npx --yes wrangler@4.151.1 pages deploy dist --project-name dracmaweb1",
+    "verify:pages": "node scripts/verify-pages.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

@@ -1,35 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Navbar from '../components/react/Navbar.tsx';
-import Hero from '../components/astro/Hero.astro';
-import SectionDivider from '../components/astro/SectionDivider.astro';
-import Ecosystem from '../components/astro/Ecosystem.astro';
-import Crowdfunding from '../components/astro/Crowdfunding.astro';
-import Presale from '../components/react/Presale.tsx';
-import Staking from '../components/react/Staking.tsx';
-import Contact from '../components/react/Contact.tsx';
-import Footer from '../components/astro/Footer.astro';
-import AiModal from '../components/react/AiModal.tsx';
-import WhitepaperModal from '../components/react/WhitepaperModal.tsx';
-
-const lang = 'es';
+import PencilLayout from '../layouts/PencilLayout.astro';
+import CanvasPage from '../components/pencil/CanvasPage.astro';
+import pages from '../data/pencil-pages.json';
+const page=pages[0];
 ---
-
-<BaseLayout lang={lang}>
-  <Navbar client:load />
-  <AiModal client:load />
-  <WhitepaperModal client:load />
-
-  <main>
-    <Hero lang={lang} />
-    <Presale client:visible />
-    <Staking client:visible />
-    <SectionDivider />
-    <Ecosystem lang={lang} />
-    <SectionDivider />
-    <Crowdfunding lang={lang} />
-    <Contact client:visible />
-  </main>
-
-  <Footer lang={lang} />
-</BaseLayout>
+<PencilLayout title={page.title}><CanvasPage page={page}/></PencilLayout>

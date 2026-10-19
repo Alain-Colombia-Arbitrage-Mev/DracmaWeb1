@@ -1,0 +1,1159 @@
+[
+  {
+    "slug": "atacama-ii",
+    "image": "dracma-solar-v2.jpg",
+    "golive": 6,
+    "name": "Parque Solar Atacama II",
+    "sector": "Energía",
+    "country": "Chile",
+    "flag": "🇨🇱",
+    "risk": "mid",
+    "status": "Abierto",
+    "color": "212,255,30",
+    "summary": "Planta fotovoltaica de 12 MW con contrato de venta de energía a 10 años.",
+    "about": "Atacama II instala 12 MW de paneles bifaciales en una de las zonas con mayor radiación solar del planeta. La energía ya está vendida por contrato a 10 años a una distribuidora regional, lo que da ingresos previsibles desde el primer mes de operación.",
+    "target": "11–14 %",
+    "term": 48,
+    "ticket": 250,
+    "softcap": 1200000,
+    "hardcap": 2400000,
+    "raised": 1620000,
+    "investors": 1284,
+    "deadline": "2026-11-30",
+    "disbursementFee": 0.03,
+    "mainId": 1,
+    "subId": 1,
+    "use": [
+      [
+        "Paneles e inversores solares",
+        58
+      ],
+      [
+        "Obra civil y montaje",
+        22
+      ],
+      [
+        "Conexión a la red",
+        12
+      ],
+      [
+        "Permisos y seguros",
+        5
+      ],
+      [
+        "Reserva operativa",
+        3
+      ]
+    ],
+    "milestones": [
+      [
+        "Ago 2026",
+        "Permisos ambientales aprobados",
+        true
+      ],
+      [
+        "Oct 2026",
+        "Soft cap alcanzado",
+        true
+      ],
+      [
+        "Dic 2026",
+        "Desembolso y compra de equipos",
+        false
+      ],
+      [
+        "Abr 2027",
+        "Conexión a la red",
+        false
+      ],
+      [
+        "May 2027",
+        "Primera distribución",
+        false
+      ]
+    ],
+    "risks": [
+      "Retrasos en la conexión a la red eléctrica.",
+      "Variación del precio de la energía al renovar el contrato.",
+      "Degradación de paneles superior a la estimada."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Contrato de venta de energía (PPA)",
+      "Estudio de irradiación",
+      "Estatutos de la sociedad vehículo"
+    ],
+    "ledger": [
+      [
+        "28 sep",
+        "Aporte de participantes (lote 412)",
+        38200
+      ],
+      [
+        "21 sep",
+        "Estudio de conexión eléctrica",
+        -12400
+      ],
+      [
+        "15 sep",
+        "Aporte de participantes (lote 411)",
+        51650
+      ],
+      [
+        "02 sep",
+        "Seguro de construcción",
+        -8900
+      ]
+    ],
+    "photo": "/design-assets/d7fc4d44583e.webp"
+  },
+  {
+    "slug": "hub-bajio",
+    "image": "dracma-logistics-v2.jpg",
+    "golive": 11,
+    "name": "Hub Logístico Bajío",
+    "sector": "Logística",
+    "country": "México",
+    "flag": "🇲🇽",
+    "risk": "mid",
+    "status": "Abierto",
+    "color": "120,200,255",
+    "summary": "Nave de 18.000 m² con dos inquilinos preacordados y renta dolarizada.",
+    "about": "Una nave logística clase A en el corredor industrial del Bajío, junto a la autopista 57. Dos operadores logísticos firmaron cartas de intención por el 80 % del espacio, con renta en dólares ajustada por inflación.",
+    "target": "9–12 %",
+    "term": 60,
+    "ticket": 250,
+    "softcap": 2000000,
+    "hardcap": 3500000,
+    "raised": 3100000,
+    "investors": 2217,
+    "deadline": "2026-10-25",
+    "disbursementFee": 0.03,
+    "mainId": 2,
+    "subId": 1,
+    "use": [
+      [
+        "Construcción de la nave",
+        64
+      ],
+      [
+        "Terreno",
+        21
+      ],
+      [
+        "Urbanización y accesos",
+        9
+      ],
+      [
+        "Permisos",
+        3
+      ],
+      [
+        "Reserva operativa",
+        3
+      ]
+    ],
+    "milestones": [
+      [
+        "Jun 2026",
+        "Compra del terreno",
+        true
+      ],
+      [
+        "Sep 2026",
+        "Soft cap alcanzado",
+        true
+      ],
+      [
+        "Nov 2026",
+        "Inicio de obra",
+        false
+      ],
+      [
+        "Sep 2027",
+        "Entrega a inquilinos",
+        false
+      ],
+      [
+        "Oct 2027",
+        "Primera distribución",
+        false
+      ]
+    ],
+    "risks": [
+      "Que un inquilino no firme el contrato definitivo.",
+      "Sobrecostos de construcción.",
+      "Riesgo cambiario si la renta se renegocia en pesos."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Cartas de intención de inquilinos",
+      "Avalúo del terreno",
+      "Licencia de construcción"
+    ],
+    "ledger": [
+      [
+        "27 sep",
+        "Aporte de participantes (lote 588)",
+        74300
+      ],
+      [
+        "19 sep",
+        "Anticipo a constructora",
+        -210000
+      ],
+      [
+        "12 sep",
+        "Aporte de participantes (lote 587)",
+        66120
+      ],
+      [
+        "05 sep",
+        "Estudio de mecánica de suelos",
+        -14800
+      ]
+    ],
+    "photo": "/design-assets/a9e507b96183.webp"
+  },
+  {
+    "slug": "cafe-huila",
+    "golive": 3,
+    "name": "Café de Especialidad Huila",
+    "sector": "Agrotech",
+    "country": "Colombia",
+    "flag": "🇨🇴",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "255,107,91",
+    "summary": "Expansión de 140 ha con exportación directa a tostadores de EE. UU.",
+    "about": "Una cooperativa con 12 años de historia amplía su cultivo de café de especialidad en 140 hectáreas y construye su propio beneficio de secado. Venderá directo a tostadores en Estados Unidos, sin intermediarios.",
+    "target": "15–22 %",
+    "term": 36,
+    "ticket": 100,
+    "softcap": 500000,
+    "hardcap": 1200000,
+    "raised": 410000,
+    "investors": 689,
+    "deadline": "2026-12-15",
+    "disbursementFee": 0.03,
+    "mainId": 3,
+    "subId": 1,
+    "use": [
+      [
+        "Plantación y renovación",
+        46
+      ],
+      [
+        "Beneficio de secado",
+        28
+      ],
+      [
+        "Certificaciones",
+        8
+      ],
+      [
+        "Logística de exportación",
+        12
+      ],
+      [
+        "Reserva operativa",
+        6
+      ]
+    ],
+    "milestones": [
+      [
+        "Jul 2026",
+        "Acuerdo con tostadores",
+        true
+      ],
+      [
+        "Dic 2026",
+        "Soft cap y desembolso",
+        false
+      ],
+      [
+        "Mar 2027",
+        "Beneficio de secado operativo",
+        false
+      ],
+      [
+        "Nov 2027",
+        "Primera cosecha exportada",
+        false
+      ]
+    ],
+    "risks": [
+      "Clima y plagas que reduzcan la cosecha.",
+      "Caída del precio internacional del café.",
+      "Proyecto agrícola: alta variabilidad de resultados."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Acuerdos con tostadores",
+      "Estados financieros de la cooperativa",
+      "Plan agronómico"
+    ],
+    "ledger": [
+      [
+        "26 sep",
+        "Aporte de participantes (lote 96)",
+        12400
+      ],
+      [
+        "18 sep",
+        "Aporte de participantes (lote 95)",
+        9850
+      ],
+      [
+        "10 sep",
+        "Certificación orgánica (anticipo)",
+        -3200
+      ]
+    ],
+    "photo": "/design-assets/fb91a7dcf516.webp"
+  },
+  {
+    "slug": "verde-medellin",
+    "golive": 28,
+    "name": "Residencial Verde Medellín",
+    "sector": "Inmobiliario",
+    "country": "Colombia",
+    "flag": "🇨🇴",
+    "risk": "mid",
+    "status": "Próximamente",
+    "color": "180,140,255",
+    "summary": "64 apartamentos para renta de mediano plazo con certificación de eficiencia energética.",
+    "about": "Edificio de 64 unidades en El Poblado para renta de mediano plazo a profesionales y nómadas digitales, con operador hotelero contratado y certificación de eficiencia energética.",
+    "target": "10–13 %",
+    "term": 72,
+    "ticket": 250,
+    "softcap": 3000000,
+    "hardcap": 5500000,
+    "raised": 0,
+    "investors": 0,
+    "deadline": "2027-02-28",
+    "disbursementFee": 0.03,
+    "mainId": 4,
+    "subId": 1,
+    "use": [
+      [
+        "Construcción",
+        61
+      ],
+      [
+        "Terreno",
+        24
+      ],
+      [
+        "Mobiliario y equipamiento",
+        8
+      ],
+      [
+        "Permisos",
+        4
+      ],
+      [
+        "Reserva operativa",
+        3
+      ]
+    ],
+    "milestones": [
+      [
+        "Nov 2026",
+        "Apertura de la ronda",
+        false
+      ],
+      [
+        "Feb 2027",
+        "Cierre de la ronda",
+        false
+      ],
+      [
+        "Mar 2027",
+        "Inicio de obra",
+        false
+      ],
+      [
+        "Jun 2029",
+        "Apertura y primeras rentas",
+        false
+      ]
+    ],
+    "risks": [
+      "Plazo largo: tu capital queda comprometido 6 años.",
+      "Ocupación menor a la proyectada.",
+      "Cambios en la regulación de rentas de corto y mediano plazo."
+    ],
+    "docs": [
+      "Memorando de participación (borrador)",
+      "Estudio de mercado",
+      "Anteproyecto arquitectónico"
+    ],
+    "ledger": [],
+    "photo": "/design-assets/78f43d227632.webp"
+  },
+  {
+    "slug": "flota-ev-lima",
+    "golive": 0,
+    "name": "Flota Eléctrica Lima",
+    "sector": "Movilidad",
+    "country": "Perú",
+    "flag": "🇵🇪",
+    "risk": "high",
+    "status": "Financiado",
+    "color": "255,194,75",
+    "summary": "120 motos eléctricas de reparto en arriendo a plataformas de delivery.",
+    "about": "Compra de 120 motos eléctricas que se arriendan a repartidores de plataformas de delivery, con estaciones de cambio de batería propias. La ronda se completó y el proyecto ya está en operación.",
+    "target": "16–20 %",
+    "term": 30,
+    "ticket": 100,
+    "softcap": 300000,
+    "hardcap": 650000,
+    "raised": 650000,
+    "investors": 941,
+    "deadline": "2026-06-30",
+    "disbursementFee": 0.03,
+    "mainId": 5,
+    "subId": 1,
+    "use": [
+      [
+        "Motos eléctricas",
+        62
+      ],
+      [
+        "Estaciones de batería",
+        24
+      ],
+      [
+        "Seguros y matrícula",
+        9
+      ],
+      [
+        "Reserva operativa",
+        5
+      ]
+    ],
+    "milestones": [
+      [
+        "Jun 2026",
+        "Hard cap alcanzado",
+        true
+      ],
+      [
+        "Jul 2026",
+        "Desembolso",
+        true
+      ],
+      [
+        "Ago 2026",
+        "Flota en operación",
+        true
+      ],
+      [
+        "Oct 2026",
+        "Primera distribución",
+        false
+      ]
+    ],
+    "risks": [
+      "Robo o daño de vehículos.",
+      "Dependencia de las plataformas de delivery.",
+      "Duración real de las baterías."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Contratos de arriendo",
+      "Pólizas de seguro",
+      "Reportes mensuales de operación"
+    ],
+    "ledger": [
+      [
+        "30 sep",
+        "Arriendos de septiembre",
+        31200
+      ],
+      [
+        "25 sep",
+        "Mantenimiento de flota",
+        -4700
+      ],
+      [
+        "15 sep",
+        "Cuota de administración dracma",
+        -1083
+      ],
+      [
+        "01 sep",
+        "Arriendos de agosto",
+        29800
+      ]
+    ],
+    "photo": "/design-assets/9741d7046c2a.webp"
+  },
+  {
+    "slug": "orquesta-ia",
+    "golive": 3,
+    "name": "Orquesta IA",
+    "sector": "Agentes de IA",
+    "country": "México",
+    "flag": "🇲🇽",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "140,120,255",
+    "summary": "Plataforma de orquestación de agentes de IA para pymes latinoamericanas.",
+    "about": "Orquesta IA conecta varios agentes de inteligencia artificial (ventas, cobranza, soporte e inventario) en un solo flujo que una pyme puede configurar sin programar. Cobra una suscripción mensual por empresa y ya tiene 140 clientes en piloto.",
+    "target": "18–25 %",
+    "term": 36,
+    "ticket": 100,
+    "softcap": 400000,
+    "hardcap": 900000,
+    "raised": 515000,
+    "investors": 812,
+    "deadline": "2026-12-20",
+    "disbursementFee": 0.03,
+    "mainId": 6,
+    "subId": 1,
+    "use": [
+      [
+        "Desarrollo de producto",
+        48
+      ],
+      [
+        "Infraestructura y modelos",
+        22
+      ],
+      [
+        "Ventas y marketing",
+        20
+      ],
+      [
+        "Seguridad y cumplimiento",
+        6
+      ],
+      [
+        "Reserva operativa",
+        4
+      ]
+    ],
+    "milestones": [
+      [
+        "Jun 2026",
+        "140 pymes en piloto",
+        true
+      ],
+      [
+        "Oct 2026",
+        "Soft cap alcanzado",
+        true
+      ],
+      [
+        "Ene 2027",
+        "Lanzamiento comercial",
+        false
+      ],
+      [
+        "Jul 2027",
+        "1.000 clientes de pago",
+        false
+      ]
+    ],
+    "risks": [
+      "Empresa tecnológica en etapa temprana: puede no alcanzar sus metas.",
+      "Costos de modelos de IA más altos de lo previsto.",
+      "Competencia de grandes plataformas."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Métricas del piloto",
+      "Plan de producto",
+      "Estados financieros"
+    ],
+    "ledger": [
+      [
+        "29 sep",
+        "Aporte de participantes (lote 131)",
+        22400
+      ],
+      [
+        "20 sep",
+        "Infraestructura de nube",
+        -6300
+      ],
+      [
+        "11 sep",
+        "Aporte de participantes (lote 130)",
+        18750
+      ]
+    ],
+    "photo": "/design-assets/dbb0ce397406.webp"
+  },
+  {
+    "slug": "bosque-vivo",
+    "golive": 12,
+    "name": "Bosque Vivo Amazonía",
+    "sector": "Medio ambiente",
+    "country": "Perú",
+    "flag": "🇵🇪",
+    "risk": "high",
+    "status": "Próximamente",
+    "color": "130,220,110",
+    "summary": "Restauración de 2.000 ha de bosque con venta de créditos de carbono certificados.",
+    "about": "Bosque Vivo restaura 2.000 hectáreas degradadas junto a comunidades locales, que reciben una parte de los ingresos. Los ingresos vienen de créditos de carbono certificados por un estándar internacional y de productos forestales no maderables.",
+    "target": "10–16 %",
+    "term": 84,
+    "ticket": 100,
+    "softcap": 800000,
+    "hardcap": 2000000,
+    "raised": 0,
+    "investors": 0,
+    "deadline": "2027-03-31",
+    "disbursementFee": 0.03,
+    "mainId": 8,
+    "subId": 1,
+    "use": [
+      [
+        "Reforestación y viveros",
+        44
+      ],
+      [
+        "Pagos a comunidades",
+        20
+      ],
+      [
+        "Certificación de carbono",
+        16
+      ],
+      [
+        "Monitoreo satelital",
+        12
+      ],
+      [
+        "Reserva operativa",
+        8
+      ]
+    ],
+    "milestones": [
+      [
+        "Dic 2026",
+        "Apertura de la ronda",
+        false
+      ],
+      [
+        "Mar 2027",
+        "Cierre de la ronda",
+        false
+      ],
+      [
+        "2028",
+        "Primera verificación de carbono",
+        false
+      ],
+      [
+        "2029",
+        "Primera venta de créditos",
+        false
+      ]
+    ],
+    "risks": [
+      "Plazo muy largo: 7 años.",
+      "Precio de los créditos de carbono volátil.",
+      "Incendios o eventos climáticos."
+    ],
+    "docs": [
+      "Memorando de participación (borrador)",
+      "Acuerdos con comunidades",
+      "Estudio de línea base de carbono"
+    ],
+    "ledger": [],
+    "photo": "/design-assets/99c422d2b6b6.webp"
+  },
+  {
+    "slug": "aula-sin-red",
+    "golive": 3,
+    "name": "Aula sin conexión",
+    "sector": "Educación offline",
+    "country": "Guatemala",
+    "flag": "🇬🇹",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "255,160,90",
+    "summary": "Tabletas con contenidos educativos que funcionan sin internet para escuelas rurales.",
+    "about": "Aula Sin Red entrega kits de tabletas con un servidor local que funciona sin conexión a internet, con contenidos alineados al currículo oficial. Los municipios y fundaciones pagan una licencia anual por escuela. Hoy opera en 60 escuelas.",
+    "target": "12–16 %",
+    "term": 48,
+    "ticket": 100,
+    "softcap": 250000,
+    "hardcap": 600000,
+    "raised": 198000,
+    "investors": 402,
+    "deadline": "2026-12-31",
+    "disbursementFee": 0.03,
+    "mainId": 9,
+    "subId": 1,
+    "use": [
+      [
+        "Kits de tabletas y servidores",
+        52
+      ],
+      [
+        "Contenidos educativos",
+        18
+      ],
+      [
+        "Capacitación docente",
+        16
+      ],
+      [
+        "Logística rural",
+        9
+      ],
+      [
+        "Reserva operativa",
+        5
+      ]
+    ],
+    "milestones": [
+      [
+        "Mar 2026",
+        "60 escuelas operando",
+        true
+      ],
+      [
+        "Dic 2026",
+        "Soft cap y desembolso",
+        false
+      ],
+      [
+        "Mar 2027",
+        "200 escuelas",
+        false
+      ],
+      [
+        "Mar 2028",
+        "500 escuelas",
+        false
+      ]
+    ],
+    "risks": [
+      "Dependencia de presupuestos públicos y de fundaciones.",
+      "Logística en zonas rurales de difícil acceso.",
+      "Daño o pérdida de equipos."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Convenios con municipios",
+      "Informe de impacto educativo"
+    ],
+    "ledger": [
+      [
+        "22 sep",
+        "Aporte de participantes (lote 44)",
+        8600
+      ],
+      [
+        "09 sep",
+        "Aporte de participantes (lote 43)",
+        7300
+      ]
+    ],
+    "photo": "/design-assets/892bfcf4c7d5.webp"
+  },
+  {
+    "slug": "credito-vecino",
+    "image": "dracma-business-v2.jpg",
+    "golive": 1,
+    "name": "Crédito Vecino",
+    "sector": "Banca",
+    "country": "Ecuador",
+    "flag": "🇪🇨",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "90,200,255",
+    "summary": "Microcréditos digitales para pequeños comercios, evaluados con datos de ventas.",
+    "about": "Crédito Vecino presta capital de trabajo a tiendas de barrio y pequeños comercios usando sus datos de ventas digitales para evaluar el riesgo. Opera con una cooperativa regulada y lleva 3 años con una mora controlada.",
+    "target": "13–17 %",
+    "term": 24,
+    "ticket": 100,
+    "softcap": 500000,
+    "hardcap": 1500000,
+    "raised": 870000,
+    "investors": 1350,
+    "deadline": "2026-11-15",
+    "disbursementFee": 0.03,
+    "mainId": 10,
+    "subId": 1,
+    "use": [
+      [
+        "Cartera de microcréditos",
+        82
+      ],
+      [
+        "Tecnología de evaluación",
+        8
+      ],
+      [
+        "Cobranza y seguimiento",
+        5
+      ],
+      [
+        "Reserva para mora",
+        5
+      ]
+    ],
+    "milestones": [
+      [
+        "2023",
+        "Inicio de operaciones",
+        true
+      ],
+      [
+        "Sep 2026",
+        "Soft cap alcanzado",
+        true
+      ],
+      [
+        "Nov 2026",
+        "Cierre y colocación",
+        false
+      ],
+      [
+        "Ene 2027",
+        "Primera distribución",
+        false
+      ]
+    ],
+    "risks": [
+      "Mora de los prestatarios mayor a la histórica.",
+      "Cambios en la regulación financiera.",
+      "Concentración en un solo país."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Historial de cartera y mora",
+      "Convenio con la cooperativa",
+      "Política de crédito"
+    ],
+    "ledger": [
+      [
+        "30 sep",
+        "Aporte de participantes (lote 207)",
+        31800
+      ],
+      [
+        "30 sep",
+        "Cobros de cartera",
+        44250
+      ],
+      [
+        "16 sep",
+        "Aporte de participantes (lote 206)",
+        27400
+      ]
+    ],
+    "photo": "/design-assets/6e1e5cefee9d.webp"
+  },
+  {
+    "slug": "pausa",
+    "golive": 0,
+    "name": "Pausa · meditación y sueño",
+    "sector": "Salud mental",
+    "country": "Latinoamérica",
+    "flag": "🌎",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "140,200,255",
+    "app": {
+      "price": 29.99,
+      "subsNow": 46200,
+      "subsTarget": 200000,
+      "churn": 0.06
+    },
+    "summary": "App de meditación, respiración y sueño en español, con meta de 200.000 suscriptores a US$29,99 al mes.",
+    "about": "Pausa ofrece meditaciones guiadas, programas de sueño y ejercicios de respiración creados por psicólogos latinoamericanos. Hoy tiene 46.200 suscriptores de pago. La ronda financia contenido nuevo, crecimiento y la reserva que permite pagar al instante las comisiones de Vox Populi.",
+    "target": "18–26 %",
+    "term": 36,
+    "ticket": 100,
+    "softcap": 1500000,
+    "hardcap": 4000000,
+    "raised": 2100000,
+    "investors": 1960,
+    "deadline": "2026-12-10",
+    "disbursementFee": 0.03,
+    "mainId": 11,
+    "subId": 1,
+    "use": [
+      [
+        "Contenido y producción",
+        30
+      ],
+      [
+        "Adquisición de usuarios",
+        28
+      ],
+      [
+        "Desarrollo de producto",
+        18
+      ],
+      [
+        "Reserva de comisiones Vox Populi",
+        12
+      ],
+      [
+        "Salud y cumplimiento",
+        6
+      ],
+      [
+        "Reserva operativa",
+        6
+      ]
+    ],
+    "milestones": [
+      [
+        "Mar 2026",
+        "25.000 suscriptores de pago",
+        true
+      ],
+      [
+        "Sep 2026",
+        "46.200 suscriptores y soft cap",
+        true
+      ],
+      [
+        "Jun 2027",
+        "120.000 suscriptores",
+        false
+      ],
+      [
+        "Dic 2027",
+        "Meta: 200.000 suscriptores",
+        false
+      ]
+    ],
+    "risks": [
+      "El precio de US$29,99 al mes es alto frente al mercado: puede aumentar la cancelación.",
+      "Dependencia de las reglas y comisiones del App Store.",
+      "Competencia de apps globales de bienestar."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Métricas de suscripción y cancelación",
+      "Plan de contenido",
+      "Política de datos de salud"
+    ],
+    "ledger": [
+      [
+        "30 sep",
+        "Ingresos netos App Store (agosto)",
+        812400
+      ],
+      [
+        "30 sep",
+        "Comisiones Vox Populi pagadas",
+        -129600
+      ],
+      [
+        "22 sep",
+        "Producción de contenido",
+        -64200
+      ],
+      [
+        "15 sep",
+        "Aporte de participantes (lote 212)",
+        48900
+      ]
+    ],
+    "photo": "/design-assets/0a3744bfe5a8.webp"
+  },
+  {
+    "slug": "nutre",
+    "golive": 0,
+    "name": "Nutre · nutrición con IA",
+    "sector": "Bienestar",
+    "country": "Colombia",
+    "flag": "🇨🇴",
+    "risk": "high",
+    "status": "Abierto",
+    "color": "180,230,120",
+    "app": {
+      "price": 29.99,
+      "subsNow": 21800,
+      "subsTarget": 200000,
+      "churn": 0.07
+    },
+    "summary": "Planes de alimentación personalizados con IA y nutricionistas, con meta de 200.000 suscriptores a US$29,99 al mes.",
+    "about": "Nutre arma planes de alimentación y listas de compras con inteligencia artificial, revisados por nutricionistas certificados, y los ajusta cada semana según tu progreso. Tiene 21.800 suscriptores de pago y alianzas con gimnasios.",
+    "target": "18–26 %",
+    "term": 36,
+    "ticket": 100,
+    "softcap": 1200000,
+    "hardcap": 3500000,
+    "raised": 980000,
+    "investors": 1104,
+    "deadline": "2027-01-20",
+    "disbursementFee": 0.03,
+    "mainId": 12,
+    "subId": 1,
+    "use": [
+      [
+        "Adquisición de usuarios",
+        32
+      ],
+      [
+        "Desarrollo de producto e IA",
+        26
+      ],
+      [
+        "Red de nutricionistas",
+        16
+      ],
+      [
+        "Reserva de comisiones Vox Populi",
+        12
+      ],
+      [
+        "Salud y cumplimiento",
+        7
+      ],
+      [
+        "Reserva operativa",
+        7
+      ]
+    ],
+    "milestones": [
+      [
+        "Abr 2026",
+        "Lanzamiento de planes con IA",
+        true
+      ],
+      [
+        "Sep 2026",
+        "21.800 suscriptores",
+        true
+      ],
+      [
+        "Ene 2027",
+        "Soft cap y desembolso",
+        false
+      ],
+      [
+        "Dic 2027",
+        "Meta: 200.000 suscriptores",
+        false
+      ]
+    ],
+    "risks": [
+      "Precio premium con riesgo de cancelación alta.",
+      "Recomendaciones de salud: exige supervisión profesional y cumplimiento.",
+      "Costos de IA más altos de lo previsto."
+    ],
+    "docs": [
+      "Memorando de participación",
+      "Métricas de suscripción",
+      "Protocolo clínico de nutricionistas"
+    ],
+    "ledger": [
+      [
+        "30 sep",
+        "Ingresos netos App Store (agosto)",
+        371500
+      ],
+      [
+        "30 sep",
+        "Comisiones Vox Populi pagadas",
+        -58300
+      ],
+      [
+        "18 sep",
+        "Aporte de participantes (lote 88)",
+        21400
+      ]
+    ],
+    "photo": "/design-assets/a859bac643d5.webp"
+  },
+  {
+    "slug": "fuerza-libre",
+    "golive": 3,
+    "name": "Fuerza Libre · calistenia",
+    "sector": "Bienestar",
+    "country": "Argentina",
+    "flag": "🇦🇷",
+    "risk": "high",
+    "status": "Próximamente",
+    "color": "255,170,90",
+    "app": {
+      "price": 29.99,
+      "subsNow": 9400,
+      "subsTarget": 200000,
+      "churn": 0.07
+    },
+    "summary": "Entrenamiento de calistenia sin gimnasio, con progresiones guiadas y meta de 200.000 suscriptores a US$29,99 al mes.",
+    "about": "Fuerza Libre enseña calistenia desde cero hasta nivel avanzado con progresiones en video, seguimiento de técnica con la cámara y retos en comunidad. Está en beta con 9.400 suscriptores de pago.",
+    "target": "18–26 %",
+    "term": 36,
+    "ticket": 100,
+    "softcap": 1000000,
+    "hardcap": 3000000,
+    "raised": 0,
+    "investors": 0,
+    "deadline": "2027-03-15",
+    "disbursementFee": 0.03,
+    "mainId": 13,
+    "subId": 1,
+    "use": [
+      [
+        "Producción de programas en video",
+        30
+      ],
+      [
+        "Adquisición de usuarios",
+        30
+      ],
+      [
+        "Tecnología de análisis de técnica",
+        18
+      ],
+      [
+        "Reserva de comisiones Vox Populi",
+        12
+      ],
+      [
+        "Reserva operativa",
+        10
+      ]
+    ],
+    "milestones": [
+      [
+        "Jul 2026",
+        "Beta con 9.400 suscriptores",
+        true
+      ],
+      [
+        "Dic 2026",
+        "Apertura de la ronda",
+        false
+      ],
+      [
+        "Mar 2027",
+        "Lanzamiento global",
+        false
+      ],
+      [
+        "Mar 2028",
+        "Meta: 200.000 suscriptores",
+        false
+      ]
+    ],
+    "risks": [
+      "Etapa temprana: la meta de suscriptores puede no alcanzarse.",
+      "Riesgo de lesiones: requiere contenido revisado por profesionales.",
+      "Alta competencia en apps de fitness."
+    ],
+    "docs": [
+      "Memorando de participación (borrador)",
+      "Métricas de la beta",
+      "Plan de contenido"
+    ],
+    "ledger": [],
+    "photo": "/design-assets/866e33cb0076.webp"
+  }
+]

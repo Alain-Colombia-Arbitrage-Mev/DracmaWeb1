@@ -1,0 +1,21 @@
+---
+const { compact=false } = Astro.props;
+const groups = [
+  { title:'Fintech', links:[['dracma Quant','/quant/'],['Crédito y lending','/credito/'],['Remesas','/remesas/'],['Tesorería','/tesoreria/']] },
+  { title:'Comisiones', links:[['Comisiones por operación','/comisiones/'],['Comercialización de proyectos','/comercializacion/'],['Ingresos recurrentes','/ingresos-recurrentes/'],['Cómo ganamos','/como-ganamos/']] },
+  { title:'Plataforma', links:[['Tecnología','/tecnologia/'],['Multisig Safe','/multisig/'],['Lanza tu proyecto','/lanza-tu-proyecto/']] },
+];
+---
+<header class="pencil-header">
+  <nav aria-label="Navegación principal" class="mx-auto flex min-h-[88px] max-w-[1180px] items-center gap-8 px-5">
+    <a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="dracma · Inicio"><img src="/brand/dracma-eagle.webp" width="40" height="48" alt="" class="h-12 w-10 object-contain" /><span class="text-2xl font-semibold tracking-[-.9px] text-[#F8F7F2]">dracma</span></a>
+    {compact ? <a href="/" class="ml-auto text-sm text-[#DCE6E4]">← Volver al inicio</a> : <>
+      <div class="ml-auto hidden items-center gap-6 lg:flex">
+        <a href="/proyectos/" class="nav-item">Proyectos</a>
+        {groups.map(group=><details class="nav-disclosure"><summary class="nav-item">{group.title}<span aria-hidden="true">⌄</span></summary><div class="nav-dropdown">{group.links.map(([title,href])=><a href={href}>{title}</a>)}</div></details>)}
+      </div>
+      <div class="ml-auto hidden gap-3 lg:flex"><a href="/comprar/" class="pencil-button pencil-button-outline">Comprar DRACMA</a><a href="/empezar/" class="pencil-button">Empezar</a></div>
+      <details class="mobile-nav ml-auto lg:hidden"><summary aria-label="Abrir menú principal" class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-md border border-[#47636B]"><span aria-hidden="true">☰</span></summary><div class="mobile-nav-panel"><a href="/proyectos/">Proyectos</a>{groups.map(group=><div><p>{group.title}</p>{group.links.map(([title,href])=><a href={href}>{title}</a>)}</div>)}<a class="pencil-button pencil-button-outline" href="/comprar/">Comprar DRACMA</a><a class="pencil-button" href="/empezar/">Empezar</a></div></details>
+    </>}
+  </nav>
+</header>
