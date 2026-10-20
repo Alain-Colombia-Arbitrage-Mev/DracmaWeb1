@@ -145,7 +145,8 @@ if (process.argv.includes('--live')) {
   }
   for (const route of ['/ruta-inexistente-auditoria-seo/', '/proyectos/proyecto-inexistente-auditoria/']) {
     const response = await fetch(liveOrigin + route, {signal:AbortSignal.timeout(15000)});
-    if (response.status !== 404 || !(await response.text()).includes('NO ENCONTRAMOS ESTA PÁGINA')) fail(`Live ${route}: expected the genuine 404 page`);
+    const html = await response.text();
+    if (response.status !== 404 || normalizeDeploymentHTML(html) !== normalizeDeploymentHTML(fs.readFileSync('dist/404.html','utf8'))) fail(`Live ${route}: expected the genuine 404 page`);
     liveChecks++;
   }
 }
