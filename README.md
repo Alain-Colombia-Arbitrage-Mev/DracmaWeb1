@@ -45,7 +45,7 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 
 ## Métricas públicas de Quant
 
-`src/data/quant-track-record.json` conserva la captura fechada de la cuenta TNG Gold EA HFM de ConfirmedTrades, con atribución a su publicador. Para actualizarla, consultar la ficha pública, comprobar sus estadísticas actuales y cambiar valores y `observedAt`; después ejecutar `node scripts/quant-track-record.mjs`. El importador de Pencil aplica el mismo normalizador. La página muestra la fecha y aclara que no hay sincronización automática; enlaza la curva original en lugar de dibujar una serie de resultados inventada. El drawdown histórico de la cuenta y el umbral de riesgo del servicio se identifican por separado.
+`src/data/quant-track-record.json` conserva la captura fechada de la cuenta TNG Gold EA HFM de ConfirmedTrades, con atribución a su publicador en el registro de origen. El frontend no incluye nombre de la cuenta, publicador, broker ni enlaces específicos que revelen esa identidad. Para actualizarla, consultar la ficha pública, comprobar sus estadísticas actuales y cambiar valores y `observedAt`; después ejecutar `node scripts/quant-track-record.mjs`. El importador de Pencil aplica el mismo normalizador. La página muestra la fecha y aclara que no hay sincronización automática; identifica el historial como una cuenta externa de referencia, sin presentar sus resultados como propios ni dibujar una serie inventada. El drawdown histórico de la cuenta y el umbral de riesgo del servicio se identifican por separado.
 
 ## Compra DRACMA: API Go y SQLite
 

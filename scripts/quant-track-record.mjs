@@ -21,11 +21,11 @@ export function renderQuantTrackRecord(d){
     ['Promedio mensual',`+${decimal(d.averageMonthlyPercent)} %`,'Media aritmética histórica · no proyección','']
   ];
   const financial=[['Balance',d.balanceUsd],['Equity',d.equityUsd],['Beneficio cerrado',d.closedProfitUsd],['Depósitos',d.depositsUsd],['Retiros',d.withdrawalsUsd],['P/L flotante',d.floatingProfitUsd]];
-  return `<div class="quant-record-head"><div><p class="quant-record-kicker">CUENTA DE REFERENCIA · ${esc(d.source)}</p><h3>${esc(d.accountName)}</h3><p>Publicada por ${esc(d.publishedBy)} · ${esc(d.broker)}</p></div><a class="quant-source-link" href="${esc(d.sourceUrl)}" target="_blank" rel="noopener noreferrer">Ver cuenta original ↗</a></div>
+  return `<div class="quant-record-head"><div><p class="quant-record-kicker">CUENTA DE REFERENCIA · ${esc(d.source)}</p><h3>Historial de referencia</h3><p>Estadísticas históricas de una cuenta externa.</p></div></div>
     <div class="quant-record-meta"><span>${esc(d.accountType)} · ${esc(d.platform)} · ${esc(d.currency)}</span><span>${esc(d.symbol)}</span><span>Consulta: <time datetime="${esc(d.observedAt)}">${date(d.observedAt)}</time></span><span>Captura de datos · sin sincronización automática</span></div>
     <dl class="quant-record-metrics">${primary.map(([label,value,hint,tone])=>`<div class="quant-record-metric ${tone?`quant-record-metric--${tone}`:''}"><dt>${label}</dt><dd>${value}<span>${hint}</span></dd></div>`).join('')}</dl>
     <div class="quant-record-details"><section aria-labelledby="quant-capital"><h4 id="quant-capital">Capital y resultado · USD</h4><dl>${financial.map(([label,value])=>`<div><dt>${label}</dt><dd>US$ ${decimal(value)}</dd></div>`).join('')}</dl></section><section aria-labelledby="quant-context"><h4 id="quant-context">Contexto del historial</h4><dl><div><dt>Primera operación</dt><dd>${date(d.firstTrade)}</dd></div><div><dt>Última operación cerrada</dt><dd>${date(d.lastTrade)}</dd></div><div><dt>Drawdown sobre balance</dt><dd>${decimal(d.drawdownBalancePercent)} %</dd></div><div><dt>Sharpe</dt><dd>${decimal(d.sharpeRatio)}</dd></div><div><dt>Duración media</dt><dd>${esc(d.averageTradeLength)}</dd></div><div><dt>Score de ConfirmedTrades</dt><dd>${esc(d.confirmedTradesScore)} / 100</dd></div></dl></section></div>
-    <div class="quant-record-foot"><p>Las cifras corresponden a esta cuenta y a la fecha de consulta. El promedio mensual no es una rentabilidad prometida. Los resultados pasados no garantizan resultados futuros.</p><a class="quant-source-link" href="${esc(d.sourceUrl)}" target="_blank" rel="noopener noreferrer">Consultar curva e historial en ConfirmedTrades ↗</a></div>`;
+    <div class="quant-record-foot"><p>Las cifras corresponden a una cuenta externa de referencia y a la fecha de consulta. El promedio mensual no es una rentabilidad prometida. Los resultados pasados no garantizan resultados futuros.</p></div>`;
 }
 
 export function normalizeQuantTrackRecord(root,slug,d){
@@ -37,7 +37,7 @@ export function normalizeQuantTrackRecord(root,slug,d){
   content(terminal,renderQuantTrackRecord(d));
   const labels={
     ECwK4:'RESULTADOS PUBLICADOS',
-    shaqV:'EL RESULTADO, CON SU FUENTE.',
+    shaqV:'ESTADÍSTICAS DEL HISTORIAL.',
     S7d6Y:`El EA opera en la cuenta MQL5 del cliente. La cuenta de referencia publica un drawdown máximo del ${decimal(d.drawdownEquityPercent)} %. La política del servicio establece un stop out del 40 %, con activación inicial y facturación mensual sobre utilidades.`,
     cT4ZB:`${decimal(d.drawdownEquityPercent)} %`,
     O0On3B:'Drawdown histórico publicado',
