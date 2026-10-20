@@ -32,7 +32,7 @@ npm run build
 npm run verify:pages
 npm run verify:seo
 npm run verify:publication
-node --test tests/pages-api.test.mjs
+node --test tests/pages-api.test.mjs tests/seo-html.test.mjs
 # Después de publicar exactamente ese build:
 npm run verify:seo:live -- --report /tmp/dracma-seo-live.json
 node scripts/verify-seo.mjs --live --origin https://dracmaweb1.pages.dev
@@ -47,6 +47,10 @@ Hay 28 URLs indexables en el sitemap y 15 documentos no indexables, incluidas
 traducciones antiguas, retornos de compra y el 404. Ese número no representa una
 medición de páginas redundantes de una cuenta de Semrush. El reporte de publicación
 se guarda en `seo-live-report.json` después de ejecutar las comprobaciones HTTP.
+
+Resultado publicado: 124 comprobaciones HTTP en `dracma.club` y 124 en la copia de Pages, sin errores internos ni títulos/descripciones duplicados. Se revisaron 8 destinos externos: 3 respuestas 403 de BscScan permanecen sin verificar. Cloudflare protege los correos en el dominio propio; el comparador normaliza exclusivamente esa transformación, con pruebas que conservan la detección de cambios en canonical, contenido y scripts ajenos.
+
+La preferencia canonical sigue las [recomendaciones de Google Search Central](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls); no implica que Google ya haya actualizado su índice.
 
 Los bloqueos o timeouts de sitios externos se mantienen como advertencias de
 verificación pendiente. La revisión no acredita indexación en Google, posiciones,

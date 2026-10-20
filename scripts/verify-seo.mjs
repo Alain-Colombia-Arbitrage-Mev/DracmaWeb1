@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { parse } from 'parse5';
 import { SITE_URL, isIndexablePath } from '../src/config/site.mjs';
 import { breadcrumbsFor } from '../src/config/breadcrumbs.mjs';
+import {normalizeDeploymentHTML} from './seo-html.mjs';
 
 const walk = (node, visit) => { visit(node); for (const child of node.childNodes || []) walk(child, visit); };
 const attrs = node => Object.fromEntries((node.attrs || []).map(a => [a.name, a.value]));
@@ -127,7 +128,7 @@ if (process.argv.includes('--live')) {
         const file = fileFor(route);
         if (pages.has(file)) {
           const html = await response.text();
-          if (html !== fs.readFileSync(file,'utf8')) fail(`Live ${route}: deployed HTML differs from the validated build`);
+          if (normalizeDeploymentHTML(html) !== normalizeDeploymentHTML(fs.readFileSync(file,'utf8'))) fail(`Live ${route}: deployed HTML differs from the validated build`);
           if (pages.get(file).indexable && /noindex|none/i.test(response.headers.get('x-robots-tag') || '')) fail(`Live ${route}: HTTP header prevents indexing`);
         } else if (/\.(?:xml|txt)$/.test(route)) {
           if (await response.text() !== fs.readFileSync(file,'utf8')) fail(`Live ${route}: deployed discovery file differs from the validated build`);

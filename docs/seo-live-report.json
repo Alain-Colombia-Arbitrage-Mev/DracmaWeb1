@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-20T03:11:07.431110+00:00",
+  "buildRevision": "9de32093666c42116a69d47ba75d90f2e2267375",
+  "primary": {
+    "site": "https://dracma.club",
+    "auditedOrigin": "https://dracma.club",
+    "htmlPages": 43,
+    "indexablePages": 28,
+    "noindexPages": 15,
+    "sitemapURLs": 28,
+    "duplicateTitles": 0,
+    "duplicateDescriptions": 0,
+    "missingInternalResources": 0,
+    "liveChecks": 124,
+    "externalChecks": 8,
+    "warnings": [
+      "External https://bscscan.com/address/0x13fE106497Ddc966caF6E788833c5F872BF95549: HTTP 403; destination not verified",
+      "External https://bscscan.com/address/0xdb15c426c241E91b045265E55a1a1c9eC4EdD28C: HTTP 403; destination not verified",
+      "External https://bscscan.com/: HTTP 403; destination not verified"
+    ],
+    "errors": []
+  },
+  "technicalAlias": {
+    "site": "https://dracma.club",
+    "auditedOrigin": "https://dracmaweb1.pages.dev",
+    "htmlPages": 43,
+    "indexablePages": 28,
+    "noindexPages": 15,
+    "sitemapURLs": 28,
+    "duplicateTitles": 0,
+    "duplicateDescriptions": 0,
+    "missingInternalResources": 0,
+    "liveChecks": 124,
+    "externalChecks": 0,
+    "warnings": [],
+    "errors": []
+  },
+  "limitations": [
+    "Three BscScan destinations returned HTTP 403 and remain unverified.",
+    "Cloudflare email obfuscation is normalized before comparing HTML; metadata and body changes remain detectable.",
+    "No Search Console indexing or new Semrush score was verified."
+  ]
+}
