@@ -31,3 +31,13 @@ authorized payment end to end, including the signed callback and distribution.
   External blocks/timeouts are reported as unverified, not successful checks.
 - Check `/api/v1/market/price` returns live JSON and honors `checkoutAvailable`.
   A successful frontend build does not establish payment or delivery functionality.
+
+## Chat del Agente DRACMA
+
+`functions/api/chat/[[path]].js` tiene prioridad sobre el proxy general de pagos.
+Configurar `CHAT_API_ORIGIN` y `CHAT_PROXY_SECRET` como secretos de Pages; no
+usar variables `PUBLIC_*` para credenciales. El proxy permite solo preguntas,
+sesiones y mensajes, conserva el token opaco de sesión y rechaza escrituras de
+otros orígenes. Chatwoot y el bot Go se despliegan por separado en Railway.
+Consultar [operación y límites](../deploy/chatwoot/README.md). Probar las rutas
+públicas después de cada despliegue y ejecutar `node --test tests/chat-api.test.mjs`.

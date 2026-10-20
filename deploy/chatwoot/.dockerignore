@@ -1,0 +1,8 @@
+**
+!Dockerfile
+!start.sh
+!bootstrap.rb
+!faq.json
+!railway.toml
+
+!railway_health.rb

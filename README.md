@@ -28,6 +28,10 @@ npm run verify:seo:live -- --report /tmp/dracma-seo-live.json
 
 La revisión comprueba páginas, archivos, metadatos, canonical, anclas, redirecciones, respuestas 404 y enlaces externos. Los destinos externos bloqueados se reportan como no verificados. Consulta [el alcance de la revisión](docs/seo-review.md) y [el reporte publicado](docs/seo-live-report.json). No equivale a una puntuación de Semrush ni acredita indexación en Google.
 
+## Agente DRACMA y Chatwoot
+
+El panel de la portada usa conversaciones reales en Chatwoot y un bot Go de preguntas frecuentes. Incluye preguntas sugeridas, historial de sesión y derivación al equipo; no usa IA generativa ni accede a cuentas privadas. Chatwoot se publica en un proyecto Railway separado, con PostgreSQL y Redis privados. Configuración, pruebas, privacidad y límites: [operación del chat](deploy/chatwoot/README.md).
+
 ## Métricas públicas de Quant
 
 `src/data/quant-track-record.json` conserva la captura fechada de la cuenta TNG Gold EA HFM de ConfirmedTrades, con atribución a su publicador en el registro de origen. El frontend no incluye nombre de la cuenta, publicador, broker ni enlaces específicos que revelen esa identidad. Para actualizarla, consultar la ficha pública, comprobar sus estadísticas actuales y cambiar valores y `observedAt`; después ejecutar `node scripts/quant-track-record.mjs`. El importador de Pencil aplica el mismo normalizador. La página muestra la fecha y aclara que no hay sincronización automática; identifica el historial como una cuenta externa de referencia, sin presentar sus resultados como propios ni dibujar una serie inventada. El drawdown histórico de la cuenta y el umbral de riesgo del servicio se identifican por separado.

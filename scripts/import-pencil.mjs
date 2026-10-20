@@ -1,3 +1,4 @@
+import { normalizeDracmaChat } from './dracma-chat.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -148,6 +149,7 @@ for(const page of pages){
   walk(root,n=>{const t=text(n);if(n.tagName==='h2'&&t.includes('TODO CORRE EN AVALANCHE'))set(n,'id','avalanche');if(n.tagName==='h2'&&t.includes('CÓDIGO ABIERTO'))set(n,'id','estado-contratos');});
 
   normalizePencilFaq(root);
+  if(page.slug==='inicio'||page.id==='jneec') normalizeDracmaChat(root);
   clarifyProjectPublication(root,page.slug);
   normalizeProjectCards(root,page.slug,projectData);
   improveDebitCards(root,page.slug);

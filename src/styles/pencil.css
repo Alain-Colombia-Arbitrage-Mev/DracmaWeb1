@@ -288,3 +288,47 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
 @media(max-width:900px) { .quant-record-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .quant-record-head { align-items:flex-start; flex-direction:column; gap:12px; } }
 @media(max-width:640px) { .quant-record-head,.quant-record-meta,.quant-record-details,.quant-record-foot { padding:20px; } .quant-record-metric { padding:18px 16px; } .quant-record-metric dd { font-size:24px; } .quant-record-details { grid-template-columns:minmax(0,1fr); gap:24px; } .quant-record-details dl > div { gap:14px; } }
 @media(max-width:360px) { .quant-record-metrics { grid-template-columns:minmax(0,1fr); } }
+
+/* A live, naturally sized conversation within the existing Agent section. */
+#agente-dracma {scroll-margin-top:100px}
+.dracma-agent-layout {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;height:auto!important;align-items:center;padding:0 20px}
+.dracma-agent-copy {position:static!important;width:auto!important;min-width:0}
+.dracma-agent-mount {position:static!important;width:100%!important;min-width:0;height:auto!important}
+[data-dracma-chat-root] {width:100%;min-width:0}
+.dracma-chat {width:100%;color:#f8f7f2;background:#0c4651;border:1px solid #6e969e;border-radius:18px;overflow:hidden;box-shadow:0 20px 70px #0004;font-family:inherit;text-align:left}
+.dracma-chat button,.dracma-chat textarea {font:inherit}
+.dracma-chat button {cursor:pointer}
+.dracma-chat button:disabled {opacity:.55;cursor:default}
+.dracma-chat button:focus-visible,.dracma-chat textarea:focus-visible,.dracma-chat a:focus-visible {outline:3px solid #e6ff28;outline-offset:3px}
+.dracma-chat-header {padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #ffffff24}
+.dracma-chat-header strong {display:block;font-size:21px;font-weight:600}
+.dracma-chat-header span {display:block;font-size:12px;color:#c9dddf;margin-top:5px}
+.dracma-chat-header button,.dracma-chat-question-heading button,.dracma-chat-retry {color:#e6ff28;background:none;border:0;font-size:12px;text-decoration:underline;text-underline-offset:4px}
+.dracma-chat-log {height:260px;overflow-y:auto;overscroll-behavior:contain;padding:20px 24px;scrollbar-color:#87a8ad #0c4651}
+.dracma-chat-intro {font-size:14px;line-height:1.6;color:#d7e6e8;margin:0 0 16px;max-width:46ch}
+.dracma-chat-message {margin:14px 0;max-width:94%;padding:13px 15px;background:#15363d;border-radius:12px;overflow-wrap:anywhere}
+.dracma-chat-message>span {display:block;font-size:11px;letter-spacing:.04em;color:#bcd2d6;margin-bottom:6px}
+.dracma-chat-message p {margin:0;font-size:14px;line-height:1.6;white-space:pre-wrap}
+.dracma-chat-message a {color:inherit;text-decoration:underline}
+.dracma-chat-user {margin-left:auto;background:#e6ff28;color:#122c32}
+.dracma-chat-user>span {color:#344c16}
+.dracma-chat-status {font-size:12px;color:#d4e5e7}
+.dracma-chat-questions {padding:16px 24px;border-top:1px solid #ffffff24}
+.dracma-chat-question-heading {display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#c9dddf;margin-bottom:10px}
+.dracma-chat-chips {display:flex;flex-wrap:wrap;gap:8px;max-height:180px;overflow-y:auto;padding:3px}
+.dracma-chat-chips button {display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;max-width:100%;border:1px solid #81a6ae;border-radius:8px;background:#113e49;color:#f8f7f2;font-size:12px;line-height:1.4;padding:9px 11px}
+.dracma-chat-chips button:hover {background:#1a5865;border-color:#e6ff28}
+.dracma-chat-chips button span {color:#e6ff28}
+.dracma-chat-form {padding:0 24px 14px}
+.dracma-chat-form label {display:block;font-size:12px;color:#d7e6e8;margin-bottom:8px}
+.dracma-chat-form>div {display:flex;align-items:flex-end;gap:10px;background:#f8f7f2;padding:10px;border:1px solid #c0d3d7;border-radius:12px}
+.dracma-chat-form textarea {resize:vertical;min-height:48px;max-height:150px;min-width:0;flex:1;background:transparent;border:0;color:#14323a;font-size:14px;line-height:1.5;padding:5px}
+.dracma-chat-form textarea::placeholder {color:#5c7379}
+.dracma-chat-form button {width:40px;height:40px;flex-shrink:0;background:#e6ff28;color:#102e35;border:1px solid #76862a;border-radius:9px;font-size:24px}
+.dracma-chat-privacy {margin:0;padding:0 24px 20px;color:#c2d8dc;font-size:11px;line-height:1.6}
+.dracma-chat-privacy a {text-decoration:underline;color:#e6ff28}
+.dracma-chat-error {margin:0 24px 14px;border:1px solid #e9ca86;background:#363923;padding:12px;border-radius:8px;color:#fff0c8;font-size:13px;line-height:1.5}
+.dracma-chat-error p {margin:0 0 8px}
+.dracma-chat-error button {color:#fff0c8;background:transparent;border:0;text-decoration:underline;margin-right:12px;font-size:12px}
+@media(max-width:900px){.dracma-agent-layout{grid-template-columns:1fr;gap:32px;max-width:680px!important}.dracma-agent-copy{max-width:100%}.dracma-chat-log{height:300px}}
+@media(max-width:480px){.dracma-agent-layout{padding:0;gap:28px}.dracma-chat-header{padding:18px 16px}.dracma-chat-log{padding:16px;height:280px}.dracma-chat-questions{padding:14px 16px}.dracma-chat-form{padding:0 16px 14px}.dracma-chat-privacy{padding:0 16px 18px}.dracma-chat-error{margin:0 16px 14px}.dracma-chat-header strong{font-size:19px}.dracma-chat-form textarea{font-size:16px}}
