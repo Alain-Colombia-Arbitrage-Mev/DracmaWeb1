@@ -22,7 +22,9 @@
     "verify:seo": "node scripts/verify-seo.mjs",
     "verify:seo:live": "node scripts/verify-seo.mjs --live --external",
     "verify:locales": "node scripts/verify-locales.mjs",
-    "test:token-estimate": "node --test src/services/tokenEstimate.test.mjs"
+    "test:token-estimate": "node --test src/services/tokenEstimate.test.mjs",
+    "test:project-fees": "node --test scripts/project-fees.test.mjs",
+    "simulate:project-fees": "node scripts/simulate-project-fees.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

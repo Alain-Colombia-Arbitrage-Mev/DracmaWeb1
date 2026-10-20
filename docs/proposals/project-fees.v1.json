@@ -1,0 +1,80 @@
+{
+  "version": "project-fees-2026-10-20-draft-1",
+  "status": "draft",
+  "activated": false,
+  "effectiveFrom": null,
+  "scope": "project_participation_primary_issuance",
+  "currency": "USD",
+  "closing": {
+    "feeBps": 800,
+    "payer": "project_issuer",
+    "base": "confirmed_gross_receipts_minus_actual_processor_cost",
+    "collection": "deduct_from_settled_project_proceeds_after_successful_close_and_cooling_period",
+    "commercialBudgetShareBps": 3500,
+    "commercial": {
+      "directSaleShareBps": 2500,
+      "campaignBonusShareBps": 500,
+      "volumeBonusShareBps": 500,
+      "shareBase": "closing_fee_not_contribution",
+      "qualification": "attributed_confirmed_sales_under_terms_accepted_before_the_order",
+      "campaignAndVolumeThresholds": null,
+      "unqualifiedAmounts": "remain_reserved_pending_reconciliation_not_automatically_paid",
+      "recruitmentCreatesEntitlement": false
+    },
+    "rounding": "closing_fee_and_commercial_budget_half_up_to_cents_individual_allocations_down_to_cents_remainder_stays_reserved"
+  },
+  "additionalProposals": {
+    "projectSetup": {
+      "amountUsd": null,
+      "basis": "separate_service_quote",
+      "payer": "issuer_own_funds"
+    },
+    "annualAdministration": {
+      "annualBps": 75,
+      "base": "time_weighted_net_capital_outstanding_to_be_returned",
+      "payer": "project_issuer",
+      "includedInClosingSimulation": false
+    },
+    "secondarySettlement": {
+      "totalBps": 100,
+      "payer": "seller",
+      "appliedPerSide": false,
+      "available": false,
+      "includedInClosingSimulation": false
+    },
+    "performance": {
+      "bps": 1000,
+      "base": "eligible_net_profit_after_capital_return_and_agreed_preferences",
+      "noSecondFeeOnPreviouslyChargedProfit": true,
+      "includedInClosingSimulation": false
+    }
+  },
+  "operatingBudget": {
+    "symbol": "K",
+    "includes": [
+      "sponsored_gas",
+      "wallet_and_paymaster",
+      "rpc_and_indexing",
+      "operation_and_controls",
+      "amortized_audits"
+    ],
+    "funding": "dracma_retained_fees_or_own_treasury",
+    "shortfall": "requires_own_funding_does_not_reduce_project_capital_or_commercial_reserve"
+  },
+  "cancellation": {
+    "closingAndCommercialFeesReleasedBeforeCloseAndCooling": false,
+    "grossRefundObligationInModel": true,
+    "unrecoveredProcessorCost": "requires_own_treasury_top_up_for_gross_refund"
+  },
+  "approval": {
+    "requiredBeforeActivation": true,
+    "scopeAndRatesAccepted": false,
+    "appliesOnlyToOrdersAcceptingThisVersion": true,
+    "existingOrdersRepriced": false
+  },
+  "exclusions": [
+    "existing_bsc_dracma_token_purchase_checkout",
+    "quant_terms",
+    "commercial_administration_monthly_5_99_usd"
+  ]
+}
