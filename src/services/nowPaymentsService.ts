@@ -125,7 +125,7 @@ export async function getPresaleQuote(tokenAmount: number): Promise<PresaleQuote
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message = payload?.error || 'No se pudo calcular la cotizacion.';
+    const message = payload?.error || 'No se pudo calcular la cotización.';
     throw new Error(message);
   }
 

@@ -613,7 +613,7 @@ function PresaleInner() {
     const amountUsd = parseFloat(investmentAmount) || 0;
 
     if (!address || totalTokensReceived <= 0) {
-      setInvoiceError('Conecta tu wallet BSC e ingresa un monto valido.');
+      setInvoiceError('Conecta tu wallet BSC e ingresa un monto válido.');
       return;
     }
 
@@ -641,7 +641,7 @@ function PresaleInner() {
       });
 
       if (!checkout.invoiceUrl) {
-        throw new Error('NOWPayments no devolvio URL de checkout.');
+        throw new Error('NOWPayments no devolvió la URL de la página de pago.');
       }
 
       setPaymentCheckout(checkout);
