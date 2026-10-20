@@ -2,6 +2,7 @@ export type MarketSnapshot = {priceUsd:string;tokenAddress:string;pairAddress:st
 export type MarketState = {price:MarketSnapshot;checkoutAvailable:boolean;minimumUsd:string;maximumUsd:string;quoteTtlSeconds:number;refreshSeconds:number;tokenDecimals:number;chainId:number};
 export type MarketQuote = {id:string;walletAddress:string;amountUsd:string;tokenAmount:string;tokenDecimals:number;market:MarketSnapshot;createdAt:string;expiresAt:string};
 export type PurchaseOrder = {id:string;quote:MarketQuote;status:string;invoiceUrl?:string;txHash?:string;createdAt:string;updatedAt:string};
+export type PaymentOptions = {provider:'nowpayments';selection:'hosted';currencies:{code:string;name:string;network:string}[];observedAt:string;expiresAt:string};
 export class CheckoutError extends Error {
   constructor(message:string,public code:string,public orderId?:string){super(message);}
 }
@@ -24,6 +25,11 @@ async function request<T>(path:string,init:RequestInit={}):Promise<T>{
   finally{clearTimeout(timeout);}
 }
 export async function getMarket(){const data=await request<MarketState>('/api/v1/market/price');return verified(data,snapshot(data.price)&&Date.parse(data.price.expiresAt)>Date.now()&&data.chainId===56&&data.tokenDecimals===18&&typeof data.checkoutAvailable==='boolean'&&decimal.test(data.minimumUsd)&&decimal.test(data.maximumUsd));}
+export async function getPaymentOptions(){
+  const data=await request<PaymentOptions>('/api/v1/payments/currencies');
+  const code=(value:unknown)=>typeof value==='string'&&/^[a-z0-9_]{1,40}$/.test(value);
+  return verified(data,data?.provider==='nowpayments'&&data.selection==='hosted'&&date(data.observedAt)&&date(data.expiresAt)&&Date.parse(data.expiresAt)>Date.now()&&Array.isArray(data.currencies)&&data.currencies.length>0&&data.currencies.length<=2000&&data.currencies.every(c=>c&&code(c.code)&&code(c.network)&&typeof c.name==='string'&&c.name.length>0&&c.name.length<=120));
+}
 export async function createMarketQuote(walletAddress:string,amountUsd:string){const data=await request<MarketQuote>('/api/v1/quotes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({walletAddress,amountUsd})});return verified(data,validMarketQuote(data)&&data.walletAddress.toLowerCase()===walletAddress.toLowerCase());}
 export async function createMarketInvoice(quoteId:string,receiptToken:string,key:string){const data=await request<PurchaseOrder>('/api/v1/checkout/invoices',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({quoteId,receiptToken})});return verified(data,order(data)&&data.quote.id===quoteId);}
 export async function getPurchaseOrder(id:string,receiptToken:string){const data=await request<PurchaseOrder>(`/api/v1/orders/${encodeURIComponent(id)}`,{headers:{Authorization:`Bearer ${receiptToken}`}});return verified(data,order(data)&&data.id===id);}

@@ -10,6 +10,7 @@ export async function onRequest({ request, env }) {
     '/api/payments/nowpayments': 'POST',
     '/api/webhooks/nowpayments': 'POST',
     '/api/v1/market/price': 'GET',
+    '/api/v1/payments/currencies': 'GET',
     '/api/v1/quotes': 'POST',
     '/api/v1/checkout/invoices': 'POST',
     '/api/v1/webhooks/nowpayments': 'POST',

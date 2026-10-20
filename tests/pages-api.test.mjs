@@ -50,6 +50,22 @@ test('Go checkout requires its own configured origin and rejects invalid order p
   assert.equal((await onRequest(context('/api/v1/orders/o_other'))).status,404);
   assert.equal((await onRequest(context('/api/v1/admin'))).status,404);
 });
+test('payment currency discovery is a read-only Go route and does not receive browser credentials', async()=>{
+  assert.equal((await onRequest(context('/api/v1/payments/currencies'))).status,503);
+  assert.equal((await onRequest(context('/api/v1/payments/currencies','POST'))).status,405);
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async(url,options)=>{
+    assert.equal(String(url),'https://go.example/api/v1/payments/currencies');
+    assert.equal(options.headers.get('x-api-key'),null);
+    assert.equal(options.headers.get('cookie'),null);
+    return Response.json({provider:'nowpayments',selection:'hosted',currencies:[{code:'btc',name:'Bitcoin',network:'btc'}]});
+  };
+  try{
+    const response=await onRequest(context('/api/v1/payments/currencies','GET',{GO_API_ORIGIN:'https://go.example'}));
+    assert.equal(response.status,200);
+    assert.equal((await response.json()).currencies[0].code,'btc');
+  }finally{globalThis.fetch=originalFetch;}
+});
 test('Go proxy preserves receipt authorization and idempotency without using the legacy origin', async () => {
   const originalFetch=globalThis.fetch;
   globalThis.fetch=async(url,options)=>{

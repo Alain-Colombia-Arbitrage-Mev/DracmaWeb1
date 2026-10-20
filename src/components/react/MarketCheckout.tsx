@@ -3,7 +3,7 @@ import {useAccount,useConnect,useConnectors} from 'wagmi';
 import {isAddress} from 'viem';
 import Web3Provider from './Web3Provider';
 import {useMarketPrice} from './useMarketPrice';
-import {CheckoutError,createMarketInvoice,createMarketQuote,formatMarketUSD,getPurchaseOrder,randomReceiptToken,validMarketQuote,type MarketQuote,type PurchaseOrder} from '../../services/marketCheckout';
+import {CheckoutError,createMarketInvoice,createMarketQuote,formatMarketUSD,getPaymentOptions,getPurchaseOrder,randomReceiptToken,validMarketQuote,type MarketQuote,type PaymentOptions,type PurchaseOrder} from '../../services/marketCheckout';
 import {DRACMA_TOKEN_ADDRESS} from '../../config/contracts';
 
 const tokenKey=(id:string)=>`dracma-receipt:${id}`;
@@ -14,9 +14,16 @@ function Checkout(){
   const {address}=useAccount();const connectors=useConnectors();const {connect,isPending}=useConnect();const {market,loading,error:priceError}=useMarketPrice();
   const [amount,setAmount]=useState('');const [wallet,setWallet]=useState('');const [quote,setQuote]=useState<MarketQuote|null>(null);const [order,setOrder]=useState<PurchaseOrder|null>(null);
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [now,setNow]=useState(Date.now());const [uncertain,setUncertain]=useState(false);const [returningId,setReturningId]=useState('');const [pendingId,setPendingId]=useState('');
+  const [paymentOptions,setPaymentOptions]=useState<PaymentOptions|null>(null);const [paymentOptionsError,setPaymentOptionsError]=useState(false);
   const attempt=useRef<{quoteId:string;key:string;receiptToken:string}|null>(null);
   useEffect(()=>{if(address&&!quote)setWallet(address);},[address,quote]);
   useEffect(()=>{const t=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(t);},[]);
+  useEffect(()=>{
+    let active=true,pending=false;
+    const refresh=async()=>{if(pending||document.hidden)return;pending=true;try{const options=await getPaymentOptions();if(active){setPaymentOptions(options);setPaymentOptionsError(false);}}catch{if(active){setPaymentOptions(null);setPaymentOptionsError(true);}}finally{pending=false;}};
+    void refresh();const timer=setInterval(refresh,30000);document.addEventListener('visibilitychange',refresh);
+    return()=>{active=false;clearInterval(timer);document.removeEventListener('visibilitychange',refresh);};
+  },[]);
   useEffect(()=>{
     const id=new URLSearchParams(location.search).get('order_id');
     if(!id||!/^o_[a-f0-9]{32}$/.test(id)){
@@ -78,12 +85,13 @@ function Checkout(){
       </div>
       <button type="button" className="flow-back mt-3" disabled={isPending} onClick={connectWallet}>{address?'Wallet conectada':isPending?'Conectando…':'Conectar mi wallet'}</button>
       <div className="crypto-definition"><span>Red de entrega</span><strong>BNB Smart Chain · BEP-20</strong></div><div className="crypto-definition"><span>Pago</span><strong>Criptomonedas · NOWPayments</strong></div>
+      <p className="field-help">{paymentOptions&&Date.parse(paymentOptions.expiresAt)>now?`${paymentOptions.currencies.length} opciones de moneda y red consultadas en NOWPayments. Elige con cuál pagar en su página de pago.`:paymentOptionsError?'No se pudo consultar la lista de criptomonedas. NOWPayments comprobará las opciones al abrir la factura.':'Consultando las criptomonedas disponibles…'} Los mínimos y las comisiones dependen de la opción elegida. Recibirás DRACMA en BNB Smart Chain.</p>
       <button className="pencil-button flow-next" disabled={loading||busy||!market||!amount||!isAddress(wallet)} onClick={review}>{busy?'Obteniendo cotización…':'Revisar mi cotización'}</button>
     </>:<>
       <h2 className="mt-5">Revisa tu compra.</h2><div className="crypto-definition"><span>Importe de la orden</span><strong>US$ {quote.amountUsd}</strong></div><div className="crypto-definition"><span>DRACMA cotizados</span><strong className="break-all">{quote.tokenAmount}</strong></div>
       <div className="crypto-definition"><span>Precio aplicado</span><strong>{formatMarketUSD(quote.market.priceUsd)}</strong></div><div className="crypto-definition"><span>Vigencia para crear la factura</span><strong aria-live="off">{seconds>0?`${seconds} s`:'Cotización caducada'}</strong></div>
       <div className="flow-summary break-all"><p>Wallet BSC: {quote.walletAddress}</p><p>Contrato: {quote.market.tokenAddress}</p></div>
-      <p className="field-help">La factura conserva esta cantidad y este importe. NOWPayments indica las comisiones y el importe por pagar en criptomonedas. La entrega se procesa desde la wallet de ventas después de verificar el pago.</p>
+      <p className="field-help">La factura conserva esta cantidad y este importe. Elige una criptomoneda y su red en NOWPayments; allí verás el mínimo, las comisiones y el importe exacto por pagar. La entrega de DRACMA se procesa en BNB Smart Chain desde la wallet de ventas después de verificar el pago.</p>
       <button className="pencil-button flow-next" disabled={busy||(!uncertain&&seconds===0)||!market?.checkoutAvailable} onClick={pay}>{busy?'Preparando factura…':uncertain?'Comprobar la misma factura':'Pagar con NOWPayments'}</button>
       {pendingId&&<a className="flow-back mt-3 break-all" href={`/comprar/?order_id=${pendingId}`}>Ver estado de {pendingId}</a>}
       <button className="flow-back mt-3" disabled={busy||uncertain} onClick={()=>{setQuote(null);attempt.current=null;setError('');}}>← {seconds===0?'Solicitar otra cotización':'Editar la compra'}</button>
