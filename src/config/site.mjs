@@ -1,5 +1,5 @@
 // Keep sitemap, canonical URLs and social metadata on the deployed site.
-const configured = process.env.PUBLIC_SITE_URL || 'https://dracmaweb1.pages.dev';
+const configured = process.env.PUBLIC_SITE_URL || 'https://dracma.club';
 const url = new URL(configured);
 if (url.protocol !== 'https:' || url.pathname !== '/' || url.search || url.hash || url.username || url.password) {
   throw new Error('PUBLIC_SITE_URL must be an HTTPS origin without a path or credentials');

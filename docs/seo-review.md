@@ -1,6 +1,6 @@
 # Revisión SEO y enlaces
 
-Sitio auditado: https://dracmaweb1.pages.dev. Fecha local: 19 de octubre de 2026.
+Dominio principal: https://dracma.club. Copia técnica: https://dracmaweb1.pages.dev. Fecha local: 19 de octubre de 2026.
 
 ## Hallazgos y correcciones
 
@@ -23,6 +23,8 @@ Sitio auditado: https://dracmaweb1.pages.dev. Fecha local: 19 de octubre de 2026
 - Las páginas de retorno antiguas solo muestran un enlace de transacción cuando
   el hash tiene el formato esperado; su enlace de respaldo es el explorador real.
 
+Se confirmó que `dracma.club` sirve esta misma web. Por elección del usuario, canonical, sitemap, robots y metadatos sociales apuntan a ese dominio. La copia `pages.dev` conserva la misma preferencia canonical. Esta revisión no configura una redirección global por host ni modifica callbacks de pagos.
+
 ## Validación reproducible
 
 ```sh
@@ -33,6 +35,7 @@ npm run verify:publication
 node --test tests/pages-api.test.mjs
 # Después de publicar exactamente ese build:
 npm run verify:seo:live -- --report /tmp/dracma-seo-live.json
+node scripts/verify-seo.mjs --live --origin https://dracmaweb1.pages.dev
 ```
 
 El verificador revisa metadatos, canonical, robots, sitemap, encabezado principal,

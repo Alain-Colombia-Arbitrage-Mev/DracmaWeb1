@@ -15,6 +15,9 @@ const resources = new Set();
 const externalLinks = new Set();
 const incomingLinks = new Set(['/']);
 const warnings = [];
+const originIndex=process.argv.indexOf('--origin');
+const liveOrigin=originIndex>=0?new URL(process.argv[originIndex+1]).origin:SITE_URL;
+if(!liveOrigin.startsWith('https://')) throw new Error('Live audit origin must use HTTPS');
 const fail = message => errors.push(message);
 const fileFor = pathname => {
   const target = path.join('dist', decodeURIComponent(pathname));
@@ -119,7 +122,7 @@ if (process.argv.includes('--live')) {
     while (queue.length) {
       const route = queue.shift();
       try {
-        const response = await fetch(SITE_URL + route, {signal:AbortSignal.timeout(15000),redirect:'manual'});
+        const response = await fetch(liveOrigin + route, {signal:AbortSignal.timeout(15000),redirect:'manual'});
         if (response.status !== 200) fail(`Live ${route}: HTTP ${response.status}`);
         const file = fileFor(route);
         if (pages.has(file)) {
@@ -135,12 +138,12 @@ if (process.argv.includes('--live')) {
   }));
   for (const line of fs.readFileSync('public/_redirects','utf8').split('\n').filter(Boolean)) {
     const [from, to, status] = line.split(/\s+/);
-    const response = await fetch(SITE_URL + from, {redirect:'manual',signal:AbortSignal.timeout(15000)});
-    if (response.status !== Number(status) || new URL(response.headers.get('location') || '/',SITE_URL).href !== SITE_URL + to) fail(`Live redirect ${from}: incorrect status or destination`);
+    const response = await fetch(liveOrigin + from, {redirect:'manual',signal:AbortSignal.timeout(15000)});
+    if (response.status !== Number(status) || new URL(response.headers.get('location') || '/',liveOrigin).href !== liveOrigin + to) fail(`Live redirect ${from}: incorrect status or destination`);
     liveChecks++;
   }
   for (const route of ['/ruta-inexistente-auditoria-seo/', '/proyectos/proyecto-inexistente-auditoria/']) {
-    const response = await fetch(SITE_URL + route, {signal:AbortSignal.timeout(15000)});
+    const response = await fetch(liveOrigin + route, {signal:AbortSignal.timeout(15000)});
     if (response.status !== 404 || !(await response.text()).includes('NO ENCONTRAMOS ESTA PÁGINA')) fail(`Live ${route}: expected the genuine 404 page`);
     liveChecks++;
   }
@@ -155,7 +158,7 @@ if(process.argv.includes('--external')) {
     } catch(error) { warnings.push(`External ${url}: ${error.message}; destination not verified`); }
   }));
 }
-const report = {site:SITE_URL,htmlPages:pages.size,indexablePages:indexable.length,noindexPages:pages.size-indexable.length,sitemapURLs:urls.length,duplicateTitles:errors.filter(e=>e.startsWith('Duplicate title:')).length,duplicateDescriptions:errors.filter(e=>e.startsWith('Duplicate description:')).length,missingInternalResources:errors.filter(e=>/missing resource|missing anchor/.test(e)).length,liveChecks,externalChecks,warnings,errors};
+const report = {site:SITE_URL,auditedOrigin:liveOrigin,htmlPages:pages.size,indexablePages:indexable.length,noindexPages:pages.size-indexable.length,sitemapURLs:urls.length,duplicateTitles:errors.filter(e=>e.startsWith('Duplicate title:')).length,duplicateDescriptions:errors.filter(e=>e.startsWith('Duplicate description:')).length,missingInternalResources:errors.filter(e=>/missing resource|missing anchor/.test(e)).length,liveChecks,externalChecks,warnings,errors};
 const outputIndex = process.argv.indexOf('--report');
 if (outputIndex >= 0) fs.writeFileSync(process.argv[outputIndex+1],JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

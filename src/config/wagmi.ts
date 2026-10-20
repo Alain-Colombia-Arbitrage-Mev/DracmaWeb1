@@ -14,8 +14,8 @@ export const wagmiConfig = createConfig({
       metadata: {
         name: 'DRACMA',
         description: 'Conecta tu wallet para recibir DRACMA en BNB Smart Chain',
-        url: typeof window !== 'undefined' ? window.location.origin : 'https://dracmaweb1.pages.dev',
-        icons: [typeof window !== 'undefined' ? `${window.location.origin}/apple-touch-icon.png` : 'https://dracmaweb1.pages.dev/apple-touch-icon.png'],
+        url: typeof window !== 'undefined' ? window.location.origin : 'https://dracma.club',
+        icons: [typeof window !== 'undefined' ? `${window.location.origin}/apple-touch-icon.png` : 'https://dracma.club/apple-touch-icon.png'],
       },
     }),
   ],

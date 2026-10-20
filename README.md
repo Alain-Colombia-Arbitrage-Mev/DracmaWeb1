@@ -1,47 +1,32 @@
-# Astro Starter Kit: Minimal
+# DRACMA Web
+
+Frontend Astro con componentes React para el catálogo ilustrativo de proyectos, la información de servicios y la consulta/cotización del token DRACMA. El dominio principal es https://dracma.club y se publica en el proyecto Cloudflare Pages `dracmaweb1`; los pagos y la entrega de tokens pertenecen a una API separada.
+
+## Desarrollo y publicación
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev
+npm run build
+npm run verify:pages
+npm run verify:seo
+npm run verify:publication
+npm run deploy:pages
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+La salida estática se genera en `dist`. El script de publicación elimina metadatos de macOS y conserva la Function de API. Configuración y límites: [Cloudflare Pages](docs/cloudflare-pages.md).
 
-## 🚀 Project Structure
+## SEO y revisión de enlaces
 
-Inside of your Astro project, you'll see the following folders and files:
+La fuente del dominio canonical es `src/config/site.mjs`; títulos y descripciones de secciones están en `src/data/pencil-pages.json`, y el contenido explicativo en `src/data/page-guides.json`. La navegación visible y los datos estructurados comparten `src/config/breadcrumbs.mjs`.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+Después de publicar el mismo build, ejecutar:
+
+```sh
+npm run verify:seo:live -- --report /tmp/dracma-seo-live.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run api`             | Starts the DRACMA payment API at `localhost:8787` |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+La revisión comprueba páginas, archivos, metadatos, canonical, anclas, redirecciones, respuestas 404 y enlaces externos. Los destinos externos bloqueados se reportan como no verificados. Consulta [el alcance de la revisión](docs/seo-review.md) y [el reporte publicado](docs/seo-live-report.json). No equivale a una puntuación de Semrush ni acredita indexación en Google.
 
 ## Métricas públicas de Quant
 
@@ -49,7 +34,7 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 
 ## Compra DRACMA: API Go y SQLite
 
-`/comprar/` y el CTA principal utilizan la API Go versionada. Calcula la cotización en el servidor con el precio del par Dexscreener BSC y persiste órdenes, reservas y entregas en SQLite. El código del backend se prepara en `/Volumes/KINGSTON/dracmabackend`; su remoto previsto es `https://github.com/devfidubit-a11y/dracmabackend.git` (pendiente de acceso).
+`/comprar/` y el CTA principal utilizan la API Go versionada. Calcula la cotización en el servidor con el precio del par Dexscreener BSC y persiste órdenes, reservas y entregas en SQLite. El backend está en `https://github.com/devfidubit-a11y/dracmabackend` y se publica por separado en Railway. Salud del servicio: `https://api-production-a401.up.railway.app/health/ready`. Las compras permanecen deshabilitadas hasta completar su configuración y controles de producción.
 
 En Cloudflare Pages, configurar `GO_API_ORIGIN` con el origen HTTPS del servidor Go. `PUBLIC_CHECKOUT_API_BASE_URL` queda vacío para usar la Function de la misma procedencia. Si falta ese origen, el checkout muestra indisponibilidad explícita y no genera facturas. No hay un precio fijo de respaldo.
 
