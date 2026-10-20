@@ -11,7 +11,7 @@ if(cards.length){
  search?.addEventListener('input',update);sector?.addEventListener('change',update);
 }
 
-const interests=[['Proyectos','Explora proyectos y sus condiciones.','/proyectos/'],['dracma Quant','EA en tu cuenta MQL5.','/quant/'],['Crédito y lending','Conoce los pools de crédito.','/credito/'],['Comisiones','Consulta las condiciones por operación.','/comisiones/'],['Tarjeta y remesas','Pagos y envíos para tu día a día.','/remesas/'],['Lanzar mi proyecto','Descubre cómo financiar tu proyecto.','/lanza-tu-proyecto/'],['Comprar DRACMA','Compra el token con crypto vía NOWPayments.','/comprar/'],['Explorar primero','Prefiero conocer dracma antes de decidir.','/proyectos/']];
+const interests=[['Proyectos','Explora proyectos y sus condiciones.','/proyectos/'],['DRACMA Quant','EA en tu cuenta MQL5.','/quant/'],['Crédito y lending','Conoce los pools de crédito.','/credito/'],['Comisiones','Consulta las condiciones por operación.','/comisiones/'],['Tarjeta y remesas','Pagos y envíos para tu día a día.','/remesas/'],['Lanzar mi proyecto','Descubre cómo financiar tu proyecto.','/lanza-tu-proyecto/'],['Comprar DRACMA','Compra el token con crypto vía NOWPayments.','/comprar/'],['Explorar primero','Prefiero conocer dracma antes de decidir.','/proyectos/']];
 const escape=(s:string)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const mounts=$all('[data-onboarding]');
 if(mounts.length){

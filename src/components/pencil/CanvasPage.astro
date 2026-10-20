@@ -1,5 +1,6 @@
 ---
 import DracmaChat from '../react/DracmaChat';
+import {canvasAppearance} from '../../lib/canvas-appearance.mjs';
 import CryptoCheckout from '../react/CryptoCheckout';
 const {page}=Astro.props;
 const files=import.meta.glob('/src/designs/*.html',{query:'?raw',import:'default',eager:true});
@@ -7,8 +8,8 @@ const desktop=files[`/src/designs/${page.id}.html`];
 const mobile=page.mobile?files[`/src/designs/${page.mobile}.html`]:null;
 if(!desktop)throw new Error(`Missing Pencil screen ${page.id}`);
 ---
-<div class:list={['pencil-desktop',{'has-mobile':mobile}]}><Fragment set:html={desktop}/></div>
-{mobile&&<div class="pencil-mobile"><Fragment set:html={mobile}/></div>}
+<div class:list={['pencil-desktop',{'has-mobile':mobile}]}><Fragment set:html={canvasAppearance(desktop)}/></div>
+{mobile&&<div class="pencil-mobile"><Fragment set:html={canvasAppearance(mobile)}/></div>}
 {page.slug==='comprar'&&<div data-checkout-root class="w-full"><CryptoCheckout client:only="react"/></div>}
 
 {page.id==='jneec'&&<div data-dracma-chat-root><DracmaChat client:load/></div>}

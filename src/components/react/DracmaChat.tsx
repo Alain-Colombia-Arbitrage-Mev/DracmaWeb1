@@ -24,7 +24,7 @@ export default function DracmaChat(){
  }catch(e){report(e);}finally{sending.current=false;setBusy(false);}}
  function reset(){if(sending.current)return;session.current='';setToken('');setMessages([]);setDraft('');setError('');try{sessionStorage.removeItem(storageKey);}catch{}input.current?.focus();}
  return <section className="dracma-chat" aria-label="Chat del Agente DRACMA">
-  <header className="dracma-chat-header"><div><strong>Agente dracma</strong><span>Preguntas frecuentes · Chatwoot</span></div>{token&&<button type="button" onClick={reset} disabled={busy}>Nueva consulta</button>}</header>
+  <header className="dracma-chat-header"><div><strong>Agente DRACMA</strong><span>Preguntas frecuentes · Chatwoot</span></div>{token&&<button type="button" onClick={reset} disabled={busy}>Nueva consulta</button>}</header>
   <div className="dracma-chat-log" role="log" aria-live="polite" aria-relevant="additions" ref={log} tabIndex={0} aria-label="Mensajes de la conversación">
    <p className="dracma-chat-intro">Consulta la información pública de proyectos, comisiones y riesgos. Las respuestas son automáticas y puedes solicitar revisión del equipo.</p>
    {messages.map(m=><div className={`dracma-chat-message dracma-chat-${m.kind}`} key={m.id}><span>{m.kind==='user'?'Tú':'Agente DRACMA'}</span><p><Content text={m.content}/></p></div>)}

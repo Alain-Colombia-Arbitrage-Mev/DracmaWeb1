@@ -16,6 +16,14 @@ npm run deploy:pages
 
 La salida estática se genera en `dist`. El script de publicación elimina metadatos de macOS y conserva la Function de API. Configuración y límites: [Cloudflare Pages](docs/cloudflare-pages.md).
 
+## Temas y títulos
+
+La web principal permite elegir Claro u Oscuro desde la navegación. Sin una elección guardada sigue el tema del sistema; conserva la preferencia en `dracma-theme`, la aplica antes de pintar y funciona aunque el almacenamiento esté bloqueado. La versión anterior comparte esa preferencia.
+
+Las paletas y los ajustes comunes están en `src/styles/appearance.css`; los componentes usan variables en `src/styles/pencil.css`. `src/lib/canvas-appearance.mjs` normaliza los títulos del HTML exportado al renderizar, conservando siglas, nombres de proyectos y la impresión de las tarjetas. No es necesario editar manualmente los archivos exportados para cambiar las mayúsculas.
+
+Comprobar con `node --test tests/appearance.test.mjs` y revisar inicio, proyectos, Quant, compra y onboarding en ambos temas y tamaños móviles.
+
 ## SEO y revisión de enlaces
 
 La fuente del dominio canonical es `src/config/site.mjs`; títulos y descripciones de secciones están en `src/data/pencil-pages.json`, y el contenido explicativo en `src/data/page-guides.json`. La navegación visible y los datos estructurados comparten `src/config/breadcrumbs.mjs`.

@@ -1,3 +1,4 @@
+import {getPreferredTheme,saveTheme,applyTheme} from '../lib/theme.mjs';
 import { atom, computed } from 'nanostores';
 import type { AiModalInfo } from '../types';
 import { TRANSLATIONS } from '../i18n/translations';
@@ -9,24 +10,21 @@ export const $theme = atom<Theme>('dark');
 
 export function initTheme() {
   if (typeof window === 'undefined') return;
-  const saved = localStorage.getItem('dracma-theme') as Theme | null;
-  const preferred = saved === 'light' ? 'light' : 'dark';
+  const preferred = getPreferredTheme() as Theme;
   $theme.set(preferred);
   applyThemeClass(preferred);
 }
 
 function applyThemeClass(theme: Theme) {
   if (typeof document === 'undefined') return;
-  document.documentElement.classList.toggle('theme-light', theme === 'light');
+  applyTheme(theme);
 }
 
 export function toggleTheme() {
   const next = $theme.get() === 'dark' ? 'light' : 'dark';
   $theme.set(next);
   applyThemeClass(next);
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem('dracma-theme', next);
-  }
+  saveTheme(next);
 }
 
 // Language store — read initial lang from the page's <html lang> attribute

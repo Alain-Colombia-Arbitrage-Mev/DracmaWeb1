@@ -1,4 +1,5 @@
 ---
+import ThemeHead from '../components/pencil/ThemeHead.astro';
 import { getTranslationsForLang } from '../i18n/utils';
 import SeoHead from '../components/astro/SeoHead.astro';
 import { SITE_URL, LEGACY_LANGUAGES, legacyLandingPath } from '../config/site.mjs';
@@ -62,14 +63,8 @@ hreflangLinks.push({locale:'x-default',href:new URL(isSuccessPage?'/success/':'/
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   </noscript>
 
-  <!-- Inline script to prevent flash of wrong theme + sync language -->
-  <script is:inline>
-    (function() {
-      var saved = localStorage.getItem('dracma-theme');
-      if (saved === 'light') document.documentElement.classList.add('theme-light');
-      window.__DRACMA_LANG__ = document.documentElement.lang || 'es';
-    })();
-  </script>
+  <ThemeHead/>
+  <script is:inline>window.__DRACMA_LANG__=document.documentElement.lang||'es';</script>
 </head>
 <body class={`lang-${lang}`}>
   <slot />
