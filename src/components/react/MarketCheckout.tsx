@@ -1,4 +1,4 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useId,useRef,useState} from 'react';
 import {useAccount,useConnect,useConnectors} from 'wagmi';
 import {isAddress} from 'viem';
 import Web3Provider from './Web3Provider';
@@ -10,6 +10,7 @@ const tokenKey=(id:string)=>`dracma-receipt:${id}`;
 const pendingKey='dracma-pending-checkout';
 const states:Record<string,string>={invoice_creating:'Preparando factura',invoice_unknown:'Factura pendiente de verificación',awaiting_payment:'Esperando el pago',waiting:'Esperando el pago',confirming:'Confirmando el pago',confirmed:'Pago confirmado por NOWPayments',sending:'Procesando el pago',partially_paid:'Pago parcial: revisa NOWPayments',delivery_pending:'Pago verificado. Entrega de DRACMA en cola',submitted:'Transferencia enviada a BSC; esperando confirmaciones',delivered:'DRACMA entregados en tu wallet',failed:'El pago no se completó',expired:'El pago caducó',refunded:'Pago reembolsado',manual_review:'La orden requiere revisión del equipo'};
 function Checkout(){
+  const fieldId=useId();
   const {address}=useAccount();const connectors=useConnectors();const {connect,isPending}=useConnect();const {market,loading,error:priceError}=useMarketPrice();
   const [amount,setAmount]=useState('');const [wallet,setWallet]=useState('');const [quote,setQuote]=useState<MarketQuote|null>(null);const [order,setOrder]=useState<PurchaseOrder|null>(null);
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [now,setNow]=useState(Date.now());const [uncertain,setUncertain]=useState(false);const [returningId,setReturningId]=useState('');const [pendingId,setPendingId]=useState('');
@@ -31,8 +32,9 @@ function Checkout(){
   },[]);
   const connectWallet=()=>{const injected=!!(window as any).ethereum;const c=connectors.find(c=>c.id===(injected?'injected':'walletConnect'));if(c)connect({connector:c});};
   const review=async()=>{
-    setError('');if(!isAddress(wallet)||!/^\d+(\.\d{1,2})?$/.test(amount)){setError('Indica un importe en USD con hasta dos decimales y una wallet BSC válida.');return;}
-    setBusy(true);try{const q=await createMarketQuote(wallet,amount);setQuote(q);setNow(Date.now());attempt.current={quoteId:q.id,key:crypto.randomUUID(),receiptToken:randomReceiptToken()};setUncertain(false);}catch(e){setError(e instanceof Error?e.message:'No se pudo obtener la cotización.');}finally{setBusy(false);}
+    const amountUsd=amount.trim().replace(',','.');
+    setError('');if(!isAddress(wallet)||!/^\d+(\.\d{1,2})?$/.test(amountUsd)){setError('Indica un importe en USD con hasta dos decimales y una wallet BSC válida.');return;}
+    setBusy(true);try{const q=await createMarketQuote(wallet,amountUsd);setQuote(q);setNow(Date.now());attempt.current={quoteId:q.id,key:crypto.randomUUID(),receiptToken:randomReceiptToken()};setUncertain(false);}catch(e){setError(e instanceof Error?e.message:'No se pudo obtener la cotización.');}finally{setBusy(false);}
   };
   const pay=async()=>{
     const current=attempt.current;if(!quote||!current||!market?.checkoutAvailable)return;setBusy(true);setError('');let sent=false;
@@ -57,12 +59,23 @@ function Checkout(){
   const seconds=quote?Math.max(0,Math.ceil((Date.parse(quote.expiresAt)-now)/1000)):0;
   if(returningId&&!order)return <div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4">Verificación de la orden</h2><p className="flow-summary break-all">Referencia: {returningId}</p><p role="status">{error||'Consultando el estado confirmado por el servicio de compra…'}</p><p className="field-help">No realices otro pago para esta orden mientras verificas su estado.</p></div>;
   if(order)return <div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4" aria-live="polite">{states[order.status]||'Verificando orden'}</h2><p className="mt-4">El regreso desde NOWPayments no confirma por sí mismo el pago ni la entrega.</p><div className="flow-summary"><p>Referencia: {order.id}</p><p>Importe: US$ {order.quote.amountUsd}</p><p>DRACMA: {order.quote.tokenAmount}</p><p className="break-all">Wallet BSC: {order.quote.walletAddress}</p></div>{order.txHash&&/^0x[a-fA-F0-9]{64}$/.test(order.txHash)&&<a className="pencil-button flow-next" href={`https://bscscan.com/tx/${order.txHash}`} target="_blank" rel="noreferrer">Ver transferencia en BscScan ↗</a>}{error&&<p role="alert" className="flow-error">{error}</p>}</div>;
-  return <div className="flow-widget">
+  return <div className="flow-widget market-checkout">
     <div className="crypto-label"><strong>Comprar DRACMA</strong><small>{quote?'02 / 02':'01 / 02'}</small></div>
     <div className="checkout-market"><span>Precio de mercado · Dexscreener</span><strong>{market?formatMarketUSD(market.price.priceUsd):'—'}</strong><small>{loading?'Consultando precio…':priceError||`Consultado ${new Date(market!.price.observedAt).toLocaleTimeString('es')}`}</small></div>
     {!quote?<>
-      <label>Importe de compra<div className="crypto-money"><input className="flow-field" aria-label="Importe de compra en USD" inputMode="decimal" type="number" min={market?.minimumUsd||'1'} max={market?.maximumUsd||'10000'} step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="0.00"/><span>USD</span></div></label>
-      <label>Wallet de recepción en BSC<input className="flow-field" aria-label="Wallet de recepción BSC" value={wallet} onChange={e=>setWallet(e.target.value)} placeholder="0x…" autoComplete="off" spellCheck={false}/></label>
+      <div className="checkout-field-group">
+        <label htmlFor={`${fieldId}-amount`}>Importe de compra</label>
+        <div className="checkout-amount">
+          <input id={`${fieldId}-amount`} className="flow-field" aria-label="Importe de compra en USD" aria-describedby={`${fieldId}-amount-help`} inputMode="decimal" type="text" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="0,00" autoComplete="off" spellCheck={false}/>
+          <span className="checkout-currency" aria-hidden="true">USD</span>
+        </div>
+        <p id={`${fieldId}-amount-help`} className="checkout-input-help">En dólares estadounidenses · Hasta 2 decimales</p>
+      </div>
+      <div className="checkout-field-group">
+        <label htmlFor={`${fieldId}-wallet`}>Wallet de recepción en BSC</label>
+        <input id={`${fieldId}-wallet`} className="flow-field checkout-wallet" aria-label="Wallet de recepción BSC" aria-describedby={`${fieldId}-wallet-help`} value={wallet} onChange={e=>setWallet(e.target.value.trim())} placeholder="0x…" autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false}/>
+        <p id={`${fieldId}-wallet-help`} className="checkout-input-help">Pega tu dirección de BNB Smart Chain.</p>
+      </div>
       <button type="button" className="flow-back mt-3" disabled={isPending} onClick={connectWallet}>{address?'Wallet conectada':isPending?'Conectando…':'Conectar mi wallet'}</button>
       <div className="crypto-definition"><span>Red de entrega</span><strong>BNB Smart Chain · BEP-20</strong></div><div className="crypto-definition"><span>Pago</span><strong>Crypto · NOWPayments</strong></div>
       <button className="pencil-button flow-next" disabled={loading||busy||!market||!amount||!isAddress(wallet)} onClick={review}>{busy?'Obteniendo cotización…':'Revisar mi cotización'}</button>

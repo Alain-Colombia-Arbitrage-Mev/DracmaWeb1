@@ -241,6 +241,23 @@ details>summary{list-style:none}a.pencil-button:hover{text-decoration:none!impor
 .checkout-market { margin-top:20px; padding:16px; border:1px solid #D9E2E3; border-radius:8px; background:#F1F5F2; }
 .checkout-market > span,.checkout-market > small { color:#50666D; font-size:11px; line-height:1.7; }
 .checkout-market > strong { color:#0C2730; font-size:24px; font-family:'IBM Plex Mono',monospace; line-height:1.4; }
+.market-checkout .checkout-field-group { margin-top:24px; }
+.market-checkout .checkout-field-group label { margin:0 0 10px; font-size:13px; font-weight:600; line-height:1.5; }
+.market-checkout .checkout-amount { display:flex; align-items:center; gap:16px; min-height:76px; padding:0 16px; border:1px solid #A9BEC1; border-radius:10px; background:#F8FAF9; transition:border-color .15s,background .15s; }
+.market-checkout .checkout-amount .flow-field { flex:1; min-width:0; width:0; min-height:74px; margin:0; padding:12px 0; border:0; border-radius:0; background:transparent; color:#0C2730; font-size:32px; font-weight:600; line-height:1.25; letter-spacing:-.025em; font-variant-numeric:tabular-nums; outline:none; box-shadow:none; }
+.market-checkout .checkout-currency { flex:none; padding:7px 10px; border:1px solid #D9E2E3; border-radius:6px; background:#FFF; color:#38575F; font-size:12px; font-weight:600; line-height:1.5; letter-spacing:.04em; }
+.market-checkout .checkout-wallet { min-height:56px; margin:0; padding:16px; border-color:#A9BEC1; border-radius:10px; background:#F8FAF9; font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:400; line-height:1.5; }
+.market-checkout .checkout-amount input::placeholder,.market-checkout .checkout-wallet::placeholder { color:#6B8187; opacity:1; }
+.market-checkout .checkout-amount:hover,.market-checkout .checkout-wallet:hover { border-color:#71868B; }
+.market-checkout .checkout-amount:focus-within,.market-checkout .checkout-wallet:focus { border-color:#0C4651; background:#FFF; outline:none; box-shadow:0 0 0 1px #0C4651,0 0 0 4px #0C465114; }
+.market-checkout .checkout-amount .flow-field:focus-visible { outline:none; }
+.market-checkout .checkout-input-help { margin-top:8px; color:#50666D; font-size:11px; font-weight:400; line-height:1.6; }
+@media(max-width:640px) {
+  .market-checkout .checkout-field-group { margin-top:22px; }
+  .market-checkout .checkout-amount { min-height:68px; gap:12px; padding-inline:14px; }
+  .market-checkout .checkout-amount .flow-field { min-height:66px; font-size:clamp(24px,7.5vw,30px); }
+  .market-checkout .checkout-wallet { padding-inline:14px; }
+}
 @media(max-width:1199px) { .dracma-buy-banner { margin-inline:20px; grid-template-columns:minmax(0,1fr) auto; } .dracma-buy-banner > a { grid-column:1/-1; justify-self:start; } }
 @media(max-width:640px) { .dracma-buy-banner { grid-template-columns:minmax(0,1fr); padding:22px; gap:20px; } .dracma-buy-banner > a { width:100%; } .dracma-buy-banner h2 { font-size:28px; } }
 
