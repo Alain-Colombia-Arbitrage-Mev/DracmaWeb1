@@ -1,0 +1,20 @@
+---
+import guides from '../../data/page-guides.json';
+const slug=Astro.url.pathname.replace(/^\/+|\/+$/g,'');
+const guide=guides[slug as keyof typeof guides];
+---
+{guide&&<section class="border-t border-[#263A40] bg-black" aria-labelledby="page-guide-title" data-page-guide>
+  <div class="mx-auto max-w-[1180px] px-5 py-14 md:py-20">
+    <h2 id="page-guide-title" class="max-w-3xl text-2xl font-semibold leading-tight text-[#F8F7F2] md:text-3xl">{guide.title}</h2>
+    <p class="mt-5 max-w-3xl text-sm leading-7 text-[#DCE6E4]">{guide.intro}</p>
+    <div class="mt-8 grid gap-8 md:grid-cols-2">
+      {guide.sections.map(section=><div>
+        <h3 class="text-base font-semibold leading-6 text-[#F8F7F2]">{section.title}</h3>
+        <p class="mt-3 text-sm leading-7 text-[#BBCBCD]">{section.body}</p>
+      </div>)}
+    </div>
+    <nav aria-label="Lecturas relacionadas" class="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:gap-x-6">
+      {guide.links.map(link=><a href={link.href} class="inline-flex min-h-11 items-center text-sm leading-6 text-[#E6FF28] underline underline-offset-4">{link.label} →</a>)}
+    </nav>
+  </div>
+</section>}

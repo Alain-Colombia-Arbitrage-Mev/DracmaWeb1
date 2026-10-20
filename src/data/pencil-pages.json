@@ -2,14 +2,14 @@
   {
     "id": "jneec",
     "slug": "",
-    "title": "Proyectos y condiciones claras",
-    "description": "Conoce el modelo de tokenización de DRACMA y explora fichas conceptuales. Consulta el estado de publicación de contratos, datos y condiciones."
+    "title": "Tokenización de proyectos y token DRACMA",
+    "description": "Conoce DRACMA: tokenización de proyectos, token en BNB Smart Chain y servicios fintech. Revisa fichas ilustrativas, documentación y riesgos antes de decidir."
   },
   {
     "id": "Ge46y",
     "slug": "proyectos",
-    "title": "Proyectos",
-    "description": "Explora las fichas conceptuales de DRACMA por sector. Consulta el uso del capital propuesto y el estado de publicación de contratos y condiciones."
+    "title": "Proyectos tokenizados: catálogo y documentación",
+    "description": "Explora el catálogo de proyectos de DRACMA por sector y país. Revisa fichas ilustrativas, uso del capital, riesgos y documentación pendiente de verificación."
   },
   {
     "id": "C2sAT",
@@ -20,81 +20,81 @@
   {
     "id": "O49VL",
     "slug": "quant",
-    "title": "dracma Quant",
-    "description": "Consulta el historial de referencia de DRACMA Quant publicado en ConfirmedTrades: crecimiento, drawdown, operaciones y condiciones de activación y facturación."
+    "title": "Quant: historial de trading y condiciones",
+    "description": "Revisa DRACMA Quant: historial de referencia, drawdown, operaciones y costos de activación y facturación. Consulta la fecha de los datos y sus límites."
   },
   {
     "id": "biKsO",
     "slug": "comisiones",
-    "title": "Comisiones por operación",
-    "description": "Consulta las comisiones de DRACMA por venta, liberación de fondos y utilidades. Revisa la base de cálculo, los beneficiarios y el momento de liquidación."
+    "title": "Comisiones por venta, desembolso y utilidades",
+    "description": "Entiende las comisiones de DRACMA por venta, desembolso y utilidades: base de cálculo, beneficiarios, conciliación y condiciones de cada proyecto."
   },
   {
     "id": "W56NL",
     "slug": "comercializacion",
-    "title": "Comercialización de proyectos",
-    "description": "Conoce cómo se atribuyen las ventas y se liquidan las comisiones por comercialización de proyectos en DRACMA, con reglas y registros por operación."
+    "title": "Comercialización de proyectos y atribución de ventas",
+    "description": "Conoce el proceso de comercialización de proyectos en DRACMA: presentación, atribución de ventas, conciliación del pago y condiciones para liquidar comisiones."
   },
   {
     "id": "CIEfV",
     "slug": "credito",
-    "title": "Crédito y lending",
-    "description": "Explora los simuladores ilustrativos de crédito y lending de DRACMA. Compara importes, plazos, cuotas, intereses y comisiones antes de evaluar el servicio."
+    "title": "Crédito y lending: simuladores de cuotas e intereses",
+    "description": "Prueba los simuladores ilustrativos de crédito y lending de DRACMA. Compara capital, plazo, cuotas e intereses; consulta los riesgos y la disponibilidad."
   },
   {
     "id": "YxFjr",
     "slug": "remesas",
-    "title": "Remesas",
-    "description": "Conoce el modelo de remesas de DRACMA y simula importes por destino. Consulta comisiones, mínimos y tipos de cambio de ejemplo; no realiza transferencias."
+    "title": "Remesas: simulador de envíos y comisiones por país",
+    "description": "Simula el costo de enviar remesas con DRACMA por destino. Revisa comisión, mínimo y tipo de cambio de ejemplo; el simulador no transfiere dinero."
   },
   {
     "id": "xu072",
     "slug": "tesoreria",
-    "title": "Tesorería",
-    "description": "Conoce cómo DRACMA organiza cobros, saldos y distribuciones por proyecto. Revisa los registros de tesorería, los movimientos y las condiciones operativas."
+    "title": "Tesorería de proyectos: cobros y distribuciones",
+    "description": "Explora el modelo de tesorería de DRACMA: cobros, saldos y distribuciones por proyecto. Consulta las condiciones operativas y la evidencia disponible."
   },
   {
     "id": "k6hDJ",
     "slug": "lanza-tu-proyecto",
-    "title": "Lanza tu proyecto",
-    "description": "Descubre el proceso para presentar un proyecto a DRACMA: evaluación, documentos, uso del capital, condiciones económicas y seguimiento de los fondos."
+    "title": "Cómo presentar un proyecto para tokenizar",
+    "description": "Conoce los pasos para presentar un proyecto a DRACMA: evaluación, documentación, uso del capital y condiciones de una propuesta de tokenización."
   },
   {
     "id": "vBwlS",
     "slug": "ingresos-recurrentes",
-    "title": "Ingresos recurrentes",
-    "description": "Conoce cómo se registran los ingresos recurrentes de los proyectos en DRACMA y cómo se distinguen cobros, utilidad elegible y condiciones de reparto."
+    "title": "Ingresos recurrentes: costos, utilidad y reparto",
+    "description": "Entiende cómo DRACMA distingue ingresos recurrentes, costos y utilidad elegible. Revisa la conciliación del período y las condiciones de reparto por proyecto."
   },
   {
     "id": "yyQGJ",
     "slug": "tecnologia",
-    "title": "Tecnología",
-    "description": "Explora la arquitectura tecnológica de DRACMA: registro de movimientos, contratos y trazabilidad. Consulta el estado de la documentación y sus límites."
+    "title": "Tokenización y blockchain: arquitectura y contratos",
+    "description": "Conoce la arquitectura de tokenización de DRACMA, el papel de la blockchain y el estado de los contratos de proyecto. Consulta documentación y límites."
   },
   {
     "id": "WGPIP",
     "slug": "multisig",
-    "title": "Multisig Safe",
-    "description": "Conoce el modelo de firmas múltiples de DRACMA: permisos, aprobación de operaciones y separación de funciones para la administración de wallets."
+    "title": "Wallet multisig Safe: firmas, permisos y custodia",
+    "description": "Aprende cómo funciona el modelo de wallet multisig Safe de DRACMA: firmas mínimas, permisos, recuperación y documentación pendiente antes de usar fondos reales."
   },
   {
     "id": "kLd2f",
     "slug": "como-ganamos",
-    "title": "Cómo ganamos",
-    "description": "Revisa cómo obtiene ingresos DRACMA: comisiones por eventos y cargo administrativo. Consulta las bases de cálculo y las condiciones de cada servicio."
+    "title": "Modelo de negocio: fees y comisiones",
+    "description": "Consulta cómo obtiene ingresos DRACMA: fee administrativo, comisiones por eventos y condiciones propias de Quant. Revisa qué se cobra, sobre qué base y cuándo."
   },
   {
     "id": "x716Gt",
     "slug": "empezar",
-    "title": "Empezar",
+    "title": "Empezar: intereses y preferencias de contacto",
     "mobile": "TefFu",
-    "description": "Elige qué te interesa de DRACMA y prepara tus preferencias de contacto. El borrador se guarda en tu navegador y todavía no se envía al equipo."
+    "description": "Elige tus intereses en DRACMA y prepara tus preferencias de contacto. Guarda o descarga un borrador en tu navegador; el formulario todavía no lo envía al equipo."
   },
   {
     "id": "dMxFo",
     "slug": "comprar",
-    "title": "Comprar DRACMA",
+    "title": "Token DRACMA: precio y cotización en BNB Smart Chain",
     "mobile": "L40Z3f",
-    "description": "Consulta el proceso de compra de DRACMA con crypto vía NOWPayments. Revisa la wallet de recepción, la red BNB Smart Chain y las condiciones del checkout."
+    "description": "Consulta el precio de DRACMA en Dexscreener y prepara una cotización en USD. Verifica contrato, wallet BSC y disponibilidad del pago con NOWPayments."
   }
 ]

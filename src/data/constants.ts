@@ -283,11 +283,7 @@ export const CONTACT_POINTS_DATA: ContactPoint[] = [
 // 15. Social Links Data
 // ---------------------------------------------------------------------------
 export const SOCIAL_LINKS_DATA: SocialLink[] = [
-  { label: 'Twitter', iconClass: 'fab fa-twitter', href: 'https://x.com/dracma_community', hoverColorClass: 'hover:text-brand-primary' },
   { label: 'Telegram', iconClass: 'fab fa-telegram', href: 'https://t.me/dracma_updates', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'Discord', iconClass: 'fab fa-discord', href: '#', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'Medium', iconClass: 'fab fa-medium', href: '#', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'LinkedIn', iconClass: 'fab fa-linkedin-in', href: '#', hoverColorClass: 'hover:text-brand-primary' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -309,19 +305,16 @@ export const FOOTER_SECTIONS_DATA: FooterSection[] = [
     titleColorClass: 'footer-heading',
     links: [
       { key: 'footerWhitepaper', href: '#whitepaper', isWhitepaperModalTrigger: true },
-      { key: 'footerAudits', href: '#' },
-      { key: 'footerBlog', href: '#' },
-      { key: 'faq', href: '#' },
+      { key: 'footerAudits', href: '/tecnologia/#estado-contratos' },
     ],
   },
   {
     titleKey: 'footerLegal',
     titleColorClass: 'footer-heading',
     links: [
-      { key: 'footerTerms', href: '#' },
-      { key: 'footerPrivacy', href: '#' },
-      { key: 'footerCookies', href: '#' },
-      { key: 'footerRisk', href: '#' },
+      { key: 'footerTerms', href: '/legal/#terminos' },
+      { key: 'footerPrivacy', href: '/legal/#privacidad' },
+      { key: 'footerRisk', href: '/legal/#riesgos' },
     ],
   },
 ];
@@ -330,11 +323,8 @@ export const FOOTER_SECTIONS_DATA: FooterSection[] = [
 // 17. Footer Social Links
 // ---------------------------------------------------------------------------
 export const FOOTER_SOCIAL_LINKS: SocialLink[] = [
-  { label: 'Twitter', iconClass: 'fab fa-twitter fa-lg', href: 'https://x.com/dracma_community', hoverColorClass: 'hover:text-brand-primary' },
   { label: 'Telegram', iconClass: 'fab fa-telegram fa-lg', href: 'https://t.me/dracma_updates', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'Discord', iconClass: 'fab fa-discord fa-lg', href: '#', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'Medium', iconClass: 'fab fa-medium fa-lg', href: '#', hoverColorClass: 'hover:text-brand-primary' },
-  { label: 'Github', iconClass: 'fab fa-github fa-lg', href: '#', hoverColorClass: 'hover:text-brand-primary' },
+  { label: 'Github', iconClass: 'fab fa-github fa-lg', href: 'https://github.com/Alain-Colombia-Arbitrage-Mev/DracmaWeb1', hoverColorClass: 'hover:text-brand-primary' },
 ];
 
 // ---------------------------------------------------------------------------

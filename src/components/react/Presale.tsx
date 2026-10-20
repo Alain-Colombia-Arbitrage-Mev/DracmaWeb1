@@ -963,7 +963,7 @@ function PresaleInner() {
                     }
                   </button>
                 )}
-                <div className="text-xs text-brand-text-secondary/60 mt-2.5 text-center font-mono" dangerouslySetInnerHTML={{ __html: t('presaleAgreement').replace(/<a>/g, '<a href="#" class="brand-primary-text hover:underline">').replace(/<\/a>/g, '</a>') }} />
+                <div className="text-xs text-brand-text-secondary/60 mt-2.5 text-center font-mono" dangerouslySetInnerHTML={{ __html: t('presaleAgreement').replace(/<a>/g, '<a href="/legal/#terminos" class="brand-primary-text hover:underline">').replace(/<\/a>/g, '</a>') }} />
               </div>
             </div>
           </div>

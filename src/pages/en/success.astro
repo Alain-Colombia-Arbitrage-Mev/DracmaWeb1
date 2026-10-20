@@ -51,7 +51,7 @@ const t = getTranslationsForLang(lang);
             </div>
           </div>
           <div id="tx-hash-section" class="hidden">
-            <a id="tx-hash-link" href="#" target="_blank" rel="noopener noreferrer"
+            <a id="tx-hash-link" href="https://bscscan.com/" target="_blank" rel="noopener noreferrer"
               class="flex items-center justify-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-mono">
               <i class="fas fa-external-link-alt"></i>
               <span id="tx-hash-text"></span>
@@ -163,7 +163,7 @@ const t = getTranslationsForLang(lang);
     if (vestingEl) vestingEl.textContent = `${Math.floor(totalTokens / 2).toLocaleString()} $DRACMA`;
   }
 
-  if (txHash) {
+  if (txHash && /^0x[a-fA-F0-9]{64}$/.test(txHash)) {
     const hashSection = document.getElementById('tx-hash-section');
     if (hashSection) hashSection.classList.remove('hidden');
 

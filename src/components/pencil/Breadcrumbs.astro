@@ -1,0 +1,12 @@
+---
+import {breadcrumbsFor} from '../../config/breadcrumbs.mjs';
+const crumbs=breadcrumbsFor(Astro.url.pathname);
+---
+{crumbs.length>1&&<nav aria-label="Ruta de navegación" class="mx-auto max-w-[1180px] px-5 pt-6 text-xs leading-6 text-[#BBCBCD]" data-breadcrumbs>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+    {crumbs.map((crumb,i)=><li class="flex items-center gap-2">
+      {i>0&&<span aria-hidden="true">/</span>}
+      {i===crumbs.length-1?<span aria-current="page">{crumb.label}</span>:<a class="underline underline-offset-4 hover:text-[#E6FF28]" href={crumb.path}>{crumb.label}</a>}
+    </li>)}
+  </ol>
+</nav>}

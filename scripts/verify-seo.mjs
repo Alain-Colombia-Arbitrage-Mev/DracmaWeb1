@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { parse } from 'parse5';
 import { SITE_URL, isIndexablePath } from '../src/config/site.mjs';
+import { breadcrumbsFor } from '../src/config/breadcrumbs.mjs';
 
 const walk = (node, visit) => { visit(node); for (const child of node.childNodes || []) walk(child, visit); };
 const attrs = node => Object.fromEntries((node.attrs || []).map(a => [a.name, a.value]));
@@ -11,6 +12,9 @@ const files = dir => fs.readdirSync(dir, {withFileTypes:true}).filter(f => !f.na
 const pages = new Map();
 const errors = [];
 const resources = new Set();
+const externalLinks = new Set();
+const incomingLinks = new Set(['/']);
+const warnings = [];
 const fail = message => errors.push(message);
 const fileFor = pathname => {
   const target = path.join('dist', decodeURIComponent(pathname));
@@ -34,11 +38,18 @@ for (const file of files('dist').filter(f => f.endsWith('.html'))) {
   if (route !== '/404/' && (canonical.length !== 1 || canonical[0] !== SITE_URL + route)) fail(`${route}: incorrect canonical`);
   if (route === '/404/' && canonical.length) fail('404 page must not canonicalize to a valid page');
   if (meta('robots')[0] !== (indexable ? 'index, follow' : 'noindex, follow')) fail(`${route}: incorrect indexing policy`);
-  for (const name of ['og:title', 'og:description', 'og:url', 'og:image', 'twitter:title', 'twitter:description', 'twitter:image']) {
+  for (const name of ['og:title', 'og:description', 'og:url', 'og:image', 'og:image:alt', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:image:alt']) {
     if (meta(name).length !== 1 || !meta(name)[0]) fail(`${route}: missing ${name}`);
   }
   if (meta('og:description')[0] !== description[0] || meta('twitter:description')[0] !== description[0]) fail(`${route}: inconsistent descriptions`);
+  if (meta('og:title')[0] !== title[0] || meta('twitter:title')[0] !== title[0]) fail(`${route}: inconsistent titles`);
   if (meta('og:url')[0] !== SITE_URL + route) fail(`${route}: incorrect social URL`);
+  const main=nodes.find(n=>n.tagName==='main');
+  if (indexable && !nodes.some(n=>n.tagName==='h1' && text(n))) fail(`${route}: missing main heading`);
+  if (!nodes.some(n=>n.tagName==='html' && attrs(n).lang)) fail(`${route}: missing document language`);
+  const crumbs=breadcrumbsFor(route);
+  if (indexable && crumbs.length>1 && !nodes.some(n=>attrs(n)['data-breadcrumbs']!==undefined)) fail(`${route}: missing visible breadcrumb`);
+  if (indexable && !main) fail(`${route}: missing main content`);
   pages.set(file, {route, doc, nodes, ids, indexable, title:title[0], description:description[0]});
 }
 const indexable = [...pages.values()].filter(p => p.indexable);
@@ -49,7 +60,9 @@ for (const key of ['title', 'description']) {
 const reference = (value, page, checkFragment=false) => {
   if (!value || /^(?:data:|mailto:|tel:|javascript:)/.test(value) || value === '#') return;
   const url = new URL(value, SITE_URL + page.route);
-  if (url.origin !== SITE_URL || url.pathname.startsWith('/api/')) return;
+  if (url.origin !== SITE_URL) { if(checkFragment && /^https?:$/.test(url.protocol)) externalLinks.add(url.href); return; }
+  if (url.pathname.startsWith('/api/')) return;
+  if (checkFragment) incomingLinks.add(url.pathname);
   const file = fileFor(url.pathname);
   if (!fs.existsSync(file)) { fail(`${page.route}: missing resource ${url.pathname}`); return; }
   if (file !== 'dist/404.html') resources.add(url.pathname);
@@ -57,8 +70,11 @@ const reference = (value, page, checkFragment=false) => {
 };
 for (const page of pages.values()) for (const node of page.nodes) {
   const a = attrs(node);
+  if(node.tagName==='a' && (!a.href || a.href==='#')) fail(`${page.route}: link without a usable destination`);
   if (a.href) reference(a.href, page, node.tagName === 'a');
   if (a.src) reference(a.src, page);
+  for(const name of ['component-url','renderer-url','before-hydration-url']) if(a[name]) reference(a[name],page);
+  if(node.tagName==='img' && a.alt===undefined) fail(`${page.route}: image without alt attribute`);
   if (a.srcset) for (const candidate of a.srcset.split(',')) reference(candidate.trim().split(/\s+/)[0], page);
   if (a.property === 'og:image' || a.name === 'twitter:image') reference(a.content, page);
   for (const match of (a.class || '').matchAll(/url\(['"]([^'"]+)['"]\)/g)) reference(match[1], page);
@@ -68,8 +84,22 @@ for (const page of pages.values()) for (const node of page.nodes) {
     if (a.hreflang && !isIndexablePath(new URL(value).pathname)) fail(`${page.route}: alternate language points to a noindex page`);
   }
   if (node.tagName === 'script' && a.type === 'application/ld+json') {
-    try { JSON.parse(text(node)); } catch { fail(`${page.route}: invalid structured data`); }
+    try {
+      const graph=JSON.parse(text(node))['@graph']||[];
+      const breadcrumb=graph.find(n=>n['@type']==='BreadcrumbList');
+      const expected=breadcrumbsFor(page.route);
+      if(page.indexable && expected.length>1) {
+        const actual=breadcrumb?.itemListElement||[];
+        if(actual.length!==expected.length || actual.some((item,i)=>item.position!==i+1 || item.name!==expected[i].label || item.item!==SITE_URL+expected[i].path)) fail(`${page.route}: incorrect breadcrumb structured data`);
+      }
+    } catch { fail(`${page.route}: invalid structured data`); }
   }
+}
+for (const page of indexable) if(!incomingLinks.has(page.route)) fail(`${page.route}: canonical page has no internal incoming links`);
+// Check CSS URLs too; HTML alone misses background images and font files.
+for(const file of files('dist').filter(f=>f.endsWith('.css'))) {
+  const page={route:'/'+file.slice(5)};
+  for(const match of fs.readFileSync(file,'utf8').matchAll(/url\(\s*['"]?([^'"\s)]+)['"]?\s*\)/g)) reference(match[1],page);
 }
 const sitemapIndex = fs.readFileSync('dist/sitemap-index.xml','utf8');
 const sitemap = fs.readFileSync('dist/sitemap-0.xml','utf8');
@@ -81,8 +111,10 @@ assert.equal(new Set(urls).size, urls.length, 'Duplicate sitemap URLs');
 assert.ok(fs.existsSync('dist/404.html'), 'Cloudflare requires a top-level 404.html to avoid SPA fallback');
 
 let liveChecks = 0;
+let externalChecks = 0;
 if (process.argv.includes('--live')) {
-  const queue = [...new Set([...resources, ...[...pages.values()].filter(p => p.route !== '/404/').map(p => p.route), '/robots.txt', '/sitemap-index.xml', '/sitemap-0.xml'])];
+  const assets=files('dist').filter(f=>!f.endsWith('.html')&&!['_headers','_redirects'].includes(path.basename(f))).map(f=>'/'+f.slice(5));
+  const queue = [...new Set([...resources, ...assets, ...[...pages.values()].filter(p => p.route !== '/404/').map(p => p.route), '/robots.txt', '/sitemap-index.xml', '/sitemap-0.xml'])];
   await Promise.all(Array.from({length:6}, async () => {
     while (queue.length) {
       const route = queue.shift();
@@ -113,7 +145,17 @@ if (process.argv.includes('--live')) {
     liveChecks++;
   }
 }
-const report = {site:SITE_URL,htmlPages:pages.size,indexablePages:indexable.length,noindexPages:pages.size-indexable.length,sitemapURLs:urls.length,duplicateTitles:errors.filter(e=>e.startsWith('Duplicate title:')).length,duplicateDescriptions:errors.filter(e=>e.startsWith('Duplicate description:')).length,missingInternalResources:errors.filter(e=>/missing resource|missing anchor/.test(e)).length,liveChecks,errors};
+if(process.argv.includes('--external')) {
+  await Promise.all([...externalLinks].map(async url=>{
+    try {
+      const response=await fetch(url,{signal:AbortSignal.timeout(20000)});
+      if([404,410].includes(response.status)) fail(`External ${url}: HTTP ${response.status}`);
+      else if(response.status>=400) warnings.push(`External ${url}: HTTP ${response.status}; destination not verified`);
+      await response.body?.cancel(); externalChecks++;
+    } catch(error) { warnings.push(`External ${url}: ${error.message}; destination not verified`); }
+  }));
+}
+const report = {site:SITE_URL,htmlPages:pages.size,indexablePages:indexable.length,noindexPages:pages.size-indexable.length,sitemapURLs:urls.length,duplicateTitles:errors.filter(e=>e.startsWith('Duplicate title:')).length,duplicateDescriptions:errors.filter(e=>e.startsWith('Duplicate description:')).length,missingInternalResources:errors.filter(e=>/missing resource|missing anchor/.test(e)).length,liveChecks,externalChecks,warnings,errors};
 const outputIndex = process.argv.indexOf('--report');
 if (outputIndex >= 0) fs.writeFileSync(process.argv[outputIndex+1],JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

@@ -96,7 +96,7 @@ function NavbarInner() {
               </button>
               <div className={`language-dropdown ${isLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href="#" role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a key={lang.code} href={lang.code === 'es' ? '/preventa/' : `/${lang.code}/`} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}
@@ -133,7 +133,7 @@ function NavbarInner() {
               </button>
               <div className={`language-dropdown right-0 left-auto min-w-[120px] ${isMobileLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href="#" role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a key={lang.code} href={lang.code === 'es' ? '/preventa/' : `/${lang.code}/`} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}

@@ -2,11 +2,11 @@
 import PencilLayout from '../../layouts/PencilLayout.astro';
 import ProjectDisclosure from '../../components/pencil/ProjectDisclosure.astro';
 import CanvasPage from '../../components/pencil/CanvasPage.astro';
-import projects from '../../data/pencil-projects.json';
+import projects from '../../data/pencil-projects.json' with {type:'json'};
 export function getStaticPaths(){return projects.map(project=>({params:{slug:project.slug},props:{project}}));}
 const {project:p}=Astro.props;
 ---
-<PencilLayout title={p.name} description={`${p.name}: proyecto de ${p.sector.toLowerCase()} en ${p.country}. Consulta objetivos, uso del capital, riesgos y condiciones. Ficha ilustrativa.`} image={p.photo}>
+<PencilLayout title={`${p.name}: ${p.sector} en ${p.country}`} description={`${p.name}: proyecto de ${p.sector.toLowerCase()} en ${p.country}. Consulta objetivos, uso del capital, riesgos y condiciones. Ficha ilustrativa.`} image={p.photo}>
 <ProjectDisclosure/>
 {p.slug==='atacama-ii'?<CanvasPage page={{id:'C2sAT'}}/>:<>
  <header class="mx-auto max-w-[1180px] px-5 py-16"><a href="/proyectos/" class="text-sm text-[#BBCBCD]">← Todos los proyectos</a><p class="mt-10 text-xs tracking-widest text-[#E6FF28]">FICHA ILUSTRATIVA · {p.sector.toUpperCase()} / {p.country.toUpperCase()}</p><h1 class="mt-4 max-w-4xl font-display text-5xl font-black leading-none md:text-6xl">{p.name.toUpperCase()}</h1><p class="mt-6 max-w-2xl text-lg leading-relaxed text-[#DCE6E4]">Concepto no verificado: {p.summary}</p></header>

@@ -20,7 +20,7 @@
     "verify:publication": "node scripts/verify-project-publication.mjs",
     "verify:pages": "node scripts/verify-pages.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
-    "verify:seo:live": "node scripts/verify-seo.mjs --live"
+    "verify:seo:live": "node scripts/verify-seo.mjs --live --external"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

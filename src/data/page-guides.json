@@ -1,0 +1,65 @@
+{
+  "": {
+    "title": "Qué puedes consultar en DRACMA",
+    "intro": "DRACMA presenta un modelo de tokenización de proyectos y servicios fintech. Aquí puedes explorar conceptos de proyectos, entender sus posibles flujos económicos y consultar el precio del token DRACMA. Cada sección tiene un alcance distinto: una ficha ilustrativa no es una oferta de inversión y una simulación no ejecuta una operación.",
+    "sections": [
+      {"title": "Proyectos tokenizados y documentación", "body": "Tokenizar un proyecto exige definir qué derechos representa el token, quién asume las obligaciones y cómo se administran los fondos. El catálogo permite revisar sectores, usos del capital y riesgos. Las direcciones verificadas de contratos, condiciones definitivas y cifras de recaudación de estos proyectos siguen pendientes de publicación."},
+      {"title": "El token DRACMA y los servicios del ecosistema", "body": "El token DRACMA que se cotiza en la página de compra está en BNB Smart Chain. Es distinto de los contratos de proyecto previstos en la arquitectura de tokenización. Consultar o comprar ese token no demuestra que un proyecto esté financiado ni acredita derechos sobre sus ingresos; esos derechos deben constar en sus documentos."}
+    ],
+    "links": [{"label":"Explorar las fichas de proyectos","href":"/proyectos/"},{"label":"Consultar el token DRACMA","href":"/comprar/"},{"label":"Revisar contratos y documentación","href":"/tecnologia/#estado-contratos"}]
+  },
+  "proyectos": {
+    "title": "Cómo revisar una ficha de proyecto tokenizado",
+    "intro": "El catálogo reúne conceptos de energía, logística, tecnología y otros sectores. Filtra por sector y abre cada ficha para conocer su objetivo, país, uso propuesto del capital y riesgos. Las fotografías y los ejemplos ayudan a explicar el concepto; no prueban la existencia de una oferta habilitada.",
+    "sections": [
+      {"title":"Documentos que debes comprobar", "body":"Antes de evaluar una participación, revisa quién promueve el proyecto, qué derechos se ofrecen, qué contrato los respalda y qué condiciones aplican a los desembolsos y repartos. Una descripción comercial no sustituye los documentos definitivos ni una dirección de contrato verificada."},
+      {"title":"Distinguir ejemplos de resultados verificados", "body":"Las fichas actuales son ilustrativas y no aceptan aportes. No hay cifras de recaudación verificadas publicadas para estos proyectos. La rentabilidad, la liquidez y las fechas dependen de condiciones y riesgos propios; no deben deducirse de una imagen o de una simulación."}
+    ],
+    "links":[{"label":"Entender las comisiones por operación","href":"/comisiones/"},{"label":"Conocer el proceso para presentar un proyecto","href":"/lanza-tu-proyecto/"}]
+  },
+  "comisiones": {
+    "title": "Cómo leer una liquidación de comisiones",
+    "intro": "Las comisiones por venta, desembolso y utilidades corresponden a hechos económicos diferentes. Para entender una liquidación, identifica primero qué evento la genera y después revisa la base elegible, la tasa acordada, el beneficiario y el período. No existe una tasa universal aplicable a todos los proyectos.",
+    "sections":[
+      {"title":"Del importe cobrado a la base elegible", "body":"El total de una venta no equivale necesariamente a su base de comisión. El acuerdo debe explicar qué conceptos incluye y cómo trata los reembolsos, costos y ajustes. En un desembolso, la referencia es el capital efectivamente liberado; en utilidades, el resultado aprobado conforme a las condiciones."},
+      {"title":"Qué revisar antes de aceptar condiciones", "body":"Comprueba cuándo se considera confirmado cada evento y qué evidencia permite conciliarlo. Revisa también si existe un cargo administrativo descontable y cómo aparece en el saldo. Una comisión comercial no constituye por sí misma un rendimiento del capital ni un derecho a utilidades del proyecto."}
+    ],
+    "links":[{"label":"Revisar el modelo de ingresos de DRACMA","href":"/como-ganamos/"},{"label":"Distinguir cobros y utilidad elegible","href":"/ingresos-recurrentes/"}]
+  },
+  "comercializacion": {
+    "title":"Qué significa atribuir una venta de un proyecto",
+    "intro":"La atribución conecta una operación comercial con su origen y con el beneficiario de una comisión. Presentar un proyecto, registrar interés y confirmar una venta son etapas distintas. La liquidación depende de las condiciones aceptadas y de la conciliación del pago.",
+    "sections":[
+      {"title":"Información consistente para cada participante", "body":"El material comercial debe remitir a la misma documentación del proyecto: objetivo, uso del capital, derechos, riesgos y condiciones. Evita describir como aprobados contratos o resultados que todavía no cuentan con evidencia verificable. Las fichas actuales del catálogo son ilustrativas."},
+      {"title":"Una venta no garantiza utilidades", "body":"El acuerdo comercial debe distinguir la comisión por venta de los desembolsos y del reparto de resultados. Antes de participar, revisa qué operación se atribuye, qué tasa se aplica y cómo se tratan las cancelaciones o ajustes. No se debe inferir una comisión solo por presentar a otra persona."}
+    ],
+    "links":[{"label":"Consultar bases de cálculo de comisiones","href":"/comisiones/"},{"label":"Explorar documentación de proyectos","href":"/proyectos/"}]
+  },
+  "ingresos-recurrentes": {
+    "title":"Ingresos, utilidad y reparto: tres conceptos diferentes",
+    "intro":"Un proyecto puede recibir pagos periódicos por membresías, regalías, alquileres u otras actividades. La recurrencia describe la frecuencia del cobro; no garantiza estabilidad, beneficio ni una distribución a participantes. Para evaluar el resultado hay que revisar el período completo y sus costos.",
+    "sections":[
+      {"title":"Cómo pasar de cobros a resultado neto", "body":"Identifica el origen de los ingresos y contrástalo con comprobantes. Después revisa reembolsos, comisiones de procesamiento, operación y demás obligaciones previstas. Solo el resultado que cumpla las condiciones del proyecto puede considerarse utilidad elegible para reparto."},
+      {"title":"Qué puede cambiar una distribución", "body":"Los retrasos de cobro, los gastos y los ajustes del cierre pueden modificar el importe disponible. La fecha, la base de cálculo y los derechos de cada participante deben estar documentados. Un gráfico de ingresos o una simulación no sustituyen el cierre aprobado ni prueban pagos realizados."}
+    ],
+    "links":[{"label":"Comprender las comisiones sobre utilidades","href":"/comisiones/"},{"label":"Consultar el modelo de tesorería","href":"/tesoreria/"}]
+  },
+  "como-ganamos": {
+    "title":"Qué revisar en los costos del modelo de DRACMA",
+    "intro":"El modelo descrito distingue un fee administrativo de US$5,99 al mes y comisiones vinculadas a operaciones. Para estimar un costo total, consulta las condiciones del servicio y del proyecto concreto: una misma tarifa no describe todos los usos de la plataforma.",
+    "sections":[
+      {"title":"Cargo administrativo y comisiones por evento", "body":"El fee puede descontarse de comisiones pendientes por pagar, con el descuento identificado en la liquidación. Las comisiones por ventas, fondos liberados y utilidades tienen bases diferentes. Revisa el evento, la tasa y los ajustes aplicables antes de comparar importes."},
+      {"title":"Quant tiene condiciones propias", "body":"La página de Quant describe una activación inicial del EA y facturación mensual sobre las utilidades según las condiciones del servicio. Esos conceptos deben evaluarse junto con el riesgo de trading. El historial externo de referencia no asegura beneficios futuros ni elimina posibles pérdidas."}
+    ],
+    "links":[{"label":"Ver comisiones y bases de cálculo","href":"/comisiones/"},{"label":"Revisar historial y condiciones de Quant","href":"/quant/"}]
+  },
+  "comprar": {
+    "title":"Precio de DRACMA, cotización y pago: qué comprobar",
+    "intro":"La página consulta un precio de mercado de Dexscreener para el par publicado de BNB Smart Chain. Indica un importe en USD y una wallet BSC para preparar una cotización. La disponibilidad del pago se muestra en el formulario; consultar un precio o generar una cotización no mueve fondos.",
+    "sections":[
+      {"title":"Verifica la red y el contrato del token", "body":"DRACMA se entrega en BNB Smart Chain, como token BEP-20. Comprueba la dirección completa del contrato y la wallet de recepción del resumen. La moneda y la red con las que pagas en NOWPayments pueden ser diferentes de la red en la que recibirías DRACMA."},
+      {"title":"Revisa el importe y el estado antes de enviar", "body":"La cotización tiene una vigencia limitada. Si el pago está habilitado, revisa el importe exacto y las condiciones que muestra NOWPayments. La confirmación del pago y la entrega del token son estados distintos; regresar a esta web no acredita por sí solo ninguna de las dos. El precio puede variar y existe riesgo de pérdida."}
+    ],
+    "links":[{"label":"Revisar el aviso de riesgos","href":"/legal/#riesgos"},{"label":"Distinguir token y contratos de proyecto","href":"/tecnologia/"}]
+  }
+}
