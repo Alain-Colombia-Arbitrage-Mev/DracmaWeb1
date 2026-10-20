@@ -7,6 +7,8 @@ import {useMarketPrice} from './useMarketPrice';
 import {CheckoutError,createMarketInvoice,createMarketQuote,formatMarketUSD,getPaymentOptions,getPurchaseOrder,randomReceiptToken,validMarketQuote,type MarketQuote,type PaymentOptions,type PurchaseOrder} from '../../services/marketCheckout';
 import {DRACMA_TOKEN_ADDRESS} from '../../config/contracts';
 import {localeFor} from '../../i18n/locales.mjs';
+import {estimateTokens,formatTokenEstimate,usdCents} from '../../services/tokenEstimate';
+import {runtimeLocale} from '../../i18n/runtime';
 
 const tokenKey=(id:string)=>`dracma-receipt:${id}`;
 const pendingKey='dracma-pending-checkout';
@@ -18,6 +20,12 @@ function Checkout(){
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [now,setNow]=useState(Date.now());const [uncertain,setUncertain]=useState(false);const [returningId,setReturningId]=useState('');const [pendingId,setPendingId]=useState('');
   const [paymentOptions,setPaymentOptions]=useState<PaymentOptions|null>(null);const [paymentOptionsError,setPaymentOptionsError]=useState(false);
   const attempt=useRef<{quoteId:string;key:string;receiptToken:string}|null>(null);
+  const currentMarket=market&&Date.parse(market.price.expiresAt)>now?market:null;
+  const cents=usdCents(amount);
+  const minimum=market?usdCents(market.minimumUsd):null;const maximum=market?usdCents(market.maximumUsd):null;
+  const withinLimits=cents!==null&&minimum!==null&&maximum!==null&&cents>0n&&cents>=minimum&&cents<=maximum;
+  const estimatedTokens=currentMarket&&withinLimits?estimateTokens(amount,currentMarket.price.priceUsd,currentMarket.tokenDecimals):null;
+  const estimateHelp=!amount.trim()?'Introduce un importe para calcular los DRACMA a recibir.':cents===null?'Usa un importe en USD con hasta dos decimales.':!market?'Esperando un precio de mercado vigente.':!withinLimits?'El importe debe estar dentro de los límites de compra.':!currentMarket?'El precio ha caducado. Actualizando la estimación…':'Estimación al precio actual. La cantidad final se confirma al revisar la cotización.';
   useEffect(()=>{if(address&&!quote)setWallet(address);},[address,quote]);
   useEffect(()=>{const t=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(t);},[]);
   useEffect(()=>{
@@ -41,8 +49,8 @@ function Checkout(){
   },[]);
   const connectWallet=()=>{const injected=!!(window as any).ethereum;const c=connectors.find(c=>c.id===(injected?'injected':'walletConnect'));if(c)connect({connector:c});};
   const review=async()=>{
-    const amountUsd=amount.trim().replace(',','.');
-    setError('');if(!isAddress(wallet)||!/^\d+(\.\d{1,2})?$/.test(amountUsd)){setError('Indica un importe en USD con hasta dos decimales y una wallet BSC válida.');return;}
+    setError('');if(!isAddress(wallet)||cents===null||!withinLimits||!estimatedTokens){setError('Indica un importe en USD con hasta dos decimales y una wallet BSC válida.');return;}
+    const amountUsd=`${cents/100n}.${(cents%100n).toString().padStart(2,'0')}`;
     setBusy(true);try{const q=await createMarketQuote(wallet,amountUsd);setQuote(q);setNow(Date.now());attempt.current={quoteId:q.id,key:crypto.randomUUID(),receiptToken:randomReceiptToken()};setUncertain(false);}catch(e){setError(e instanceof Error?e.message:'No se pudo obtener la cotización.');}finally{setBusy(false);}
   };
   const pay=async()=>{
@@ -70,15 +78,21 @@ function Checkout(){
   if(order)return <Localized><div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4" aria-live="polite">{states[order.status]||'Verificando orden'}</h2><p className="mt-4">El regreso desde NOWPayments no confirma por sí mismo el pago ni la entrega.</p><div className="flow-summary"><p>Referencia: {order.id}</p><p>Importe: US$ {order.quote.amountUsd}</p><p>DRACMA: {order.quote.tokenAmount}</p><p className="break-all">Wallet BSC: {order.quote.walletAddress}</p></div>{order.txHash&&/^0x[a-fA-F0-9]{64}$/.test(order.txHash)&&<a className="pencil-button flow-next" href={`https://bscscan.com/tx/${order.txHash}`} target="_blank" rel="noreferrer">Ver transferencia en BscScan ↗</a>}{error&&<p role="alert" className="flow-error">{error}</p>}</div></Localized>;
   return <Localized><div className="flow-widget market-checkout">
     <div className="crypto-label"><strong>Comprar DRACMA</strong><small>{quote?'02 / 02':'01 / 02'}</small></div>
-    <div className="checkout-market"><span>Precio de mercado · Dexscreener</span><strong>{market?formatMarketUSD(market.price.priceUsd):'—'}</strong><small>{loading?'Consultando precio…':priceError||`Consultado ${new Date(market!.price.observedAt).toLocaleTimeString('es')}`}</small></div>
+    <div className="checkout-market"><span>Precio de mercado · Dexscreener</span><strong>{currentMarket?formatMarketUSD(currentMarket.price.priceUsd):'—'}</strong><small>{loading?'Consultando precio…':priceError||(!currentMarket?'Esperando un precio de mercado vigente.':`Consultado ${new Date(currentMarket.price.observedAt).toLocaleTimeString('es')}`)}</small></div>
     {!quote?<>
       <div className="checkout-field-group">
         <label htmlFor={`${fieldId}-amount`}>Importe de compra</label>
         <div className="checkout-amount">
-          <input id={`${fieldId}-amount`} className="flow-field" aria-label="Importe de compra en USD" aria-describedby={`${fieldId}-amount-help`} inputMode="decimal" type="text" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="0,00" autoComplete="off" spellCheck={false}/>
+          <input id={`${fieldId}-amount`} className="flow-field" aria-label="Importe de compra en USD" aria-describedby={`${fieldId}-amount-help ${fieldId}-estimate-help`} inputMode="decimal" type="text" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="0,00" autoComplete="off" spellCheck={false}/>
           <span className="checkout-currency" aria-hidden="true">USD</span>
         </div>
         <p id={`${fieldId}-amount-help`} className="checkout-input-help">En dólares estadounidenses · Hasta 2 decimales</p>
+      </div>
+      <div className="checkout-market">
+        <span id={`${fieldId}-estimate-label`}>DRACMA estimados a recibir</span>
+        <output htmlFor={`${fieldId}-amount`} aria-labelledby={`${fieldId}-estimate-label`} aria-live="polite" className="text-xl font-semibold break-all" title={estimatedTokens?`${estimatedTokens} DRACMA`:undefined}><bdi dir="ltr">{estimatedTokens?`≈ ${formatTokenEstimate(estimatedTokens,runtimeLocale)}`:'—'}</bdi> DRACMA</output>
+        <p id={`${fieldId}-estimate-help`} className="checkout-input-help">{estimateHelp}</p>
+        {market&&<small>{`Mínimo: US$ ${market.minimumUsd} · Máximo: US$ ${market.maximumUsd}`}</small>}
       </div>
       <div className="checkout-field-group">
         <label htmlFor={`${fieldId}-wallet`}>Wallet de recepción en BSC</label>
@@ -88,7 +102,7 @@ function Checkout(){
       <button type="button" className="flow-back mt-3" disabled={isPending} onClick={connectWallet}>{address?'Wallet conectada':isPending?'Conectando…':'Conectar mi wallet'}</button>
       <div className="crypto-definition"><span>Red de entrega</span><strong>BNB Smart Chain · BEP-20</strong></div><div className="crypto-definition"><span>Pago</span><strong>Criptomonedas · NOWPayments</strong></div>
       <p className="field-help">{paymentOptions&&Date.parse(paymentOptions.expiresAt)>now?`${paymentOptions.currencies.length} opciones de moneda y red consultadas en NOWPayments. Elige con cuál pagar en su página de pago.`:paymentOptionsError?'No se pudo consultar la lista de criptomonedas. NOWPayments comprobará las opciones al abrir la factura.':'Consultando las criptomonedas disponibles…'} Los mínimos y las comisiones dependen de la opción elegida. Recibirás DRACMA en BNB Smart Chain.</p>
-      <button className="pencil-button flow-next" disabled={loading||busy||!market||!amount||!isAddress(wallet)} onClick={review}>{busy?'Obteniendo cotización…':'Revisar mi cotización'}</button>
+      <button className="pencil-button flow-next" disabled={loading||busy||!estimatedTokens||!isAddress(wallet)} onClick={review}>{busy?'Obteniendo cotización…':'Revisar mi cotización'}</button>
     </>:<>
       <h2 className="mt-5">Revisa tu compra.</h2><div className="crypto-definition"><span>Importe de la orden</span><strong>US$ {quote.amountUsd}</strong></div><div className="crypto-definition"><span>DRACMA cotizados</span><strong className="break-all">{quote.tokenAmount}</strong></div>
       <div className="crypto-definition"><span>Precio aplicado</span><strong>{formatMarketUSD(quote.market.priceUsd)}</strong></div><div className="crypto-definition"><span>Vigencia para crear la factura</span><strong aria-live="off">{seconds>0?`${seconds} s`:'Cotización caducada'}</strong></div>

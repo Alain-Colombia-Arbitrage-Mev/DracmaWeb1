@@ -2203,5 +2203,13 @@
   "Ocurrió un error inesperado.": "发生意外错误。",
   "Hash de transacción": "交易哈希",
   "Intentar de Nuevo": "重试",
-  "Desconectar": "断开连接"
+  "Desconectar": "断开连接",
+  "DRACMA estimados a recibir": "预计收到的 DRACMA",
+  "Introduce un importe para calcular los DRACMA a recibir.": "输入金额以计算预计收到的 DRACMA。",
+  "Usa un importe en USD con hasta dos decimales.": "输入美元金额，最多保留两位小数。",
+  "Esperando un precio de mercado vigente.": "正在等待有效的市场价格。",
+  "El importe debe estar dentro de los límites de compra.": "金额必须在购买限额范围内。",
+  "El precio ha caducado. Actualizando la estimación…": "价格已过期。正在更新估算…",
+  "Estimación al precio actual. La cantidad final se confirma al revisar la cotización.": "按当前价格估算。最终数量将在核对报价时确认。",
+  "Mínimo: US$ {min} · Máximo: US$ {max}": "最低：US$ {min} · 最高：US$ {max}"
 }

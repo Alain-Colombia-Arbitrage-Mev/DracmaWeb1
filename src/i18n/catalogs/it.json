@@ -2202,5 +2202,13 @@
   "Ocurrió un error inesperado.": "Si è verificato un errore imprevisto.",
   "Hash de transacción": "Hash della transazione",
   "Intentar de Nuevo": "Riprova",
-  "Desconectar": "Disconnetti"
+  "Desconectar": "Disconnetti",
+  "DRACMA estimados a recibir": "DRACMA stimati da ricevere",
+  "Introduce un importe para calcular los DRACMA a recibir.": "Inserisci un importo per calcolare i DRACMA che potresti ricevere.",
+  "Usa un importe en USD con hasta dos decimales.": "Inserisci un importo in USD con un massimo di due decimali.",
+  "Esperando un precio de mercado vigente.": "In attesa di un prezzo di mercato aggiornato.",
+  "El importe debe estar dentro de los límites de compra.": "L’importo deve rientrare nei limiti di acquisto.",
+  "El precio ha caducado. Actualizando la estimación…": "Il prezzo è scaduto. Aggiornamento della stima…",
+  "Estimación al precio actual. La cantidad final se confirma al revisar la cotización.": "Stima al prezzo attuale. La quantità finale viene confermata quando controlli la quotazione.",
+  "Mínimo: US$ {min} · Máximo: US$ {max}": "Minimo: US$ {min} · Massimo: US$ {max}"
 }

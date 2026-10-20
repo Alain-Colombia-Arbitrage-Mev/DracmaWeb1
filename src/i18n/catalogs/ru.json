@@ -2203,5 +2203,13 @@
   "Ocurrió un error inesperado.": "Произошла непредвиденная ошибка.",
   "Hash de transacción": "Хеш транзакции",
   "Intentar de Nuevo": "Попробовать снова",
-  "Desconectar": "Отключить"
+  "Desconectar": "Отключить",
+  "DRACMA estimados a recibir": "Ожидаемое количество DRACMA",
+  "Introduce un importe para calcular los DRACMA a recibir.": "Введите сумму для расчёта количества DRACMA к получению.",
+  "Usa un importe en USD con hasta dos decimales.": "Укажите сумму в долларах США с точностью до двух знаков после запятой.",
+  "Esperando un precio de mercado vigente.": "Ожидание актуальной рыночной цены.",
+  "El importe debe estar dentro de los límites de compra.": "Сумма должна быть в пределах лимитов покупки.",
+  "El precio ha caducado. Actualizando la estimación…": "Срок действия цены истёк. Обновляем расчёт…",
+  "Estimación al precio actual. La cantidad final se confirma al revisar la cotización.": "Расчёт по текущей цене. Итоговое количество подтверждается при проверке котировки.",
+  "Mínimo: US$ {min} · Máximo: US$ {max}": "Минимум: US$ {min} · Максимум: US$ {max}"
 }

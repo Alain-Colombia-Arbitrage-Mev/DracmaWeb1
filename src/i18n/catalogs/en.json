@@ -2203,5 +2203,13 @@
   "Ocurrió un error inesperado.": "An unexpected error occurred.",
   "Hash de transacción": "Transaction hash",
   "Intentar de Nuevo": "Try Again",
-  "Desconectar": "Disconnect"
+  "Desconectar": "Disconnect",
+  "DRACMA estimados a recibir": "Estimated DRACMA to receive",
+  "Introduce un importe para calcular los DRACMA a recibir.": "Enter an amount to calculate the DRACMA you could receive.",
+  "Usa un importe en USD con hasta dos decimales.": "Enter a USD amount with up to two decimal places.",
+  "Esperando un precio de mercado vigente.": "Waiting for a current market price.",
+  "El importe debe estar dentro de los límites de compra.": "The amount must be within the purchase limits.",
+  "El precio ha caducado. Actualizando la estimación…": "The price has expired. Updating the estimate…",
+  "Estimación al precio actual. La cantidad final se confirma al revisar la cotización.": "Estimate at the current price. The final amount is confirmed when you review the quote.",
+  "Mínimo: US$ {min} · Máximo: US$ {max}": "Minimum: US$ {min} · Maximum: US$ {max}"
 }

@@ -2203,5 +2203,13 @@
   "Ocurrió un error inesperado.": "حدث خطأ غير متوقع.",
   "Hash de transacción": "هاش المعاملة",
   "Intentar de Nuevo": "حاول مرة أخرى",
-  "Desconectar": "قطع الاتصال"
+  "Desconectar": "قطع الاتصال",
+  "DRACMA estimados a recibir": "كمية DRACMA التقديرية التي ستتلقاها",
+  "Introduce un importe para calcular los DRACMA a recibir.": "أدخل مبلغًا لحساب كمية DRACMA التي قد تتلقاها.",
+  "Usa un importe en USD con hasta dos decimales.": "أدخل مبلغًا بالدولار الأمريكي بمنزلتين عشريتين كحد أقصى.",
+  "Esperando un precio de mercado vigente.": "في انتظار سعر سوق ساري.",
+  "El importe debe estar dentro de los límites de compra.": "يجب أن يكون المبلغ ضمن حدود الشراء.",
+  "El precio ha caducado. Actualizando la estimación…": "انتهت صلاحية السعر. جارٍ تحديث التقدير…",
+  "Estimación al precio actual. La cantidad final se confirma al revisar la cotización.": "تقدير بالسعر الحالي. تُؤكَّد الكمية النهائية عند مراجعة عرض السعر.",
+  "Mínimo: US$ {min} · Máximo: US$ {max}": "الحد الأدنى: US$ {min} · الحد الأقصى: US$ {max}"
 }
