@@ -24,7 +24,8 @@
     "verify:locales": "node scripts/verify-locales.mjs",
     "test:token-estimate": "node --test src/services/tokenEstimate.test.mjs",
     "test:project-fees": "node --test scripts/project-fees.test.mjs",
-    "simulate:project-fees": "node scripts/simulate-project-fees.mjs"
+    "simulate:project-fees": "node scripts/simulate-project-fees.mjs",
+    "test:auth-proxy": "node --test scripts/tests/auth-proxy.test.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
