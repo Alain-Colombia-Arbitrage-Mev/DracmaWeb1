@@ -1,0 +1,27 @@
+---
+import MarketCheckout from '../react/MarketCheckout';
+import '../../styles/checkout.css';
+---
+<section class="buy-page" data-source-node="dMxFo">
+  <div class="buy-page-grid">
+    <div class="buy-page-intro">
+      <p class="buy-eyebrow">DRACMA · BNB SMART CHAIN</p>
+      <h1>Compra <span>DRACMA.</span></h1>
+      <p class="buy-page-lead">Elige cuánto comprar, mira cuántos tokens recibirías y prepara tu pago con criptomonedas.</p>
+      <ol class="buy-page-how">
+        <li><span>01</span><div><strong>Elige tu importe</strong><p>Consulta la cantidad estimada al precio de mercado.</p></div></li>
+        <li><span>02</span><div><strong>Indica tu wallet</strong><p>Pega la dirección donde quieres recibir DRACMA.</p></div></li>
+        <li><span>03</span><div><strong>Revisa antes de pagar</strong><p>Comprueba tu compra y elige una criptomoneda en NOWPayments cuando el pago esté habilitado.</p></div></li>
+      </ol>
+      <p class="buy-page-provider">Pago con criptomonedas <strong>NOWPayments ↗</strong></p>
+    </div>
+    <div class="buy-page-form" data-source-node="L40Z3f"><MarketCheckout client:only="react"><p slot="fallback" role="status" class="buy-checkout-loading">Cargando formulario de compra…</p></MarketCheckout></div>
+  </div>
+  <section class="buy-page-questions" aria-labelledby="buy-questions-title"><h2 id="buy-questions-title">Lo esencial, antes de comprar.</h2><div>
+    <details><summary>¿Necesito conectar una wallet?</summary><p>No. Puedes pegar una dirección que controles y admita DRACMA en BNB Smart Chain. Conectar una wallet solo facilita completar esa dirección.</p></details>
+    <details><summary>¿Con qué criptomoneda puedo pagar?</summary><p>Cuando el pago esté habilitado, NOWPayments mostrará las monedas y redes disponibles para tu orden, junto con el importe exacto y las comisiones.</p></details>
+    <details><summary>¿Dónde recibo los tokens DRACMA?</summary><p>En la dirección BSC que confirmes antes de pagar. La entrega se procesa después de verificar el pago; su estado y la transferencia se consultan desde la orden.</p></details>
+    <details><summary>¿La estimación garantiza el precio?</summary><p>La estimación cambia con el mercado. Revisa la cotización y su vigencia antes de abrir el pago. La cantidad queda vinculada a la factura creada.</p></details>
+  </div></section>
+  <p class="buy-page-risk">El precio puede variar y existe riesgo de pérdida. Revisa el contrato del token y las condiciones de tu orden. <a href="/legal/#riesgos">Consultar riesgos →</a></p>
+</section>

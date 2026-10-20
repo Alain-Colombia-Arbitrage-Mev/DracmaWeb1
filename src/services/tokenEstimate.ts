@@ -1,7 +1,9 @@
 // Match the Go checkout's integer arithmetic: floor to token base units.
 // This preview never creates a quote, reserves inventory or authorizes payment.
 export function usdCents(input:string):bigint|null {
-  const normalized=input.trim().replace(',','.');
+  const normalized=input.trim().normalize('NFKC')
+    .replace(/[٠-٩۰-۹]/g,digit=>String(digit.charCodeAt(0)-(digit<='٩'?0x660:0x6f0)))
+    .replace('٫','.').replace(',','.');
   if(!/^\d{1,25}(?:\.\d{1,2})?$/.test(normalized))return null;
   const [whole,fraction='']=normalized.split('.');
   return BigInt(whole)*100n+BigInt(fraction.padEnd(2,'0'));
