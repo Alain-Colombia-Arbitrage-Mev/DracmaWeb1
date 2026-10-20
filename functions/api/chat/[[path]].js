@@ -14,6 +14,9 @@ export async function onRequest({request,env}) {
  let target;
  try {const base=new URL(env.CHAT_API_ORIGIN);if(base.protocol!=='https:'||base.username||base.password||base.origin===url.origin||!env.CHAT_PROXY_SECRET)throw Error();target=new URL(url.pathname.replace('/api/chat/','/chat/'),base.origin);}catch{return fail('El chat todavía no está configurado.',503);}
  const headers=new Headers({'Accept':'application/json','X-Dracma-Chat-Proxy':env.CHAT_PROXY_SECRET,'X-Dracma-Client-IP':request.headers.get('cf-connecting-ip')||'unknown'});
+ const locale=(request.headers.get('X-Dracma-Locale')||'es').toLowerCase().split('-')[0];
+ if(!['es','en','ar','zh','ru','it'].includes(locale))return fail('Idioma no disponible.',400);
+ headers.set('X-Dracma-Locale',locale);
  for(const key of ['authorization','content-type'])if(request.headers.has(key))headers.set(key,request.headers.get(key));
  try {
   let body;

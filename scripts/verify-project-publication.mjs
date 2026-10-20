@@ -31,10 +31,10 @@ for(const route of routes) {
   if(route==='/proyectos/')assert.doesNotMatch(visible.join(' '),/PROYECTOS REALES|Mínimo de captación alcanzado|CAPITAL RECAUDADO/, 'Catalog presents conceptual projects or fundraising as real activity');
 }
 assert.equal(fundingStates,28,'Missing publication states in project cards or details');
-for(const lang of['preventa','en','fr','hi','ru','zh','ar']) {
+for(const lang of['preventa','en/preventa','ar/preventa','zh/preventa','ru/preventa','it/preventa','fr','hi']) {
   const doc=parse(fs.readFileSync(`dist/${lang}/index.html`,'utf8'));
   let count=0;
   walk(doc,n=>{if(attrs(n)['data-project-reference-card']!==undefined){count++;assert.doesNotMatch(text(n),/\d[.,\d]*\s*%|\d[.,\d]*\s*\$DRACMA|Financiado Exitosamente|Successfully Funded/,`${lang}: legacy example card shows financing metrics`);}});
   assert.equal(count,3,`${lang}: missing legacy reference cards`);
 }
-console.log(`Verified publication disclosure on ${routes.length} pages, ${fundingStates} pending-data states and 21 legacy reference cards.`);
+console.log(`Verified publication disclosure on ${routes.length} pages, ${fundingStates} pending-data states and 24 legacy reference cards.`);

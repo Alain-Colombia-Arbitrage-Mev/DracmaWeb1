@@ -64,3 +64,9 @@ go vet ./...
 - El modo FAQ no comprende todas las preguntas abiertas. Las consultas no cubiertas se conservan para revisión del equipo.
 
 Referencias: [Docker oficial](https://developers.chatwoot.com/self-hosted/deployment/docker), [variables de Chatwoot](https://developers.chatwoot.com/self-hosted/configuration/environment-variables), [red privada de Railway](https://docs.railway.com/networking/private-networking/how-it-works).
+
+## Idiomas del asistente
+
+El proxy valida `X-Dracma-Locale` (`es`, `en`, `ar`, `zh`, `ru`, `it`). `GET /chat/questions` devuelve las sugerencias de ese idioma. `POST /chat/session` admite `{ "locale": "en" }`; si no se indica, conserva el valor predeterminado español. La selección queda vinculada a la conversación en `dracma_agent.conversation_locales`, tabla creada al arrancar dentro del esquema propio del bot. No se accede directamente a tablas de conversaciones de Chatwoot.
+
+`bot/faq-locales.json` contiene 50 respuestas traducidas y revisadas, términos de búsqueda y mensajes de bienvenida/derivación. El worker responde en el idioma de la conversación aunque la consulta use una pregunta equivalente en otro idioma. Las consultas fuera del catálogo siguen abriendo la conversación al equipo, con un mensaje en el idioma seleccionado y sin prometer disponibilidad o plazos. No hay traducción externa de conversaciones privadas ni un modelo generativo conectado a cuentas. Las sesiones del frontend están separadas por idioma.

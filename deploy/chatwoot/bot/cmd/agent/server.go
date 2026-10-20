@@ -147,12 +147,13 @@ func (a *App) protected(next http.HandlerFunc) http.HandlerFunc {
 		next(w, r)
 	}
 }
-func (a *App) questions(w http.ResponseWriter, _ *http.Request) {
-	q := make([]map[string]string, 0, len(a.faq))
-	for _, f := range a.faq {
+func (a *App) questions(w http.ResponseWriter, r *http.Request) {
+	localized := a.localized(requestLocale(r))
+	q := make([]map[string]string, 0, len(localized.Questions))
+	for _, f := range localized.Questions {
 		q = append(q, map[string]string{"id": f.ID, "question": f.Question})
 	}
-	respond(w, 200, map[string]any{"questions": q, "mode": "faq", "notice": "Respuestas automáticas basadas en información pública. No consulta cuentas privadas ni envía avisos contables."})
+	respond(w, 200, map[string]any{"questions": q, "mode": "faq", "locale": requestLocale(r), "notice": localized.Notice})
 }
 
 type session struct {
@@ -184,8 +185,17 @@ func (a *App) publicPath(s session) string {
 	return fmt.Sprintf("/public/api/v1/inboxes/%s/contacts/%s/conversations/%d", a.identifier, s.Source, s.Conversation)
 }
 func (a *App) createSession(w http.ResponseWriter, r *http.Request) {
-	var in struct{}
+	var in struct {
+		Locale string `json:"locale"`
+	}
 	if !decode(w, r, &in) {
+		return
+	}
+	if in.Locale == "" {
+		in.Locale = requestLocale(r)
+	}
+	if !validLocale(in.Locale) {
+		fail(w, 400, "Idioma no disponible.")
 		return
 	}
 	random := make([]byte, 32)
@@ -205,6 +215,10 @@ func (a *App) createSession(w http.ResponseWriter, r *http.Request) {
 		ID int64 `json:"id"`
 	}
 	if a.request(r.Context(), "POST", "/public/api/v1/inboxes/"+a.identifier+"/contacts/"+source+"/conversations", map[string]any{}, false, &conv) != nil || conv.ID <= 0 {
+		fail(w, 503, "No se pudo iniciar la conversación.")
+		return
+	}
+	if _, err := a.db.Exec(r.Context(), "INSERT INTO dracma_agent.conversation_locales(conversation_id,locale) VALUES($1,$2)", conv.ID, in.Locale); err != nil {
 		fail(w, 503, "No se pudo iniciar la conversación.")
 		return
 	}

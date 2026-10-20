@@ -1,3 +1,4 @@
+import Localized from '../../i18n/Localized';
 import {useEffect,useId,useRef,useState} from 'react';
 import {useAccount,useConnect,useConnectors} from 'wagmi';
 import {isAddress} from 'viem';
@@ -5,6 +6,7 @@ import Web3Provider from './Web3Provider';
 import {useMarketPrice} from './useMarketPrice';
 import {CheckoutError,createMarketInvoice,createMarketQuote,formatMarketUSD,getPaymentOptions,getPurchaseOrder,randomReceiptToken,validMarketQuote,type MarketQuote,type PaymentOptions,type PurchaseOrder} from '../../services/marketCheckout';
 import {DRACMA_TOKEN_ADDRESS} from '../../config/contracts';
+import {localeFor} from '../../i18n/locales.mjs';
 
 const tokenKey=(id:string)=>`dracma-receipt:${id}`;
 const pendingKey='dracma-pending-checkout';
@@ -47,7 +49,7 @@ function Checkout(){
     const current=attempt.current;if(!quote||!current||!market?.checkoutAvailable)return;setBusy(true);setError('');let sent=false;
     try{
       // Persist recovery before any side effect. Do not create an invoice if storage is blocked.
-      try{sessionStorage.setItem(pendingKey,JSON.stringify({quote,attempt:current}));}catch{throw Error('Permite el almacenamiento de esta pestaña para conservar el acceso a tu orden antes de pagar.');}
+      try{sessionStorage.setItem(pendingKey,JSON.stringify({quote,attempt:current}));sessionStorage.setItem('dracma-checkout-locale',localeFor(location.pathname));}catch{throw Error('Permite el almacenamiento de esta pestaña para conservar el acceso a tu orden antes de pagar.');}
       sent=true;
       const result=await createMarketInvoice(current.quoteId,current.receiptToken,current.key);
       if(!result.invoiceUrl)throw new CheckoutError('La factura sigue pendiente de verificación.','invoice_pending',result.id);
@@ -64,9 +66,9 @@ function Checkout(){
     }finally{setBusy(false);}
   };
   const seconds=quote?Math.max(0,Math.ceil((Date.parse(quote.expiresAt)-now)/1000)):0;
-  if(returningId&&!order)return <div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4">Verificación de la orden</h2><p className="flow-summary break-all">Referencia: {returningId}</p><p role="status">{error||'Consultando el estado confirmado por el servicio de compra…'}</p><p className="field-help">No realices otro pago para esta orden mientras verificas su estado.</p></div>;
-  if(order)return <div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4" aria-live="polite">{states[order.status]||'Verificando orden'}</h2><p className="mt-4">El regreso desde NOWPayments no confirma por sí mismo el pago ni la entrega.</p><div className="flow-summary"><p>Referencia: {order.id}</p><p>Importe: US$ {order.quote.amountUsd}</p><p>DRACMA: {order.quote.tokenAmount}</p><p className="break-all">Wallet BSC: {order.quote.walletAddress}</p></div>{order.txHash&&/^0x[a-fA-F0-9]{64}$/.test(order.txHash)&&<a className="pencil-button flow-next" href={`https://bscscan.com/tx/${order.txHash}`} target="_blank" rel="noreferrer">Ver transferencia en BscScan ↗</a>}{error&&<p role="alert" className="flow-error">{error}</p>}</div>;
-  return <div className="flow-widget market-checkout">
+  if(returningId&&!order)return <Localized><div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4">Verificación de la orden</h2><p className="flow-summary break-all">Referencia: {returningId}</p><p role="status">{error||'Consultando el estado confirmado por el servicio de compra…'}</p><p className="field-help">No realices otro pago para esta orden mientras verificas su estado.</p></div></Localized>;
+  if(order)return <Localized><div className="flow-widget"><p className="buy-eyebrow">ESTADO DE TU COMPRA</p><h2 className="mt-4" aria-live="polite">{states[order.status]||'Verificando orden'}</h2><p className="mt-4">El regreso desde NOWPayments no confirma por sí mismo el pago ni la entrega.</p><div className="flow-summary"><p>Referencia: {order.id}</p><p>Importe: US$ {order.quote.amountUsd}</p><p>DRACMA: {order.quote.tokenAmount}</p><p className="break-all">Wallet BSC: {order.quote.walletAddress}</p></div>{order.txHash&&/^0x[a-fA-F0-9]{64}$/.test(order.txHash)&&<a className="pencil-button flow-next" href={`https://bscscan.com/tx/${order.txHash}`} target="_blank" rel="noreferrer">Ver transferencia en BscScan ↗</a>}{error&&<p role="alert" className="flow-error">{error}</p>}</div></Localized>;
+  return <Localized><div className="flow-widget market-checkout">
     <div className="crypto-label"><strong>Comprar DRACMA</strong><small>{quote?'02 / 02':'01 / 02'}</small></div>
     <div className="checkout-market"><span>Precio de mercado · Dexscreener</span><strong>{market?formatMarketUSD(market.price.priceUsd):'—'}</strong><small>{loading?'Consultando precio…':priceError||`Consultado ${new Date(market!.price.observedAt).toLocaleTimeString('es')}`}</small></div>
     {!quote?<>
@@ -99,6 +101,6 @@ function Checkout(){
     {market&&!market.checkoutAvailable&&<p className="flow-note">El precio se puede consultar, pero las compras todavía no están habilitadas.</p>}
     {error&&<p className="flow-error" role="alert">{error}</p>}
     <p className="field-help">Compra mínima: US$ {market?.minimumUsd||'1.00'}. Contrato DRACMA: <span className="break-all">{DRACMA_TOKEN_ADDRESS}</span>.</p>
-  </div>;
+  </div></Localized>;
 }
 export default function MarketCheckout(){return <Web3Provider><Checkout/></Web3Provider>;}

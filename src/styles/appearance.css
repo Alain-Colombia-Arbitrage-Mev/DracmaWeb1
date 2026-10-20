@@ -117,3 +117,20 @@ a[class~="bg-[#E6FF28]" i],button[class~="bg-[#E6FF28]" i]{background:var(--ui-a
 .pencil-page svg:not([data-theme-art]) [stroke="#DCE6E4" i]{stroke:var(--muted)}
 
 .pencil-page svg:not([data-theme-art]) [stroke="#D0DFE0" i]{stroke:var(--muted)}
+
+/* Language controls reuse the shared navigation and surfaces. */
+.language-switch {position:relative;flex-shrink:0;font-size:12px;}
+.language-switch>summary {display:flex;gap:6px;align-items:center;min-height:44px;padding:0 10px;border:1px solid var(--ui-border);border-radius:8px;cursor:pointer;color:var(--ui-text);}
+.language-options {min-width:150px;inset-inline-start:0;}
+.language-options a[aria-current="page"] {color:var(--ui-accent);font-weight:700;}
+[dir="rtl"] body {font-family:"Noto Sans Arabic",Tahoma,Arial,sans-serif;}
+[dir="rtl"] [class*="text-left"] {text-align:right;}
+[dir="rtl"] .pencil-page,[dir="rtl"] .flow-widget {text-align:right;}
+[dir="rtl"] .checkout-wallet,[dir="rtl"] .checkout-amount,[dir="rtl"] pre,[dir="rtl"] code,[dir="rtl"] .debit-card {direction:ltr;text-align:left;unicode-bidi:isolate;}
+[dir="rtl"] .dracma-chat-form textarea {text-align:right;}
+[dir="rtl"] .nav-back [aria-hidden] {display:inline-block;transform:rotate(180deg);}
+html[lang="zh"] body {font-family:"Noto Sans SC",Inter,Arial,sans-serif;}
+@media(max-width:400px){.pencil-header nav{gap:8px;padding-inline:12px;}.pencil-header nav>a:first-child span{font-size:21px;}.theme-switch{padding-inline:8px;}.language-switch>summary{padding-inline:8px;}}
+
+[dir="rtl"] .font-display,[dir="rtl"] [data-display-heading]{font-family:"Noto Sans Arabic",Tahoma,sans-serif;letter-spacing:normal;}
+@media(max-width:360px){.theme-switch .theme-label-light,.theme-switch .theme-label-dark{display:none;}.theme-switch{min-width:44px;}}

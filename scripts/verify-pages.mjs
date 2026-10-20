@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {LOCALES} from '../src/i18n/locales.mjs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {parse} from 'parse5';
@@ -32,5 +33,5 @@ const projects=JSON.parse(fs.readFileSync('src/data/pencil-projects.json'));
 assert.equal(projects.length,12);
 for(const project of projects){assert.ok(project.photo,`Missing project photograph: ${project.slug}`);assert.ok(fs.existsSync('dist'+project.photo),`Missing photo asset: ${project.photo}`);assert.ok(fs.existsSync(`dist/proyectos/${project.slug}/index.html`),`Missing detail: ${project.slug}`);}
 assert.deepEqual(errors,[]);
-assert.equal(faqItems,11,'Missing FAQ items');
+assert.equal(faqItems,11*LOCALES.length,'Missing FAQ items');
 console.log(`Verified ${htmlFiles.length} routes, ${rendered.size} Pencil screens, ${references} local references, ${projects.length} project details and ${faqItems} native FAQ items.`);

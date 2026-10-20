@@ -13,3 +13,11 @@ test('chat proxy does not follow redirects or disguise upstream failures',async(
  const original=globalThis.fetch;globalThis.fetch=async(url,init)=>{assert.equal(init.redirect,'manual');return new Response('<html>unavailable</html>',{status:503,headers:{'content-type':'text/html'}});};try{const r=await onRequest(context('questions'));assert.equal(r.status,502);assert.match((await r.json()).error,/no está disponible/);}finally{globalThis.fetch=original;}
 });
 test('oversized chat message rejected before upstream request',async()=>{const r=await onRequest(context('session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:'x'.repeat(9000)})}));assert.equal(r.status,413);});
+test('chat forwards a validated locale without trusting arbitrary language headers',async()=>{
+ const original=globalThis.fetch;let language;
+ globalThis.fetch=async(url,init)=>{language=init.headers.get('X-Dracma-Locale');return Response.json({questions:[]});};
+ try{
+  assert.equal((await onRequest(context('questions',{headers:{'X-Dracma-Locale':'ar'}}))).status,200);assert.equal(language,'ar');
+  assert.equal((await onRequest(context('questions',{headers:{'X-Dracma-Locale':'xx'}}))).status,400);
+ }finally{globalThis.fetch=original;}
+});

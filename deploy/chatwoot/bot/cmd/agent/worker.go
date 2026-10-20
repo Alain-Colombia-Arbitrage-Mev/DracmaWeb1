@@ -6,42 +6,20 @@ import (
 	"log/slog"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/jackc/pgx/v5"
 )
 
 func normalized(s string) string {
-	return strings.NewReplacer("á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u", "ü", "u").Replace(strings.ToLower(s))
+	return strings.Map(func(r rune) rune {
+		if unicode.Is(unicode.Mn, r) || r == 'ـ' {
+			return -1
+		}
+		return r
+	}, strings.NewReplacer("á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u", "ü", "u", "ё", "е", "أ", "ا", "إ", "ا", "آ", "ا").Replace(strings.ToLower(s)))
 }
-func (a *App) answer(content string) (string, bool) {
-	n := normalized(content)
-	for _, f := range a.faq {
-		if n == normalized(f.Question) {
-			return f.Answer, f.Handoff
-		}
-	}
-	// A request for a person takes precedence over topic keywords.
-	for _, f := range a.faq {
-		if f.Handoff {
-			for _, term := range f.Terms {
-				if strings.Contains(n, normalized(term)) {
-					return f.Answer, true
-				}
-			}
-		}
-	}
-	for _, f := range a.faq {
-		for _, term := range f.Terms {
-			if strings.Contains(n, term) {
-				return f.Answer, f.Handoff
-			}
-		}
-	}
-	if strings.Contains(n, "hola") || strings.Contains(n, "gracias") {
-		return "Hola. Soy el asistente de preguntas frecuentes de DRACMA. Puedo explicar proyectos, comisiones, riesgos, contratos y el proceso de compra usando información pública. Elige una pregunta sugerida o cuéntame qué quieres revisar.", false
-	}
-	return "No tengo una respuesta verificada para esa consulta. Puedo explicar la información pública de proyectos, comisiones, riesgos y compra del token; no veo cuentas ni documentos privados. He dejado esta conversación para revisión del equipo, sin un plazo de respuesta confirmado. No compartas claves privadas, contraseñas ni documentos de identidad.", true
-}
+func (a *App) answer(content string) (string, bool) { return a.answerIn(content, "es") }
 func (a *App) accountPath(id int64) string {
 	return fmt.Sprintf("/api/v1/accounts/%d/conversations/%d", a.account, id)
 }
@@ -131,7 +109,12 @@ func (a *App) tick(parent context.Context) (err error) {
 	if content == "" {
 		return a.state(ctx, id, "skipped")
 	}
-	answer, handoff := a.answer(content)
+	locale := "es"
+	err = a.db.QueryRow(ctx, "SELECT locale FROM dracma_agent.conversation_locales WHERE conversation_id=$1", conversation).Scan(&locale)
+	if err != nil && err != pgx.ErrNoRows {
+		return err
+	}
+	answer, handoff := a.answerIn(content, locale)
 	// Persist intent before the HTTP side effect. Never blindly replay an ambiguous send.
 	if err = a.state(ctx, id, "sending"); err != nil {
 		return err

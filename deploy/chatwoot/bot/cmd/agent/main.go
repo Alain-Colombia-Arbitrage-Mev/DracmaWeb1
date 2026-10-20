@@ -32,6 +32,7 @@ type App struct {
 	account, inbox                                      int64
 	cipher                                              cipher.AEAD
 	faq                                                 []FAQ
+	locales                                             map[string]LocalizedFAQ
 	limits                                              rateLimits
 }
 
@@ -80,6 +81,18 @@ func run() error {
 	if err = json.Unmarshal(data, &a.faq); err != nil {
 		return err
 	}
+	data, err = os.ReadFile("/faq-locales.json")
+	if err != nil {
+		return err
+	}
+	if err = json.Unmarshal(data, &a.locales); err != nil {
+		return err
+	}
+	for _, l := range []string{"en", "ar", "zh", "ru", "it"} {
+		if len(a.locales[l].Questions) != len(a.faq) || a.locales[l].Fallback == "" {
+			return errors.New("incomplete localized FAQ")
+		}
+	}
 	config, err := pgxpool.ParseConfig(required("DATABASE_URL"))
 	if err != nil {
 		return errors.New("invalid database configuration")
@@ -91,6 +104,9 @@ func run() error {
 		return errors.New("database pool initialization failed")
 	}
 	defer a.db.Close()
+	if _, err = a.db.Exec(ctx, `CREATE TABLE IF NOT EXISTS dracma_agent.conversation_locales (conversation_id bigint PRIMARY KEY, locale text NOT NULL CHECK (locale IN ('es','en','ar','zh','ru','it')))`); err != nil {
+		return errors.New("chat language storage unavailable")
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", a.health)
 	mux.HandleFunc("POST /webhooks/chatwoot", a.webhook)

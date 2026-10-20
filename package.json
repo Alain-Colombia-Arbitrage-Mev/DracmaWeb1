@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "api": "node server/index.mjs",
     "dev:api": "node --watch server/index.mjs",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-locales.mjs",
     "test:amplify-hosting": "node --test amplify-hosting.test.mjs",
     "test:min-purchase": "node --test server/minPurchase.test.mjs",
     "test:nowpayments-service": "node --test src/services/nowPaymentsService.test.mjs",
@@ -16,11 +16,12 @@
     "deploy:huff:distributor": "node contracts/script/deployTokenDistributor.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy:pages": "npm run build && npm run verify:pages && npm run verify:seo && npm run verify:publication && node scripts/prepare-pages.mjs && npx --yes wrangler@4.151.1 pages deploy dist --project-name dracmaweb1",
+    "deploy:pages": "npm run build && npm run verify:pages && npm run verify:seo && npm run verify:publication && npm run verify:locales && node scripts/prepare-pages.mjs && npx --yes wrangler@4.151.1 pages deploy dist --project-name dracmaweb1",
     "verify:publication": "node scripts/verify-project-publication.mjs",
     "verify:pages": "node scripts/verify-pages.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
-    "verify:seo:live": "node scripts/verify-seo.mjs --live --external"
+    "verify:seo:live": "node scripts/verify-seo.mjs --live --external",
+    "verify:locales": "node scripts/verify-locales.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

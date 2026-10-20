@@ -1,0 +1,672 @@
+{
+  "en": {
+    "questions": [
+      {
+        "id": "proyectos",
+        "question": "Are projects accepting contributions?",
+        "terms": [
+          "project",
+          "contribut",
+          "fundrais",
+          "invest in",
+          "atacama"
+        ],
+        "answer": "The catalog contains illustrative project profiles. Contributions are not enabled, and verified fundraising totals and project contracts have not been published. Review the objectives, proposed use of capital and risks at https://dracma.club/en/proyectos/. A project profile is not an investment offer."
+      },
+      {
+        "id": "comisiones",
+        "question": "What fees does DRACMA charge?",
+        "terms": [
+          "fee",
+          "commission",
+          "service cost",
+          "charge",
+          "pricing"
+        ],
+        "answer": "The described model includes a US$5.99 monthly administration fee, deductible from commissions awaiting payment, plus commissions on sales, released funds and profits. Each event has its own calculation basis; rates and beneficiaries depend on the project's terms. Quant has separate terms. See https://dracma.club/en/comisiones/ and https://dracma.club/en/como-ganamos/."
+      },
+      {
+        "id": "riesgos",
+        "question": "What risks should I review?",
+        "terms": [
+          "risk",
+          "lose",
+          "guarantee",
+          "return",
+          "profit",
+          "safe investment"
+        ],
+        "answer": "You may lose capital and face low liquidity, delays or outcomes that differ from the examples. Simulations do not guarantee returns. Project documents, rights, obligations and specific risks must be available before participation. See https://dracma.club/en/legal/#riesgos. I cannot provide personalized investment recommendations."
+      },
+      {
+        "id": "retiros",
+        "question": "Can I withdraw early?",
+        "terms": [
+          "withdraw",
+          "liquidity",
+          "sell",
+          "exit",
+          "cash out"
+        ],
+        "answer": "Early withdrawals and the availability of buyers cannot be guaranteed. Liquidity, time frames and exit terms must be set out in the final documents for each transaction. Illustrative project profiles do not accept contributions. Before deciding, review https://dracma.club/en/proyectos/ and the relevant terms."
+      },
+      {
+        "id": "token",
+        "question": "How can I check the DRACMA price?",
+        "terms": [
+          "buy",
+          "dracma price",
+          "quote",
+          "dexscreener",
+          "nowpayments",
+          "pay",
+          "purchase",
+          "tokens"
+        ],
+        "answer": "At https://dracma.club/en/comprar/ you can check the published Dexscreener pair price and request a USD quote using your BSC wallet. The form shows whether payments are enabled. A quote does not move funds; payment and delivery are separate states. Check the currency, network, amount and destination before sending any money."
+      },
+      {
+        "id": "contrato",
+        "question": "What are DRACMA's network and contract?",
+        "terms": [
+          "contract",
+          "bep20",
+          "bep-20",
+          "blockchain",
+          "bsc",
+          "bnb",
+          "token address"
+        ],
+        "answer": "The quoted DRACMA token uses BNB Smart Chain (BEP-20). Its published contract is 0x8A9f07fdBc75144C9207373597136c6E280A872D. This is separate from the project contracts planned for the tokenization architecture, whose verified addresses have not yet been published. Always check the summary at https://dracma.club/en/comprar/."
+      },
+      {
+        "id": "documentos",
+        "question": "Where can I find documents and transaction records?",
+        "terms": [
+          "document",
+          "accounting",
+          "ledger",
+          "audit",
+          "evidence"
+        ],
+        "answer": "Project profiles explain the concept, use of capital and risks. Contract documentation is covered at https://dracma.club/en/tecnologia/#estado-contratos. The site's accounting examples do not establish real transactions. This chat uses public information and cannot access your accounts, private documents or balances."
+      },
+      {
+        "id": "quant",
+        "question": "What do the Quant metrics show?",
+        "terms": [
+          "quant",
+          "trading",
+          "drawdown",
+          "metatrader",
+          "expert advisor"
+        ],
+        "answer": "https://dracma.club/en/quant/ displays a dated snapshot of the history of an external reference account. It is not automatically synchronized or presented as DRACMA's own performance. Past performance does not guarantee future results. Review the date, drawdown, activation terms and billing terms before evaluating the service."
+      },
+      {
+        "id": "avisos",
+        "question": "Does the agent send accounting alerts?",
+        "terms": [
+          "alert",
+          "notific",
+          "notify",
+          "accounting change"
+        ],
+        "answer": "Automatic notifications are not yet connected to project accounting. I can explain the available public information and its limits, but cannot monitor accounts or promise alerts. Check updates and the documentation status at https://dracma.club/en/tecnologia/."
+      },
+      {
+        "id": "equipo",
+        "question": "I want to speak with the team",
+        "terms": [
+          "human",
+          "person",
+          "team",
+          "advisor",
+          "support",
+          "representative"
+        ],
+        "handoff": true,
+        "answer": "I have left this conversation open for the team to review in Chatwoot. I cannot confirm availability or a response time. You can describe your question here. Do not share passwords, seed phrases, private keys or identity documents."
+      }
+    ],
+    "greeting": "Hello. I am the FAQ assistant for DRACMA. I can explain projects, commissions, risks, contracts and the purchasing process using public information. Choose a suggested question or tell me what you want to review.",
+    "fallback": "I don't have a verified answer for that query. I can explain the public information of projects, commissions, risks and purchase of the token; I don't see private accounts or documents. I have left this conversation for team review, with no confirmed response time frame. Do not share private keys, passwords or identification documents.",
+    "notice": "Automatic responses based on public information. It does not consult private accounts or send accounting notices."
+  },
+  "ar": {
+    "questions": [
+      {
+        "id": "proyectos",
+        "question": "هل تقبل المشاريع مساهمات رأسمالية؟",
+        "terms": [
+          "مشروع",
+          "المشاريع",
+          "مساهم",
+          "تمويل",
+          "استثمار",
+          "أتاكاما"
+        ],
+        "answer": "يعرض الكتالوج ملفات توضيحية لأفكار مشاريع. لا يمكن تقديم مساهمات من خلالها، ولم تُنشر أرقام موثقة لجمع الأموال أو عقود مشاريع متحقق منها. يمكنك مراجعة الأهداف والاستخدام المقترح لرأس المال والمخاطر على https://dracma.club/ar/proyectos/. ملف المشروع ليس عرضًا استثماريًا."
+      },
+      {
+        "id": "comisiones",
+        "question": "ما الرسوم التي تفرضها DRACMA؟",
+        "terms": [
+          "رسوم",
+          "عمول",
+          "تكلفة الخدمة",
+          "تكاليف"
+        ],
+        "answer": "يتضمن النموذج الموصوف رسمًا إداريًا شهريًا قدره US$5,99 يمكن خصمه من العمولات المستحقة للدفع، إضافة إلى عمولات على المبيعات والأموال المصروفة والأرباح. لكل حدث أساس حساب مستقل؛ وتتوقف النسب والمستفيدون على شروط المشروع. لخدمة Quant شروط مستقلة. راجع https://dracma.club/ar/comisiones/ و https://dracma.club/ar/como-ganamos/."
+      },
+      {
+        "id": "riesgos",
+        "question": "ما المخاطر التي ينبغي مراجعتها؟",
+        "terms": [
+          "مخاطر",
+          "خسار",
+          "ضمان",
+          "عوائد",
+          "ربح"
+        ],
+        "answer": "قد تخسر رأس المال وتواجه ضعف السيولة أو التأخير أو نتائج مختلفة عن الأمثلة. المحاكاة لا تضمن العوائد. يجب إتاحة وثائق المشروع وحقوقه والتزاماته ومخاطره المحددة قبل المشاركة. راجع https://dracma.club/ar/legal/#riesgos. لا يمكنني تقديم توصية استثمارية مخصصة لك."
+      },
+      {
+        "id": "retiros",
+        "question": "هل يمكنني الانسحاب مبكرًا؟",
+        "terms": [
+          "سحب",
+          "سيولة",
+          "بيع",
+          "خروج",
+          "استرداد"
+        ],
+        "answer": "لا يمكن ضمان السحب المبكر أو وجود مشترين. يجب تحديد السيولة والمدة وشروط الخروج في الوثائق النهائية لكل عملية. الملفات التوضيحية لا تتيح تقديم مساهمات. قبل اتخاذ القرار، راجع https://dracma.club/ar/proyectos/ والشروط ذات الصلة."
+      },
+      {
+        "id": "token",
+        "question": "كيف أتحقق من سعر DRACMA؟",
+        "terms": [
+          "شراء",
+          "سعر DRACMA",
+          "تسعير",
+          "dexscreener",
+          "nowpayments",
+          "دفع",
+          "الرموز"
+        ],
+        "answer": "يمكنك على https://dracma.club/ar/comprar/ الاطلاع على سعر الزوج المنشور في Dexscreener وطلب تسعير بالدولار باستخدام محفظتك على BSC. يوضح النموذج ما إذا كان الدفع مفعّلًا. طلب التسعير لا ينقل الأموال؛ فالدفع وتسليم الرموز حالتان منفصلتان. تحقق من العملة والشبكة والمبلغ والوجهة قبل إرسال أي أموال."
+      },
+      {
+        "id": "contrato",
+        "question": "ما شبكة DRACMA وعنوان عقدها؟",
+        "terms": [
+          "عقد",
+          "عقود",
+          "bep20",
+          "bep-20",
+          "bsc",
+          "bnb",
+          "عنوان الرمز",
+          "بلوكتشين"
+        ],
+        "answer": "يستخدم رمز DRACMA المعروض للتسعير شبكة BNB Smart Chain بمعيار BEP-20. عنوان عقده المنشور هو 0x8A9f07fdBc75144C9207373597136c6E280A872D. وهو مختلف عن عقود المشاريع المخطط لها ضمن بنية الترميز، والتي لم تُنشر عناوينها المتحقق منها بعد. تحقق دائمًا من الملخص على https://dracma.club/ar/comprar/."
+      },
+      {
+        "id": "documentos",
+        "question": "أين أجد الوثائق وسجلات العمليات؟",
+        "terms": [
+          "وثائق",
+          "مستند",
+          "محاسب",
+          "تدقيق",
+          "أدلة"
+        ],
+        "answer": "توضح ملفات المشاريع الفكرة واستخدامات رأس المال والمخاطر. تُراجع وثائق العقود على https://dracma.club/ar/tecnologia/#estado-contratos. الأمثلة المحاسبية في الموقع لا تثبت وقوع عمليات حقيقية. يعتمد هذا الحوار على المعلومات العامة ولا يتيح الوصول إلى حساباتك أو وثائقك الخاصة أو أرصدتك."
+      },
+      {
+        "id": "quant",
+        "question": "ماذا تعرض مؤشرات Quant؟",
+        "terms": [
+          "quant",
+          "تداول",
+          "تراجع",
+          "metatrader",
+          "مستشار خبير"
+        ],
+        "answer": "تعرض https://dracma.club/ar/quant/ لقطة مؤرخة للسجل التاريخي لحساب مرجعي خارجي. لا توجد مزامنة تلقائية، ولا يُعرض السجل باعتباره أداءً خاصًا بـ DRACMA. النتائج السابقة لا تضمن النتائج المستقبلية. راجع التاريخ والتراجع في رأس المال وشروط التفعيل والفوترة قبل تقييم الخدمة."
+      },
+      {
+        "id": "avisos",
+        "question": "هل يرسل الوكيل تنبيهات محاسبية؟",
+        "terms": [
+          "تنبيه",
+          "إشعار",
+          "إشعارات",
+          "تغييرات"
+        ],
+        "answer": "لم تُربط الإشعارات التلقائية بمحاسبة المشاريع بعد. يمكنني شرح المعلومات العامة المتاحة وحدودها، لكن لا يمكنني مراقبة الحسابات أو الوعد بإرسال تنبيهات. راجع المستجدات وحالة الوثائق على https://dracma.club/ar/tecnologia/."
+      },
+      {
+        "id": "equipo",
+        "question": "أريد التواصل مع الفريق",
+        "terms": [
+          "بشري",
+          "إنسان",
+          "الفريق",
+          "مستشار بشري",
+          "دعم",
+          "موظف"
+        ],
+        "handoff": true,
+        "answer": "تركت هذه المحادثة مفتوحة ليتمكن الفريق من مراجعتها في Chatwoot. لا يمكنني تأكيد توفر الفريق أو وقت الرد. يمكنك شرح استفسارك هنا. لا تشارك كلمات المرور أو عبارات الاسترداد أو المفاتيح الخاصة أو وثائق الهوية."
+      }
+    ],
+    "greeting": "مرحبا. أنا مساعد الأسئلة الشائعة لـ DRACMA. يمكنني شرح المشاريع والعمولات والمخاطر والعقود وعملية الشراء باستخدام المعلومات العامة. اختر سؤالاً مقترحًا أو أخبرني بما تريد مراجعته.",
+    "fallback": "ليس لدي إجابة تم التحقق منها لهذا الاستعلام. يمكنني شرح المعلومات العامة عن المشاريع والعمولات والمخاطر وشراء الرمز المميز؛ لا أرى حسابات أو مستندات خاصة. لقد تركت هذه المحادثة لمراجعة الفريق، دون إطار زمني مؤكد للرد. لا تشارك المفاتيح الخاصة أو كلمات المرور أو وثائق الهوية.",
+    "notice": "ردود تلقائية بناء على المعلومات العامة. ولا يستشير الحسابات الخاصة أو يرسل إشعارات محاسبية."
+  },
+  "zh": {
+    "questions": [
+      {
+        "id": "proyectos",
+        "question": "这些项目目前接受出资吗？",
+        "terms": [
+          "项目",
+          "出资",
+          "筹款",
+          "融资",
+          "投资",
+          "阿塔卡马"
+        ],
+        "answer": "目录展示的是示例性项目资料。目前无法通过这些资料出资，也没有公布经过核实的募集金额或项目合约。你可以在 https://dracma.club/zh/proyectos/ 查看项目目标、拟议资金用途和风险。项目资料不构成投资要约。"
+      },
+      {
+        "id": "comisiones",
+        "question": "DRACMA 收取哪些费用？",
+        "terms": [
+          "费用",
+          "佣金",
+          "服务费",
+          "收费",
+          "手续费"
+        ],
+        "answer": "所述模式包括每月 US$5.99 的管理费，可从待支付的佣金中扣除；另有销售、资金拨付和利润相关佣金。各类事件有各自的计费基础，费率和受益人取决于项目条款。Quant 适用单独条款。请参阅 https://dracma.club/zh/comisiones/ 和 https://dracma.club/zh/como-ganamos/。"
+      },
+      {
+        "id": "riesgos",
+        "question": "我应当了解哪些风险？",
+        "terms": [
+          "风险",
+          "亏损",
+          "保证",
+          "收益",
+          "利润",
+          "安全投资"
+        ],
+        "answer": "你可能损失本金，并面临流动性不足、延误或实际结果与示例不符等情况。模拟结果不保证收益。参与前，应当能够查阅项目文件、权利、义务及具体风险。请参阅 https://dracma.club/zh/legal/#riesgos。我无法提供个性化投资建议。"
+      },
+      {
+        "id": "retiros",
+        "question": "我可以提前退出吗？",
+        "terms": [
+          "提现",
+          "提款",
+          "流动性",
+          "出售",
+          "退出",
+          "赎回"
+        ],
+        "answer": "无法保证能够提前退出或找到买家。流动性、期限和退出条件应以每项交易的最终文件为准。示例性项目资料不开放出资。决定前，请查阅 https://dracma.club/zh/proyectos/ 及相关条款。"
+      },
+      {
+        "id": "token",
+        "question": "如何查询 DRACMA 价格？",
+        "terms": [
+          "购买",
+          "DRACMA价格",
+          "报价",
+          "dexscreener",
+          "nowpayments",
+          "支付",
+          "代币"
+        ],
+        "answer": "你可以在 https://dracma.club/zh/comprar/ 查询已公布交易对的 Dexscreener 价格，并使用 BSC 钱包申请美元报价。表单会显示付款是否开放。获取报价不会转移资金；付款和代币交付是不同状态。转账前，请核对币种、网络、金额和收款地址。"
+      },
+      {
+        "id": "contrato",
+        "question": "DRACMA 使用哪个网络和合约？",
+        "terms": [
+          "合约",
+          "bep20",
+          "bep-20",
+          "区块链",
+          "bsc",
+          "bnb",
+          "代币地址"
+        ],
+        "answer": "报价所对应的 DRACMA 代币使用 BNB Smart Chain，标准为 BEP-20。已公布的合约地址是 0x8A9f07fdBc75144C9207373597136c6E280A872D。该合约不同于代币化架构中规划的项目合约；后者经过核实的地址仍待公布。请始终核对 https://dracma.club/zh/comprar/ 中的摘要。"
+      },
+      {
+        "id": "documentos",
+        "question": "在哪里查看文件和交易记录？",
+        "terms": [
+          "文档",
+          "文件",
+          "会计",
+          "账目",
+          "审计",
+          "凭证"
+        ],
+        "answer": "项目资料介绍项目概念、资金用途和风险。合约文件的发布状态见 https://dracma.club/zh/tecnologia/#estado-contratos。网站中的会计示例不能证明实际交易已经发生。本聊天仅使用公开信息，无法访问你的账户、私人文件或余额。"
+      },
+      {
+        "id": "quant",
+        "question": "Quant 指标展示什么？",
+        "terms": [
+          "quant",
+          "交易策略",
+          "回撤",
+          "metatrader",
+          "智能交易系统"
+        ],
+        "answer": "https://dracma.club/zh/quant/ 展示外部参考账户历史记录的带日期快照。该数据不会自动同步，也不被表述为 DRACMA 自身的业绩。过去业绩不保证未来结果。评估服务前，请查看数据日期、回撤及开通和计费条款。"
+      },
+      {
+        "id": "avisos",
+        "question": "助手会发送会计提醒吗？",
+        "terms": [
+          "提醒",
+          "通知",
+          "变更",
+          "变动"
+        ],
+        "answer": "目前尚未将自动通知连接到项目会计系统。我可以解释现有公开信息及其局限，但无法监控账户或承诺发送提醒。请在 https://dracma.club/zh/tecnologia/ 查看更新及文件发布状态。"
+      },
+      {
+        "id": "equipo",
+        "question": "我想联系团队",
+        "terms": [
+          "人工",
+          "真人",
+          "团队",
+          "客服",
+          "工作人员"
+        ],
+        "handoff": true,
+        "answer": "我已将本次对话保持为开放状态，供团队在 Chatwoot 中查看。我无法确认团队是否在线或何时回复。你可以在这里说明问题背景。请勿分享密码、助记词、私钥或身份证明文件。"
+      }
+    ],
+    "greeting": "你好。我是DRACMA的FAQ助理。我可以使用公共信息解释项目、佣金、风险、合同和采购流程。选择一个建议的问题或告诉我您想查看什么。",
+    "fallback": "我没有该查询的经过验证的答案。我可以解释项目、佣金、风险和购买代币的公开信息；我没有看到私人帐户或文件。我已将此对话留给团队审核，但没有确认回复时间范围。请勿共享私钥、密码或身份证明文件。",
+    "notice": "基于公共信息的自动响应。它不查询私人账户或发送会计通知。"
+  },
+  "ru": {
+    "questions": [
+      {
+        "id": "proyectos",
+        "question": "Можно ли уже вносить средства в проекты?",
+        "terms": [
+          "проект",
+          "взнос",
+          "сбор средств",
+          "инвестир",
+          "атакама"
+        ],
+        "answer": "В каталоге представлены иллюстративные описания проектов. Взносы через них не принимаются; проверенные данные о собранных средствах и контрактах проектов не опубликованы. Цели, предполагаемое использование капитала и риски описаны на https://dracma.club/ru/proyectos/. Карточка проекта не является инвестиционным предложением."
+      },
+      {
+        "id": "comisiones",
+        "question": "Какие комиссии взимает DRACMA?",
+        "terms": [
+          "комисси",
+          "стоимость услуг",
+          "платеж за обслуживание",
+          "тариф"
+        ],
+        "answer": "Описанная модель включает административный сбор US$5,99 в месяц, который может удерживаться из комиссий, ожидающих выплаты, а также комиссии за продажи, перечисление средств и прибыль. Для каждого события установлена своя база расчета; ставки и получатели зависят от условий проекта. Для Quant действуют отдельные условия. См. https://dracma.club/ru/comisiones/ и https://dracma.club/ru/como-ganamos/."
+      },
+      {
+        "id": "riesgos",
+        "question": "Какие риски следует изучить?",
+        "terms": [
+          "риск",
+          "потер",
+          "гаранти",
+          "доходност",
+          "прибыл"
+        ],
+        "answer": "Возможны потеря капитала, низкая ликвидность, задержки и результаты, отличающиеся от примеров. Моделирование не гарантирует доходность. До участия должны быть доступны документы проекта, права, обязательства и конкретные риски. См. https://dracma.club/ru/legal/#riesgos. Я не могу давать персональные инвестиционные рекомендации."
+      },
+      {
+        "id": "retiros",
+        "question": "Можно ли выйти досрочно?",
+        "terms": [
+          "вывод",
+          "вывести",
+          "ликвидност",
+          "продать",
+          "выход",
+          "вернуть"
+        ],
+        "answer": "Досрочный вывод средств и наличие покупателей не гарантируются. Ликвидность, сроки и условия выхода должны быть определены в окончательных документах каждой операции. Иллюстративные карточки не позволяют вносить средства. До принятия решения изучите https://dracma.club/ru/proyectos/ и соответствующие условия."
+      },
+      {
+        "id": "token",
+        "question": "Как узнать цену DRACMA?",
+        "terms": [
+          "купить",
+          "цена DRACMA",
+          "котировк",
+          "dexscreener",
+          "nowpayments",
+          "оплат",
+          "покупк",
+          "токен"
+        ],
+        "answer": "На https://dracma.club/ru/comprar/ можно посмотреть цену опубликованной пары на Dexscreener и запросить котировку в USD, указав кошелек BSC. Форма показывает, доступна ли оплата. Запрос котировки не переводит средства; оплата и доставка токенов — разные состояния. Перед переводом проверьте валюту, сеть, сумму и адрес получателя."
+      },
+      {
+        "id": "contrato",
+        "question": "Каковы сеть и адрес контракта DRACMA?",
+        "terms": [
+          "контракт",
+          "bep20",
+          "bep-20",
+          "блокчейн",
+          "bsc",
+          "bnb",
+          "адрес токена"
+        ],
+        "answer": "Токен DRACMA, для которого публикуется котировка, использует BNB Smart Chain, стандарт BEP-20. Опубликованный адрес контракта: 0x8A9f07fdBc75144C9207373597136c6E280A872D. Он отличается от контрактов проектов, предусмотренных архитектурой токенизации: их проверенные адреса пока не опубликованы. Всегда проверяйте сводку на https://dracma.club/ru/comprar/."
+      },
+      {
+        "id": "documentos",
+        "question": "Где посмотреть документы и записи об операциях?",
+        "terms": [
+          "документ",
+          "бухгалтер",
+          "учет",
+          "аудит",
+          "подтверждени"
+        ],
+        "answer": "Карточки описывают концепцию, использование капитала и риски. Статус документации контрактов указан на https://dracma.club/ru/tecnologia/#estado-contratos. Примеры бухгалтерских записей на сайте не подтверждают реальные операции. Этот чат использует общедоступную информацию и не имеет доступа к вашим счетам, личным документам или балансам."
+      },
+      {
+        "id": "quant",
+        "question": "Что показывают показатели Quant?",
+        "terms": [
+          "quant",
+          "трейдинг",
+          "просадк",
+          "metatrader",
+          "советник"
+        ],
+        "answer": "На https://dracma.club/ru/quant/ опубликован датированный снимок истории внешнего эталонного счета. Автоматической синхронизации нет; данные не представлены как собственные результаты DRACMA. Прошлые результаты не гарантируют будущих. Перед оценкой услуги изучите дату данных, просадку и условия активации и выставления счетов."
+      },
+      {
+        "id": "avisos",
+        "question": "Отправляет ли агент бухгалтерские уведомления?",
+        "terms": [
+          "уведомлен",
+          "оповещен",
+          "изменени"
+        ],
+        "answer": "Автоматические уведомления пока не связаны с бухгалтерским учетом проектов. Я могу объяснить доступную публичную информацию и ее ограничения, но не могу следить за счетами или обещать уведомления. Обновления и статус документов доступны на https://dracma.club/ru/tecnologia/."
+      },
+      {
+        "id": "equipo",
+        "question": "Хочу связаться с командой",
+        "terms": [
+          "человек",
+          "сотрудник",
+          "команд",
+          "поддержк",
+          "живой оператор"
+        ],
+        "handoff": true,
+        "answer": "Я оставил эту беседу открытой, чтобы команда могла просмотреть ее в Chatwoot. Я не могу подтвердить доступность команды или срок ответа. Здесь можно описать суть вопроса. Не сообщайте пароли, сид-фразы, закрытые ключи или документы, удостоверяющие личность."
+      }
+    ],
+    "greeting": "Здравствуйте. Я помощник по часто задаваемым вопросам для DRACMA. Я могу объяснить проекты, комиссии, риски, контракты и процесс закупок, используя общедоступную информацию. Выберите предложенный вопрос или сообщите мне, что вы хотите просмотреть.",
+    "fallback": "У меня нет проверенного ответа на этот вопрос. Я могу объяснить общедоступную информацию о проектах, комиссиях, рисках и покупке токена; Я не вижу личных счетов и документов. Я оставил этот разговор на рассмотрение команды без подтвержденных сроков ответа. Не передавайте личные ключи, пароли или документы, удостоверяющие личность.",
+    "notice": "Автоматические ответы на основе общедоступной информации. Он не просматривает частные счета и не отправляет бухгалтерские уведомления."
+  },
+  "it": {
+    "questions": [
+      {
+        "id": "proyectos",
+        "question": "I progetti accettano già apporti di capitale?",
+        "terms": [
+          "progett",
+          "contribut",
+          "raccolta",
+          "finanziat",
+          "investire",
+          "atacama"
+        ],
+        "answer": "Il catalogo presenta schede illustrative di progetti. Non è possibile effettuare apporti e non sono stati pubblicati dati verificati sulla raccolta o sui contratti dei progetti. Puoi consultare obiettivi, impiego proposto del capitale e rischi su https://dracma.club/it/proyectos/. Una scheda non costituisce un'offerta di investimento."
+      },
+      {
+        "id": "comisiones",
+        "question": "Quali commissioni applica DRACMA?",
+        "terms": [
+          "commission",
+          "costo del servizio",
+          "tariff",
+          "costi",
+          "canone"
+        ],
+        "answer": "Il modello descritto prevede un canone amministrativo di US$5,99 al mese, detraibile dalle commissioni in attesa di pagamento, e commissioni su vendite, fondi erogati e utili. Ogni evento ha una propria base di calcolo; aliquote e beneficiari dipendono dalle condizioni del progetto. Quant ha condizioni separate. Consulta https://dracma.club/it/comisiones/ e https://dracma.club/it/como-ganamos/."
+      },
+      {
+        "id": "riesgos",
+        "question": "Quali rischi devo esaminare?",
+        "terms": [
+          "risch",
+          "perder",
+          "garanzi",
+          "rendimento",
+          "profitto"
+        ],
+        "answer": "Puoi perdere capitale e riscontrare scarsa liquidità, ritardi o risultati diversi dagli esempi. Le simulazioni non garantiscono rendimenti. Prima di partecipare devono essere disponibili documenti, diritti, obblighi e rischi specifici del progetto. Consulta https://dracma.club/it/legal/#riesgos. Non posso fornire raccomandazioni di investimento personalizzate."
+      },
+      {
+        "id": "retiros",
+        "question": "Posso uscire anticipatamente?",
+        "terms": [
+          "preliev",
+          "ritir",
+          "liquidit",
+          "vender",
+          "uscita",
+          "recuperare"
+        ],
+        "answer": "Non è possibile garantire un prelievo anticipato o la presenza di acquirenti. Liquidità, tempi e condizioni di uscita devono essere indicati nei documenti definitivi di ogni operazione. Le schede illustrative non consentono apporti. Prima di decidere, consulta https://dracma.club/it/proyectos/ e le relative condizioni."
+      },
+      {
+        "id": "token",
+        "question": "Come posso consultare il prezzo di DRACMA?",
+        "terms": [
+          "comprare",
+          "acquist",
+          "prezzo DRACMA",
+          "quotazion",
+          "dexscreener",
+          "nowpayments",
+          "pagar",
+          "pagament",
+          "token"
+        ],
+        "answer": "Su https://dracma.club/it/comprar/ puoi consultare il prezzo della coppia pubblicata su Dexscreener e richiedere una quotazione in USD con il tuo wallet BSC. Il modulo indica se i pagamenti sono abilitati. La quotazione non trasferisce fondi; pagamento e consegna sono stati distinti. Verifica valuta, rete, importo e destinazione prima di inviare denaro."
+      },
+      {
+        "id": "contrato",
+        "question": "Quali sono la rete e il contratto di DRACMA?",
+        "terms": [
+          "contratto",
+          "contratti",
+          "bep20",
+          "bep-20",
+          "blockchain",
+          "bsc",
+          "bnb",
+          "indirizzo del token"
+        ],
+        "answer": "Il token DRACMA quotato utilizza BNB Smart Chain, con standard BEP-20. Il contratto pubblicato è 0x8A9f07fdBc75144C9207373597136c6E280A872D. È distinto dai contratti di progetto previsti nell'architettura di tokenizzazione, i cui indirizzi verificati non sono ancora pubblicati. Controlla sempre il riepilogo su https://dracma.club/it/comprar/."
+      },
+      {
+        "id": "documentos",
+        "question": "Dove posso consultare documenti e movimenti?",
+        "terms": [
+          "document",
+          "contabil",
+          "registro",
+          "audit",
+          "verifica"
+        ],
+        "answer": "Le schede spiegano il concetto, gli impieghi del capitale e i rischi. Lo stato della documentazione contrattuale è consultabile su https://dracma.club/it/tecnologia/#estado-contratos. Gli esempi contabili del sito non dimostrano movimenti reali. Questa chat utilizza informazioni pubbliche e non accede ai tuoi conti, documenti privati o saldi."
+      },
+      {
+        "id": "quant",
+        "question": "Che cosa mostrano le metriche di Quant?",
+        "terms": [
+          "quant",
+          "trading",
+          "drawdown",
+          "metatrader",
+          "expert advisor"
+        ],
+        "answer": "https://dracma.club/it/quant/ mostra un'istantanea datata dello storico di un conto esterno di riferimento. Non c'è sincronizzazione automatica e i dati non sono presentati come risultati propri di DRACMA. I risultati passati non garantiscono quelli futuri. Consulta data, drawdown e condizioni di attivazione e fatturazione prima di valutare il servizio."
+      },
+      {
+        "id": "avisos",
+        "question": "L'agente invia avvisi contabili?",
+        "terms": [
+          "avvis",
+          "notific",
+          "allert",
+          "cambiamenti"
+        ],
+        "answer": "Le notifiche automatiche non sono ancora collegate alla contabilità dei progetti. Posso spiegare le informazioni pubbliche disponibili e i loro limiti, ma non monitorare conti né promettere avvisi. Consulta novità e stato della documentazione su https://dracma.club/it/tecnologia/."
+      },
+      {
+        "id": "equipo",
+        "question": "Voglio parlare con il team",
+        "terms": [
+          "umano",
+          "persona",
+          "team",
+          "assistenza",
+          "operatore",
+          "consulente"
+        ],
+        "handoff": true,
+        "answer": "Ho lasciato questa conversazione aperta affinché il team possa esaminarla in Chatwoot. Non posso confermare disponibilità o tempi di risposta. Puoi descrivere qui il contesto della tua domanda. Non condividere password, frasi seed, chiavi private o documenti di identità."
+      }
+    ],
+    "greeting": "Ciao. Sono l'assistente FAQ per DRACMA. Riesco a spiegare progetti, commissioni, rischi, contratti e il processo di acquisto utilizzando informazioni pubbliche. Scegli una domanda suggerita o dimmi cosa vuoi rivedere.",
+    "fallback": "Non ho una risposta verificata per quella domanda. Posso spiegare le informazioni pubbliche di progetti, commissioni, rischi e acquisto del token; Non vedo conti o documenti privati. Ho lasciato questa conversazione per la revisione del team, senza alcun intervallo di tempo confermato per la risposta. Non condividere chiavi private, password o documenti di identificazione.",
+    "notice": "Risposte automatiche basate su informazioni pubbliche. Non consulta conti privati ​​né invia comunicazioni contabili."
+  }
+}

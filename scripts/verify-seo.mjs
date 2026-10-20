@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { parse } from 'parse5';
 import { SITE_URL, isIndexablePath } from '../src/config/site.mjs';
 import { breadcrumbsFor } from '../src/config/breadcrumbs.mjs';
+import {localeFor} from '../src/i18n/locales.mjs';
 import {normalizeDeploymentHTML} from './seo-html.mjs';
 
 const walk = (node, visit) => { visit(node); for (const child of node.childNodes || []) walk(child, visit); };
@@ -38,7 +39,7 @@ for (const file of files('dist').filter(f => f.endsWith('.html'))) {
   const indexable = isIndexablePath(route);
   if (title.length !== 1 || !title[0].trim()) fail(`${route}: missing or repeated title`);
   if (description.length !== 1 || !description[0]?.trim()) fail(`${route}: missing or repeated description`);
-  if (indexable && (description[0]?.length < 70 || description[0]?.length > 210)) fail(`${route}: description length ${description[0]?.length}`);
+  if (indexable && (description[0]?.length < (localeFor(route)==='zh'?25:50) || description[0]?.length > (localeFor(route)==='es'?210:320))) fail(`${route}: description length ${description[0]?.length}`);
   if (route !== '/404/' && (canonical.length !== 1 || canonical[0] !== SITE_URL + route)) fail(`${route}: incorrect canonical`);
   if (route === '/404/' && canonical.length) fail('404 page must not canonicalize to a valid page');
   if (meta('robots')[0] !== (indexable ? 'index, follow' : 'noindex, follow')) fail(`${route}: incorrect indexing policy`);
@@ -84,8 +85,8 @@ for (const page of pages.values()) for (const node of page.nodes) {
   for (const match of (a.class || '').matchAll(/url\(['"]([^'"]+)['"]\)/g)) reference(match[1], page);
   if (a.rel === 'canonical' || a.hreflang || a.property === 'og:url' || a.property === 'og:image') {
     const value = a.href || a.content;
-    if (value && new URL(value).origin !== SITE_URL) fail(`${page.route}: SEO reference on another origin: ${value}`);
-    if (a.hreflang && !isIndexablePath(new URL(value).pathname)) fail(`${page.route}: alternate language points to a noindex page`);
+    if (value && new URL(value,SITE_URL).origin !== SITE_URL) fail(`${page.route}: SEO reference on another origin: ${value}`);
+    if (a.hreflang && !isIndexablePath(new URL(value,SITE_URL).pathname)) fail(`${page.route}: alternate language points to a noindex page`);
   }
   if (node.tagName === 'script' && a.type === 'application/ld+json') {
     try {

@@ -1,5 +1,6 @@
 ---
 import ThemeSwitch from './ThemeSwitch.astro';
+import LanguageSwitch from './LanguageSwitch.astro';
 const { compact=false } = Astro.props;
 const groups = [
   { title:'Fintech', links:[['DRACMA Quant','/quant/'],['Crédito y lending','/credito/'],['Remesas','/remesas/'],['Tesorería','/tesoreria/']] },
@@ -10,6 +11,7 @@ const groups = [
 <header class="pencil-header">
   <nav aria-label="Navegación principal" class="mx-auto flex min-h-[88px] max-w-[1180px] items-center gap-3 px-5 lg:gap-5">
     <a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="dracma · Inicio"><img src="/brand/dracma-eagle.webp" width="40" height="48" alt="" class="h-12 w-10 object-contain" /><span class="text-2xl font-semibold tracking-[-.9px] text-[#F8F7F2]">dracma</span></a>
+    <LanguageSwitch/>
     {compact&&<div class="theme-switch-wrap"><ThemeSwitch/></div>}
     {compact ? <a href="/" class="nav-back ml-auto text-sm text-[#DCE6E4]"><span aria-hidden="true">←</span> Volver<span class="nav-back-detail"> al inicio</span></a> : <>
       <div class="hidden items-center gap-5 lg:flex">

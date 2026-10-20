@@ -1,0 +1,8 @@
+---
+import {LOCALES,LANGUAGE_NAMES,localePath} from '../../i18n/locales.mjs';
+const route=/^\/404(?:\.html|\/)$/.test(Astro.url.pathname)?'/':Astro.url.pathname;
+---
+<details class="language-switch nav-disclosure">
+ <summary aria-label="Idioma"><span data-current-language>ES</span><span aria-hidden="true">⌄</span></summary>
+ <div class="nav-dropdown language-options" data-no-translate>{LOCALES.map(locale=><a href={localePath(route,locale)} lang={locale} dir={locale==='ar'?'rtl':'ltr'} hreflang={locale} data-locale-link={locale} aria-current={locale==='es'?'page':undefined}>{LANGUAGE_NAMES[locale]}</a>)}</div>
+</details>
