@@ -5,6 +5,7 @@
 !cmd
 !cmd/**
 !faq.json
+!faq-locales.json
 !railway.toml
 **/*_test.go
 **/._*
