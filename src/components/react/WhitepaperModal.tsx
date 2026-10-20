@@ -1,3 +1,4 @@
+import Localized from '../../i18n/Localized';
 import { useStore } from '@nanostores/react';
 import { $whitepaperModalOpen, $translations, closeWhitepaperModal } from '../../stores/appStore';
 
@@ -10,7 +11,7 @@ export default function WhitepaperModal() {
   const t = (key: string, fallback?: string) => translations[key] || fallback || key;
 
   return (
-    <div
+    <Localized><div
       className="fixed inset-0 bg-base-dark/90 backdrop-blur-xl flex items-center justify-center p-4 z-[1000]"
       onClick={closeWhitepaperModal}
     >
@@ -41,6 +42,6 @@ export default function WhitepaperModal() {
           <p className="text-center mt-8 text-lg starlight-gold-text font-mono">{t('whitepaperFullContentPlaceholder')}</p>
         </div>
       </div>
-    </div>
+    </div></Localized>
   );
 }

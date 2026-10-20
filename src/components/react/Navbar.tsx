@@ -1,3 +1,5 @@
+import {LOCALES,localePath} from '../../i18n/locales.mjs';
+import Localized from '../../i18n/Localized';
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
@@ -33,11 +35,11 @@ function NavbarInner() {
 
   const handleLanguageChange = (e: React.MouseEvent<HTMLAnchorElement>, langCode: string) => {
     e.preventDefault();
-    const basePath = langCode === 'es' ? '/preventa/' : `/${langCode}/`;
+    const basePath = LOCALES.includes(langCode) ? localePath('/preventa/',langCode) : `/${langCode}/`;
     window.location.href = basePath;
   };
 
-  const landingPath = currentLang === 'es' ? '/preventa/' : `/${currentLang}/`;
+  const landingPath = LOCALES.includes(currentLang) ? localePath('/preventa/',currentLang) : `/${currentLang}/`;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -61,7 +63,7 @@ function NavbarInner() {
   }, [connect, connectors]);
 
   return (
-    <nav className="site-navigation fixed w-full z-50 backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderBottom: '1px solid var(--th-nav-border)'}}>
+    <Localized><nav className="site-navigation fixed w-full z-50 backdrop-blur-lg" style={{background: 'var(--th-nav-bg)', borderBottom: '1px solid var(--th-nav-border)'}}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
@@ -91,12 +93,12 @@ function NavbarInner() {
                 className="flex items-center text-brand-text-secondary hover:text-brand-primary transition duration-300 text-sm font-semibold"
               >
                 <i className="fas fa-globe mr-1.5" aria-hidden="true"></i>
-                <span>{currentLang.toUpperCase()}</span>
+                <span data-current-language data-no-translate>{currentLang.toUpperCase()}</span>
                 <i className="fas fa-chevron-down fa-xs ml-1.5" aria-hidden="true"></i>
               </button>
               <div className={`language-dropdown ${isLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href={lang.code === 'es' ? '/preventa/' : `/${lang.code}/`} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a data-no-translate key={lang.code} href={localePath('/preventa/',lang.code)} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}
@@ -133,7 +135,7 @@ function NavbarInner() {
               </button>
               <div className={`language-dropdown right-0 left-auto min-w-[120px] ${isMobileLangOpen ? '!opacity-100 !translate-y-0 !pointer-events-auto' : ''}`} role="menu">
                 {LANGUAGES.map(lang => (
-                  <a key={lang.code} href={lang.code === 'es' ? '/preventa/' : `/${lang.code}/`} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
+                  <a data-no-translate key={lang.code} href={localePath('/preventa/',lang.code)} lang={lang.code} role="menuitem" onClick={(e) => { handleLanguageChange(e, lang.code); setIsMobileLangOpen(false); }} onKeyDown={(e) => { if (e.key === 'Escape') setIsMobileLangOpen(false); }} className={currentLang === lang.code ? 'active-lang' : ''}>
                     {lang.name}
                   </a>
                 ))}
@@ -168,14 +170,14 @@ function NavbarInner() {
           </div>
         </div>
       )}
-    </nav>
+    </nav></Localized>
   );
 }
 
 export default function Navbar() {
   return (
-    <Web3Provider>
+    <Localized><Web3Provider>
       <NavbarInner />
-    </Web3Provider>
+    </Web3Provider></Localized>
   );
 }

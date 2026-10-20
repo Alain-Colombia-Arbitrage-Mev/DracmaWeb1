@@ -65,13 +65,9 @@ export const NAV_LINKS: NavLinkItem[] = [
 // 5. Languages
 // ---------------------------------------------------------------------------
 export const LANGUAGES = [
-  { code: 'es', name: 'Espanol' },
-  { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Francais' },
-  { code: 'hi', name: '\u0939\u093f\u0928\u094d\u0926\u0940' },
-  { code: 'ar', name: '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' },
-  { code: 'ru', name: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439' },
-  { code: 'zh', name: '\u7b80\u4f53\u4e2d\u6587' },
+  {code:'es',name:'Español'}, {code:'en',name:'English'},
+  {code:'ar',name:'العربية'}, {code:'zh',name:'中文'},
+  {code:'ru',name:'Русский'}, {code:'it',name:'Italiano'},
 ];
 
 // ---------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import Localized from '../../i18n/Localized';
 import { useState, useCallback } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useConnect, useDisconnect, useConnectors } from 'wagmi';
@@ -44,7 +45,7 @@ function StakingTxOverlay({ stakeStep, unstakeStep, claimStep, txHash, errorMess
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
+    <Localized><div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div className="rounded-2xl p-6 md:p-8 max-w-md w-full text-center relative" style={{ background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)', boxShadow: 'var(--th-shadow-lg)' }}>
         {(isSuccess || isError) && (
           <button
@@ -124,7 +125,7 @@ function StakingTxOverlay({ stakeStep, unstakeStep, claimStep, txHash, errorMess
           </>
         )}
       </div>
-    </div>
+    </div></Localized>
   );
 }
 
@@ -215,7 +216,7 @@ function StakingInner() {
     claimStep !== 'idle' && claimStep !== 'success' && claimStep !== 'error';
 
   return (
-    <section id="staking" className="py-16 bg-brand-background relative overflow-hidden">
+    <Localized><section id="staking" className="py-16 bg-brand-background relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 z-0 opacity-[0.03]" style={{ backgroundImage: "repeating-linear-gradient(45deg, rgba(99,102,241,0.06), rgba(99,102,241,0.06) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(139,92,246,0.04), rgba(139,92,246,0.04) 1px, transparent 1px, transparent 15px)" }}></div>
       <div className="absolute top-[15%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.04] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)', filter: 'blur(80px)' }}></div>
@@ -565,14 +566,14 @@ function StakingInner() {
           </div>
         </div>
       </div>
-    </section>
+    </section></Localized>
   );
 }
 
 export default function Staking() {
   return (
-    <Web3Provider>
+    <Localized><Web3Provider>
       <StakingInner />
-    </Web3Provider>
+    </Web3Provider></Localized>
   );
 }

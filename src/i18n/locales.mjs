@@ -7,8 +7,8 @@ export const normalizeCopy = value => value.replace(/\s+/gu,' ').trim();
 const compiledPatterns=new WeakMap();
 function patternsFor(dictionary){
  if(compiledPatterns.has(dictionary))return compiledPatterns.get(dictionary);
- const patterns=Object.entries(dictionary).filter(([key])=>/\{\d+\}/.test(key)).map(([pattern,target])=>{
-  const tokens=[];const escaped=pattern.split(/(\{\d+\})/).map(part=>/^\{\d+\}$/.test(part)?(tokens.push(part),'(.+?)'):part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('');
+ const patterns=Object.entries(dictionary).filter(([key])=>/\{[a-zA-Z0-9_]+\}/.test(key)).map(([pattern,target])=>{
+  const tokens=[];const escaped=pattern.split(/(\{[a-zA-Z0-9_]+\})/).map(part=>/^\{[a-zA-Z0-9_]+\}$/.test(part)?(tokens.push(part),'(.+?)'):part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('');
   return {regex:new RegExp(`^${escaped}$`,'u'),tokens,target};
  });compiledPatterns.set(dictionary,patterns);return patterns;
 }
@@ -19,7 +19,7 @@ export function translateCopy(value,dictionary){
  if(!translated&&key.length<2000){
   for(const {regex,target,tokens} of patternsFor(dictionary)){
    const match=key.match(regex);
-   if(match){translated=target.replace(/\{\d+\}/g,t=>match[tokens.indexOf(t)+1]||t);break;}
+   if(match){translated=target.replace(/\{[a-zA-Z0-9_]+\}/g,t=>match[tokens.indexOf(t)+1]||t);break;}
   }
  }
  return translated?value.replace(/\S[\s\S]*\S|\S/u,translated):value;

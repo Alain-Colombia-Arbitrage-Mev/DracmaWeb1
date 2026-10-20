@@ -1,3 +1,4 @@
+import Localized from '../../i18n/Localized';
 import { useStore } from '@nanostores/react';
 import { $aiModalInfo, $translations, closeAiModal } from '../../stores/appStore';
 
@@ -26,7 +27,7 @@ export default function AiModal() {
   };
 
   return (
-    <div className="ai-modal" onClick={closeAiModal}>
+    <Localized><div className="ai-modal" onClick={closeAiModal}>
       <div className="ai-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold font-display brand-primary-text">
@@ -54,6 +55,6 @@ export default function AiModal() {
           </button>
         )}
       </div>
-    </div>
+    </div></Localized>
   );
 }

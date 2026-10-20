@@ -32,6 +32,7 @@ for(const locale of LOCALES){
   const walk=(n,blocked=false)=>{
    const cls=attr(n,'class')||'';
    if(n.tagName==='html'){set(n,'lang',languageTag(locale));set(n,'dir',locale==='ar'?'rtl':'ltr');}
+   if(n.tagName==='body'&&attr(n,'class'))set(n,'class',attr(n,'class').replace(/\blang-[\w-]+\b/g,'lang-'+locale));
    if(n.tagName==='head'){head=n;n.childNodes=n.childNodes.filter(c=>!(c.tagName==='link'&&attr(c,'rel')==='alternate'));}
    if(n.tagName==='script'&&attr(n,'type')==='application/ld+json'){
     const content=n.childNodes.find(c=>c.nodeName==='#text');if(content)content.value=JSON.stringify(script(JSON.parse(content.value),locale,dictionary)).replace(/</g,'\\u003c');return;

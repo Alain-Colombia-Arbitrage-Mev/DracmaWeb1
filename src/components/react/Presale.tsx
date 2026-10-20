@@ -1,3 +1,4 @@
+import Localized from '../../i18n/Localized';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { useAccount, useChainId, useConnect, useDisconnect, useConnectors, useSwitchChain } from 'wagmi';
@@ -81,7 +82,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
+    <Localized><div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div className="rounded-2xl p-6 md:p-8 max-w-md w-full text-center relative" style={{ background: 'var(--th-surface)', border: '1px solid var(--th-border-accent)', boxShadow: 'var(--th-shadow-lg)' }}>
         {/* Close button — visible on success and error states */}
         {(isSuccess || isError) && (
@@ -317,7 +318,7 @@ function TxStatusOverlay({ txStep, txHash, errorMessage, onReset, t, purchaseDet
           </>
         )}
       </div>
-    </div>
+    </div></Localized>
   );
 }
 
@@ -363,7 +364,7 @@ function VestingClaimSection({ t }: { t: (key: string, fallback?: string) => str
   const isClaimProcessing = claimStep === 'claiming' || claimStep === 'confirming';
 
   return (
-    <div className="mt-10 card-ui glass-card-premium p-6 md:p-8 animate-fade-in-zoom max-w-5xl mx-auto">
+    <Localized><div className="mt-10 card-ui glass-card-premium p-6 md:p-8 animate-fade-in-zoom max-w-5xl mx-auto">
       <h3 className="text-2xl font-bold mb-6 title-section-display brand-primary-text relative pb-3 title-underline-animated animate-on-visible">
         <i className="fas fa-lock mr-2"></i>
         {t('vestingTitle', 'Vesting de Tokens')}
@@ -503,7 +504,7 @@ function VestingClaimSection({ t }: { t: (key: string, fallback?: string) => str
         </div>
         <i className="fas fa-external-link-alt text-brand-text-secondary/40 text-[10px]"></i>
       </div>
-    </div>
+    </div></Localized>
   );
 }
 
@@ -701,7 +702,7 @@ function PresaleInner() {
   const tokensProgress = totalPresaleTokens > 0 ? (tokensAllocated / totalPresaleTokens) * 100 : 0;
 
   return (
-    <section id="presale" className="py-16 bg-brand-background relative overflow-hidden">
+    <Localized><section id="presale" className="py-16 bg-brand-background relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-[0.03]" style={{backgroundImage: "repeating-linear-gradient(45deg, rgba(99,102,241,0.06), rgba(99,102,241,0.06) 1px, transparent 1px, transparent 15px), repeating-linear-gradient(-45deg, rgba(139,92,246,0.04), rgba(139,92,246,0.04) 1px, transparent 1px, transparent 15px)", animation: "backgroundGridScroll 80s linear infinite"}}></div>
       <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] rounded-full opacity-[0.04] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
       <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.03] pointer-events-none" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)', filter: 'blur(80px)'}}></div>
@@ -988,14 +989,14 @@ function PresaleInner() {
         {/* Vesting Claim Section — only visible when user has vesting tokens */}
         <VestingClaimSection t={t} />
       </div>
-    </section>
+    </section></Localized>
   );
 }
 
 export default function Presale() {
   return (
-    <Web3Provider>
+    <Localized><Web3Provider>
       <PresaleInner />
-    </Web3Provider>
+    </Web3Provider></Localized>
   );
 }

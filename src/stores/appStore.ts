@@ -30,10 +30,10 @@ export function toggleTheme() {
 // Language store — read initial lang from the page's <html lang> attribute
 function getPageLang(): string {
   if (typeof window !== 'undefined' && (window as any).__DRACMA_LANG__) {
-    return (window as any).__DRACMA_LANG__;
+    return String((window as any).__DRACMA_LANG__).split('-')[0];
   }
   if (typeof document !== 'undefined') {
-    return document.documentElement.lang || 'es';
+    return document.documentElement.lang.split('-')[0] || 'es';
   }
   return 'es';
 }
@@ -48,7 +48,7 @@ export function initLang() {
 }
 
 export const $translations = computed($currentLang, (lang) => {
-  return TRANSLATIONS[lang] || TRANSLATIONS.es;
+  return ['en','ar','zh','ru','it'].includes(lang) ? TRANSLATIONS.es : TRANSLATIONS[lang] || TRANSLATIONS.es;
 });
 
 // Helper to get translation
